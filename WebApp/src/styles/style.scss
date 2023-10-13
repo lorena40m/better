@@ -1,0 +1,1064 @@
+.MuiTypography-root {
+  font-family: "Open Sans", sans-serif !important;
+}
+.SearchBox {
+  width: 500px;
+}
+.pageTemplate {
+  padding: 25px 0;
+  &__head {
+    margin-bottom: 23px;
+  }
+  &__title {
+    font-family: "Open Sans", sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 30px !important;
+    line-height: 41px !important;
+    color: #2a3b51;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  &__status {
+    background: #ffffff;
+    border: 1px solid rgba(131, 155, 187, 0.4);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    gap: 6px;
+  }
+  &__body {
+    margin: 0;
+    width: 100%;
+  }
+  &__PlayBtnText {
+    margin-top: 35px;
+    a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 22px;
+      text-decoration-line: underline;
+      color: #839bbb;
+    }
+  }
+}
+.transferCard {
+  background: #ffffff;
+  border: 1px solid #53d258;
+  border-radius: 10px;
+  padding: 40px 28px;
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 45px;
+  }
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    font-style: normal;
+    font-weight: 500 !important;
+    font-size: 36px !important;
+    line-height: 37px !important;
+    color: #21bc27;
+    margin: 0 !important;
+  }
+  &__body {
+    margin-bottom: 38px;
+    .MuiInputBase-root {
+      height: 46px;
+      gap: 10px;
+      fieldset {
+        border: 1px solid rgba(131, 155, 187, 0.4) !important;
+        border-radius: 5px;
+        height: 50px;
+      }
+      input {
+        font-weight: 400;
+        font-size: 22px;
+        line-height: 30px;
+        color: #2a3b51;
+      }
+    }
+    .inputText {
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 30px;
+      color: #839bbb;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    &-text {
+      font-style: italic;
+      font-weight: 300 !important;
+      font-size: 16.8px !important;
+      line-height: 15px !important;
+      text-align: center;
+      color: #839bbb;
+      margin: 0 !important;
+    }
+    &-total {
+      font-style: normal;
+      font-weight: 500;
+      font-size: 26px;
+      line-height: 35px;
+      color: #2a3b51;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      .cardBox-title {
+        font-size: 26px !important;
+        line-height: 35px !important;
+      }
+    }
+  }
+}
+.copyBox {
+  background: #ffffff;
+  border: 1px solid rgba(131, 155, 187, 0.4);
+  border-radius: 5px;
+  width: 122px;
+  height: 36px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  fieldset {
+    border: none;
+  }
+  input {
+    font-weight: 400;
+    font-size: 14.7px;
+    line-height: 20px;
+    text-align: center;
+    color: #2a3b51;
+    padding: 0;
+  }
+  button {
+    padding: 0;
+    height: 14px;
+    width: 14px;
+    svg {
+      height: 14px;
+      width: 14px;
+    }
+  }
+}
+.transactionCard {
+  background: #ffffff;
+  border: 1px solid #b5c3d6;
+  border-radius: 10px;
+  &__head {
+    padding: 25px 30px;
+    cursor: pointer;
+    position: relative;
+    &-title {
+      font-weight: 700 !important;
+      font-size: 20px !important;
+      line-height: 27px !important;
+      color: #2a3b51 !important;
+      margin: 0 0 6px !important;
+    }
+    &-text {
+      font-weight: 500 !important;
+      font-size: 20px !important;
+      line-height: 20px !important;
+      margin: 0 !important;
+      display: inline-block;
+    }
+    &-icon {
+      display: inline-block;
+      position: absolute;
+      right: 30px;
+      bottom: 25px;
+      transition: all 0.5s ease;
+    }
+  }
+  &__body {
+    padding: 0 30px;
+    border-top: 1px solid #b5c3d6;
+  }
+  &__list {
+    padding: 28px 0;
+  }
+  &__listTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    margin: 0 0 10px;
+    padding-left: 24px;
+    .MuiTypography-root {
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 24px;
+      color: #000000;
+      margin: 0 !important;
+    }
+  }
+  &__listBox {
+    padding: 0;
+    margin: 0;
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 5px;
+      margin: 0;
+      padding-left: 24px;
+      position: relative;
+      .MuiTypography-root {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 19px;
+        text-align: right;
+        color: #8c8c8c;
+        &:first-child {
+          border-left: 1px solid #d9d9d9;
+          padding-left: 5px;
+        }
+      }
+    }
+    &--main {
+      margin-top: 20px;
+      li:first-child {
+        margin: 0 0 6px;
+        .MuiTypography-root {
+          font-size: 16px;
+          line-height: 22px;
+          color: #2a3b51;
+          border-left: none;
+          padding-left: 0;
+        }
+        &::after {
+          content: "x";
+          font-size: 16px;
+          line-height: 22px;
+          position: absolute;
+          left: 0;
+        }
+      }
+    }
+  }
+  &__total {
+    padding: 28px 0 48px;
+    position: relative;
+    &:after {
+      content: "";
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 1px;
+      width: 100%;
+      position: absolute;
+      background: linear-gradient(180deg, #f7454520 0%, #3384f520 101.41%);
+    }
+  }
+}
+.operationCard {
+  background: #ffffff;
+  border: 1px solid rgba(181, 195, 214, 0.4);
+  border-radius: 10px;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 35px 32px;
+  &__title {
+    font-weight: 700 !important;
+    font-size: 21px !important;
+    line-height: 28px !important;
+    color: #000000;
+    margin: 0 0 25px !important;
+  }
+  &__tabs {
+    height: 595px;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      width: 5px;
+      border-radius: 10px;
+    }
+    /* Track */
+    &::-webkit-scrollbar-track {
+      background: #d9d9d966;
+      border-radius: 10px;
+    }
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background: #d9d9d9;
+      border-radius: 10px;
+    }
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+      background: #eee;
+    }
+    .MuiTabs-root {
+      position: relative;
+      &::before {
+        content: "";
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        width: 100%;
+        position: absolute;
+        background: linear-gradient(
+          180deg,
+          rgba(247, 69, 69, 0.1254901961) 0%,
+          rgba(51, 132, 245, 0.1254901961) 101.41%
+        );
+      }
+      .MuiButtonBase-root {
+        width: 50%;
+        min-width: 150px;
+        font-weight: 700;
+        font-size: 21px;
+        line-height: 28px;
+        text-transform: capitalize;
+        color: #d9d9d9;
+        &.Mui-selected {
+          color: #2a3b51;
+        }
+      }
+    }
+    .MuiTabs-indicator {
+      background: linear-gradient(152.26deg, #f74545 0%, #3384f5 101.41%);
+      opacity: 0.4;
+      border-radius: 1px;
+      height: 4px;
+    }
+  }
+  .MuiTabs-root + div > .MuiBox-root {
+    padding: 18px 0;
+  }
+}
+.TransmitterCard {
+  border: 1.05px solid rgba(131, 155, 187, 0.2);
+  border-radius: 5.25px;
+  padding: 15px;
+  opacity: 25%;
+  transition: all 0.5s ease;
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(131, 155, 187, 0.1);
+    &-text {
+      font-weight: 300;
+      font-size: 16.8px;
+      line-height: 15px;
+      color: #839bbb;
+    }
+  }
+  &__title {
+    font-weight: 400 !important;
+    font-size: 16.8px !important;
+    line-height: 23px !important;
+    color: #21bc27;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    svg {
+      height: 16px;
+      width: 16px;
+    }
+  }
+  &__body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 6px 0;
+    .MuiInputBase-root {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      &::after,
+      &::before {
+        display: none;
+      }
+      .MuiBox-root {
+        font-weight: 400;
+        font-size: 16.8px;
+        line-height: 23px;
+        color: #839bbb;
+      }
+      input {
+        font-weight: 400;
+        font-size: 16.8px;
+        line-height: 23px;
+        color: #2a3b51;
+        padding: 0;
+        margin: 0;
+      }
+    }
+  }
+  &__status {
+    font-weight: 700;
+    font-size: 18.9px;
+    line-height: 26px;
+    text-align: center;
+    color: #2a3b51;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  &:hover {
+    border: 1.05px solid #53d258;
+    opacity: 100%;
+  }
+}
+.WalletBoxCard {
+  .cardBox-price {
+    justify-content: center;
+    text-align: center;
+    .gradientText {
+      border-top: 1px solid #acb0c9;
+    }
+  }
+  .cardBox-data {
+    width: 100%;
+
+    .cardBox-head {
+      .MuiBox-root {
+        align-items: center;
+        gap: 6px;
+        .cardBox-title {
+          font-weight: 500 !important;
+          font-size: 36px !important;
+          line-height: 37px !important;
+          justify-content: center;
+        }
+      }
+      .InputField {
+        padding: 0;
+        max-width: 141px;
+        background-color: #fff;
+        input {
+          padding: 7px 35px 7px 12px;
+          font-weight: 400;
+          font-size: 14.7px;
+          line-height: 20px;
+          color: #2a3b51;
+        }
+        input.Mui-disabled {
+          -webkit-text-fill-color: #2a3b51;
+        }
+        svg {
+          position: absolute;
+          right: 10px;
+          width: 14px;
+        }
+      }
+    }
+    .cardBox-body {
+      margin-top: 35px;
+      .css-1xgjpwf-MuiGrid-root {
+        margin: 0;
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        .css-htcl07-MuiGrid-root,
+        .css-1oztqwo-MuiGrid-root {
+          max-width: fit-content;
+          .cardBox-price {
+            width: fit-content;
+            text-align: center;
+            margin: auto;
+            font-weight: 700;
+            font-size: 20px;
+            color: #839bbb;
+            line-height: 27px;
+            &:first-child {
+              padding: 0 15px;
+            }
+            span {
+              font-size: 36px;
+              line-height: 49px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.WalletCard {
+  padding: 40px 45px;
+  background: #ffffff;
+  border: 1px solid rgba(181, 195, 214, 0.4);
+  border-radius: 10px;
+  &__title {
+    font-weight: 700 !important;
+    font-size: 21px !important;
+    line-height: 28px !important;
+    color: #000000;
+    margin: 0 0 25px !important;
+  }
+}
+.WalletOprationCard {
+  .TransmitterCard {
+    opacity: 100%;
+    margin-bottom: 10px;
+    &:hover {
+      border-color: inherit;
+    }
+    &__title {
+      color: #839bbb;
+      svg {
+        path {
+          fill: #839bbb;
+          &:first-child {
+            stroke: #839bbb;
+          }
+        }
+      }
+    }
+    &__status {
+      max-width: 100px;
+      width: 100%;
+    }
+  }
+  .TransmitterCard.success {
+    border: 1.05px solid #21bc27;
+    .TransmitterCard__title {
+      color: #21bc27;
+      svg {
+        path {
+          fill: #21bc27;
+          &:first-child {
+            stroke: #21bc27;
+          }
+        }
+      }
+    }
+  }
+  .TransmitterCard.danger {
+    border: 1.05px solid #bc2121;
+    .TransmitterCard__title {
+      color: #bc2121;
+      svg {
+        path {
+          fill: #bc2121;
+          &:first-child {
+            stroke: #bc2121;
+          }
+        }
+      }
+    }
+  }
+  .NftSlider {
+    padding: 55px 0;
+    &__title {
+      font-weight: 700;
+      font-size: 21px;
+      line-height: 28px;
+      color: #2a3b51;
+      margin-bottom: 15px;
+    }
+    .mySlider {
+      position: relative;
+      padding: 0 !important;
+      &::before {
+        content: "";
+        position: absolute;
+        height: 100%;
+        width: 214px;
+        background: linear-gradient(
+          266.56deg,
+          #fafafb 32%,
+          rgba(255, 255, 255, 0) 77.14%
+        );
+        z-index: 2;
+        right: 0;
+      }
+      .collectionBox {
+        border: 1.05px solid rgba(179, 193, 213, 0.4);
+        border-radius: 10px;
+        &-img {
+          border-radius: 10px 10px 0 0;
+          margin: 0;
+        }
+        &-title {
+          font-size: 14px !important;
+          line-height: 19px !important;
+          margin-bottom: 3px !important;
+        }
+        &-subTitle {
+          font-weight: 400 !important;
+          font-size: 12px !important;
+          line-height: 16px !important;
+          margin-bottom: 16px !important;
+        }
+        &-label {
+          font-weight: 700;
+          font-size: 10px;
+          line-height: 14px;
+          color: #a0a3bd;
+        }
+        &-discription {
+          font-weight: 700;
+          font-size: 10px;
+          line-height: 14px;
+          color: #2a3b51;
+        }
+      }
+    }
+  }
+  .ElevationBox {
+    padding: 20px 25px;
+    &__title {
+      font-weight: 700;
+      font-size: 21px;
+      line-height: 28px;
+      color: #2a3b51;
+      margin: 0;
+    }
+    .SwitchDetail {
+      font-style: italic;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 22px;
+      color: #839bbb;
+    }
+    .SwitchBtnToggler {
+      padding: 0;
+      height: 20px;
+      width: 40px;
+      border-radius: 10.5px;
+      background-color: #f7931a;
+      .css-ars20s-MuiButtonBase-root-MuiSwitch-switchBase {
+        padding: 0;
+      }
+      .css-ars20s-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked {
+        color: #fff;
+      }
+    }
+    .MonnaiseTable {
+      margin-top: 10px;
+      max-height: 215px;
+      padding-right: 10px;
+      td {
+        padding: 15px 0;
+        .profilePart {
+          display: flex;
+          align-items: center;
+          gap: 13px;
+          &__text {
+            span {
+              color: #839bbb;
+              font-weight: 500;
+              font-size: 16.8px;
+              line-height: 23px;
+              margin-right: 5px;
+              &:last-child {
+                margin-right: 0;
+                color: #a0a3bd;
+              }
+            }
+          }
+        }
+        .tablerighttext {
+          font-weight: 700;
+          font-size: 18.9px;
+          line-height: 26px;
+          color: #2a3b51;
+        }
+      }
+    }
+  }
+}
+.cardsModule {
+  .cardBox {
+    &-inner {
+      padding: 30px;
+    }
+    &-head {
+      .cardBox-status {
+        font-size: 16px;
+        line-height: 22px;
+      }
+    }
+    &-title {
+      font-size: 20px !important;
+      line-height: 27px !important;
+      color: #2a3b51;
+    }
+    &-price {
+      span {
+        font-weight: 700;
+        font-size: 34px;
+        line-height: 46px;
+      }
+    }
+  }
+}
+.sliderBlock {
+  .mySlider {
+    overflow-x: hidden;
+  }
+}
+.listTableBlock {
+  .sectionHead {
+    margin-bottom: 0;
+  }
+}
+@media only screen and (max-width: 1199px) {
+  .transferCard {
+    &__title {
+      font-size: 26px !important;
+      line-height: 37px !important;
+    }
+  }
+  .WalletBoxCard {
+    .cardBox-price {
+      padding: 0 !important;
+      span {
+        font-size: 26px !important;
+        line-height: normal !important;
+      }
+    }
+  }
+}
+@media only screen and (max-width: 1024px) {
+  .SearchBox {
+    width: auto;
+  }
+}
+@media only screen and (max-width: 900px) {
+  .TabNone {
+    display: none;
+  }
+  .pageTemplate {
+    &__body {
+      .MuiGrid-item.MuiGrid-grid-md-6 {
+        width: 100%;
+      }
+    }
+  }
+  .WalletOprationCard {
+    .walletProfile {
+      > .MuiGrid-root.MuiGrid-grid-md-6 {
+        padding: 0;
+        width: 100%;
+        &:first-child {
+          margin-bottom: 30px;
+        }
+      }
+    }
+    .NftSlider {
+      padding: 40px 0;
+    }
+  }
+  .cardsModule {
+    .cardBox {
+      &-head {
+        .cardBox-title {
+          font-size: 18px !important;
+        }
+      }
+      &-price {
+        span {
+          font-size: 26px !important;
+          line-height: normal !important;
+        }
+        .cardBox-status {
+          font-size: 18px !important;
+        }
+      }
+    }
+  }
+  .sliderBlock {
+    margin: 30px 0;
+  }
+}
+@media only screen and (max-width: 575px) {
+  .topHeader-inner {
+    gap: 15px;
+    p,
+    button {
+      font-size: 14px;
+      line-height: normal;
+    }
+    button {
+      padding: 6px 10px;
+    }
+  }
+  .siteHeader-inner {
+    flex-wrap: wrap;
+    padding: 15px 0 !important;
+    border: none;
+    > .MuiBox-root.css-0 {
+      width: 100%;
+      order: 1;
+      margin-top: 25px;
+    }
+  }
+  .pageTemplate {
+    &__title {
+      font-size: 20px !important;
+      line-height: 27px !important;
+    }
+    &__status {
+      padding: 6px 15px;
+    }
+  }
+  .transferCard {
+    padding: 15px;
+    &__head {
+      margin-bottom: 15px;
+    }
+    &__title {
+      font-size: 16px !important;
+      line-height: 37px !important;
+    }
+    &__body {
+      margin-bottom: 45px;
+      .MuiInputBase-root {
+        height: auto;
+        padding: 6px 8px;
+        .inputText,
+        input {
+          font-size: 14px;
+          line-height: 19px;
+          padding: 0;
+        }
+        fieldset {
+          height: auto;
+        }
+      }
+    }
+    &__footer {
+      &-text {
+        font-size: 12px !important;
+        line-height: 15px !important;
+      }
+      &-total {
+        img {
+          height: 20px;
+          width: 20px;
+        }
+        .cardBox-title {
+          font-size: 14px !important;
+          line-height: 19px !important;
+        }
+      }
+    }
+  }
+  .copyBox {
+    display: flex;
+    input {
+      font-size: 12px;
+      line-height: 16px;
+    }
+  }
+  .transactionCard {
+    &__head {
+      padding: 15px;
+      &-title {
+        font-size: 14px !important;
+        line-height: 19px !important;
+      }
+      &-text {
+        font-size: 16px !important;
+        line-height: 14px !important;
+      }
+    }
+    &__body {
+      padding: 0 15px;
+    }
+    &__listTitle {
+      .MuiTypography-root {
+        font-size: 16px;
+        line-height: 22px;
+      }
+    }
+    &__listBox {
+      &--main {
+        margin-top: 10px;
+      }
+    }
+    &__list {
+      padding: 20px 0;
+    }
+    &__total {
+      padding: 10px 0 26px;
+    }
+  }
+  .TransmitterCard {
+    &__body {
+      .css-zow5z4-MuiGrid-root {
+        flex-direction: column;
+        margin: 0;
+        row-gap: 10px;
+        > .MuiGrid-item {
+          padding: 0;
+        }
+        .MuiGrid-item.MuiGrid-grid-xs-2 {
+          display: none !important;
+        }
+      }
+    }
+  }
+  .WalletBoxCard {
+    .cardBox-inner {
+      padding: 15px;
+      .cardBox-data {
+        .cardBox-head {
+          .cardBox-title {
+            font-size: 24px !important;
+          }
+          .InputField {
+            max-width: 115px;
+            input {
+              font-size: 12px;
+              line-height: 16px;
+            }
+          }
+        }
+        .cardBox-body {
+          margin-top: 20px;
+          .cardBox-price {
+            padding: 5px !important;
+            font-size: 14px !important;
+            line-height: 19px !important;
+            span {
+              font-size: 16px !important;
+              line-height: 22px !important;
+            }
+          }
+        }
+      }
+    }
+  }
+  .cardsModule {
+    .cardBox {
+      &-inner {
+        padding: 15px;
+      }
+      &-head {
+        .cardBox-title {
+          font-size: 24px !important;
+          font-weight: 700 !important;
+        }
+        .InputField {
+          max-width: 115px;
+          input {
+            font-size: 12px;
+            line-height: 16px;
+          }
+        }
+      }
+      &-price {
+        span,
+        .cardBox-status {
+          font-size: 16px !important;
+          line-height: 22px !important;
+        }
+      }
+    }
+  }
+  .TransmitterCard {
+    &__head {
+      &-text {
+        font-size: 12px;
+        line-height: 15px;
+      }
+    }
+    &__title {
+      font-size: 14px !important;
+      line-height: 19px !important;
+    }
+    &__body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 0;
+      .MuiInputBase-root {
+        .MuiBox-root,
+        input {
+          font-size: 14px;
+          line-height: 19px;
+        }
+      }
+    }
+    &__status {
+      font-size: 14px;
+      line-height: 19px;
+      justify-content: end;
+    }
+  }
+  .operationCard {
+    padding: 25px 15px;
+    border: none;
+    &__title {
+      font-size: 16px !important;
+      line-height: 22px !important;
+    }
+  }
+  .WalletOprationCard {
+    padding-top: 0;
+    .css-19r6kue-MuiContainer-root {
+      padding: 0;
+      .MuiGrid-grid-md-6:first-child,
+      .pageTemplate__head {
+        padding: 0 20px !important;
+      }
+    }
+    .ElevationBox {
+      &__title {
+        font-size: 16px;
+        line-height: 22px;
+      }
+      .SwitchDetail {
+        display: none;
+      }
+      .MonnaiseTable {
+        td {
+          .profilePart {
+            &__text {
+              span {
+                font-size: 14px;
+                line-height: 19px;
+              }
+            }
+          }
+          .tablerighttext {
+            font-size: 14px;
+            line-height: 19px;
+          }
+        }
+      }
+    }
+  }
+  .searchBlock {
+    padding: 80px 0;
+    p {
+      font-size: 28px;
+      line-height: normal;
+    }
+    &-form {
+      input {
+        padding-left: 15px;
+      }
+    }
+  }
+  .listTableBlock {
+    margin: 30px 0;
+  }
+}

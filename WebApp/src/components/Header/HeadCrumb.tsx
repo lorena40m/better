@@ -1,0 +1,26 @@
+import React from "react";
+import { Stack, Typography, Button, Container, Box } from "@mui/material";
+import { useTranslation } from "next-i18next";
+
+const HeadCrumb = () => {
+  const { t } = useTranslation("common");
+  return (
+    <Stack
+      className="topHeader"
+      padding="8px 0"
+      sx={{
+        background:
+          "linear-gradient(170.05deg, rgba(247, 69, 69, 0.1) -65.14%, rgba(51, 132, 245, 0.1) 174.73%)",
+      }}
+    >
+      <Container maxWidth="xl">
+        <Box className="topHeader-inner">
+          <Typography>{t("topHeader")} ? 🕵️‍♂️</Typography>
+          <Button>{t("topButton")}</Button>
+        </Box>
+      </Container>
+    </Stack>
+  );
+};
+
+export default HeadCrumb;
