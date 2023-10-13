@@ -93,7 +93,7 @@ export default function Header() {
                 <Stack>
                   <Box>
                     <Typography variant="body1" style={{ color: "black" }}>
-                      Besoin d’aide
+                      {t("needHelp")}
                     </Typography>
                     {/* <Typography variant="body2" style={{ color: "#839BBB" }}>
                       changer la langue
