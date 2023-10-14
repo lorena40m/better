@@ -2,6 +2,8 @@ import { Collection, Coin } from './API';
 import axios from 'axios';
 import TezosToolkit from '@taquito/taquito'
 
+const rpcEndpoint = 'https://tezosrpc.midl.dev/ak-lpuoz6fm0tjlm1';
+
 function getISODateForLast24Hours() {
   // Get the current date and time
   const currentDate = new Date();
@@ -15,6 +17,49 @@ function getISODateForLast24Hours() {
   return isoDateString;
 }
 
+async function get_fee() {
+  return 0.0015;
+}
+
+async function getLastBlockHash() {
+  try {
+      const url = 'https://api.tzstats.com/explorer/tip';
+      const response = await axios.get(url);    
+
+      if (response.status === 200) {
+          const data = response.data;
+          const block_hash = data.hash;
+          return block_hash;
+      } else {
+        console.error('Failed to fetch external data. Status code:', response.status);
+      }
+      } catch (error) {
+      console.error('Error:', error);
+      }
+}
+
+async function getBlockDate() {
+  try {
+      const last_block = await getLastBlockHash();
+      const url = `https://api.tzstats.com/explorer/block/${last_block}`;
+
+      const response = await axios.get(url);    
+
+      if (response.status === 200) {
+          const data = response.data;
+             const timestamp = data.time;
+            
+              return timestamp;
+      } else {
+        console.error('Failed to fetch external data. Status code:', response.status);
+      }
+      } catch (error) {
+      console.error('Error:', error);
+      }
+}
+
+
+
 async function get_xtz_price() {
   const url = 'https://api.tzstats.com/markets/tickers';
 
@@ -26,6 +71,7 @@ async function get_xtz_price() {
       console.error('Error calling API: ', error);
       throw error; // L'erreur est lancée pour être éventuellement gérée par l'appelant.
   }
+}
 
 async function getBlockNumber() {
   try {
@@ -223,7 +269,6 @@ async function getTop50Cryptos_on_volume_24() {
     throw error;
   }
 }
-
 
 export default (params: {
   pageSize: number,
