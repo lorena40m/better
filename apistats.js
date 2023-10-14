@@ -1,52 +1,130 @@
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('Event handler is running.'); 
-    const searchForm = document.getElementById('search-form');
-    const addressInput = document.getElementById('address');
-    const table = document.getElementById('blockchain-data');
+const axios = require('axios');
 
-    searchForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const address = addressInput.value.trim();
+function getISODateForLast24Hours() {
+    // Get the current date and time
+    const currentDate = new Date();
+  
+    // Calculate the date and time 24 hours ago
+    const twentyFourHoursAgo = new Date(currentDate - 24 * 60 * 60 * 1000);
+  
+    // Convert the date to an ISO 8601 format string
+    const isoDateString = twentyFourHoursAgo.toISOString();
+  
+    return isoDateString;
+  }
 
-        // Check if the address is valid (add validation logic here if needed)
-        if (address === '') {
-            alert('Please enter a valid Tezos address.');
-            return;
+
+
+async function get_top_nft_sales() {
+    const url = 'https://data.objkt.com/v3/graphql';
+    const isoDateLast24Hours = getISODateForLast24Hours();
+
+      try {
+        const queryResult = await axios.post(url, {
+          query: 
+                `query test {
+                    listing_sale(
+                        limit: 10
+                        where: {timestamp: {_gte: "${isoDateLast24Hours}"}}
+                        order_by: {price_xtz: desc_nulls_last}
+                      ) {
+                        price_xtz
+                        timestamp
+                        sender_address
+                        seller_address
+                        buyer_address
+                        token {
+                          display_uri
+                        }
+                      }
+                }`,
+        });
+    const result = queryResult.data.data;
+    console.log(JSON.stringify(result, null, 4));
         }
+    catch (error) {
+            console.error('Error calling API: ', error);
+            throw error;
+        }
+}
 
-        // Use backticks for template literals
-        // Replace 'your_api_url' with the actual API endpoint using `${}` for the variable
-        fetch(`https://api.tzstats.com/explorer/account/${address}/operations?limit=100&order=desc`)
-            .then(response => response.json())
-            .then(data => {
-                // Clear the previous table data
-                console.log(data);
-                table.innerHTML = '';
+async function get_top_nft_collection() {
+    const url = 'https://data.objkt.com/v3/graphql';
+    const isoDateLast24Hours = getISODateForLast24Hours();
 
-                if (Array.isArray(data)) {
-                    data.forEach(item => {
-                        const row = table.insertRow();
-                        const cell1 = row.insertCell(0);
-                        const cell2 = row.insertCell(1);
-                        const cell3 = row.insertCell(2);
-                        const cell4 = row.insertCell(3);// Add more cells as needed for other fields
+      try {
+        const queryResult = await axios.post(url, {
+          query: 
+                `query test {
+                    gallery(order_by: {volume_24h: desc_nulls_last}, limit: 10) {
+                      active_auctions
+                      active_listing
+                      description
+                      editions
+                      floor_price
+                      items
+                      last_metadata_update
+                      logo
+                      max_items
+                      metadata
+                      name
+                      owners
+                      slug
+                      volume_24h
+                      volume_total
+                    }
+                }`,
+        });
+    const result = queryResult.data.data;
+    console.log(JSON.stringify(result, null, 4));
+        }
+    catch (error) {
+            console.error('Error calling API: ', error);
+            throw error;
+        }
+}
 
-                        // Populate the table cells with data from the API
-                        cell1.textContent = item.hash;
-                        cell2.textContent = item.type;
-                        cell3.textContent = item.fee;
-                        cell4.textContent = item.value;
-                        // Populate other cells here based on your data
+async function get_10_last_calls_smart_contract(address) {
+    const url = `https://api.tzstats.com/explorer/contract/${address}/calls?prim=1&order=desc&limit=10`;
 
-                        // You can access other fields in a similar manner
-                    });
-                } else {
-                    // Handle the case where the API response is not an array
-                    console.error('API response is not an array:', data);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    });
-});
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        // Handle any errors that may occur during the API call.
+        console.error('Error calling API: ', error);
+        throw error; // Throw the error to potentially be handled by the caller.
+    }
+}
+
+async function get_creator_address(address) {
+  const url = `https://api.tzstats.com/explorer/contract/${address}`;
+
+  try {
+    const response = await axios.get(url);
+    const data = response.data;
+    if (data && data.creator) {
+      return data.creator; // Extract and return the creator address
+    } else {
+      throw new Error('Creator address not found in the API response.');
+    }
+  } catch (error) {
+    // Handle any errors that may occur during the API call.
+    console.error('Error calling API: ', error);
+    throw error; // Throw the error to potentially be handled by the caller.
+  }
+}
+async function get_publication_date(address) {
+    const url = `https://api.tzstats.com/explorer/contract/${address}`;
+  
+    try {
+      const response = await axios.get(url);
+      const data = response.data;
+      return data.first_seen_time; // Extract and return the creator address
+    } catch (error) {
+      // Handle any errors that may occur during the API call.
+      console.error('Error calling API: ', error);
+      throw error; // Throw the error to potentially be handled by the caller.
+    }
+  }
+
