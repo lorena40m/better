@@ -1,6 +1,5 @@
 export default (params: {
   pageSize: number,
 }) => {
-  return {
-  }
+  return 0.95
 }

@@ -28,6 +28,10 @@ async function get_xtz_price() {
     }
 }
 
+async function get_fee() {
+  return 0.0015;
+}
+
 async function get_top_nft_sales() {
     const url = 'https://data.objkt.com/v3/graphql';
     const isoDateLast24Hours = getISODateForLast24Hours();
@@ -218,26 +222,19 @@ async function isWallet(string) {
   console.log(wallet);
 }
 
-async function isSmartContract(string) {
-  return 0;
-}
 
-async function isOperation(string) {
-  return 0;
-}
-
-async function  parsing(string) {
+async function  parsing_address(string) {
   if (typeof string !== 'string') {
       throw new Error('Input must be a string');
   }
   if (string.startsWith('tz')) {
-      return isWallet(string); 
+      return "wallet"; 
   }
   else if (string.startsWith('KT')){
-      return isSmartContract(string);
+      return "smartContract";
   }
   else if (string.startsWith('op') || string.startsWith('oo') || string.startsWith('on')){
-      return isOperation(string); 
+      return "operation"; 
   }
   else {
       throw new Error('This Hash is not a transaction, a wallet or a smart contract');
@@ -386,7 +383,25 @@ async function getTransactionTimestamp(transactionHash) {
       console.error('Error:', error);
       }
 }
+async function getTransactionStatus(transactionHash) {
+  try {
+      const url = `https://api.tzkt.io/v1/operations/${transactionHash}/status`;
 
+      const response = await axios.get(url);
+      
+
+      if (response.status === 200) {
+          const data = response.data;
+
+          return data; 
+
+      } else {
+        console.error('Failed to fetch external data. Status code:', response.status);
+      }
+      } catch (error) {
+      console.error('Error:', error);
+      }
+}
 
 async function getSmartContractInfo(contractAddress) {
 
