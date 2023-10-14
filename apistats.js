@@ -236,8 +236,11 @@ async function  parsing(string) {
   else if (string.startsWith('KT')){
       return isSmartContract(string);
   }
-  else {
+  else if (string.startsWith('op') || string.startsWith('oo') || string.startsWith('on')){
       return isOperation(string); 
+  }
+  else {
+      throw new Error('This Hash is not a transaction, a wallet or a smart contract');
   }
 }
 
