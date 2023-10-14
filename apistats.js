@@ -431,54 +431,60 @@ async function getSmartContractInfo(contractAddress) {
       }
 }
 
-// const apiKey = 'f94f3ccd-2ff3-4cee-b028-4c28c3e7166e'; // Get your API key from CoinMarketCap
-// const apiUrl = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest';
+const apiKey = 'f94f3ccd-2ff3-4cee-b028-4c28c3e7166e'; // Get your API key from CoinMarketCap
+const apiUrl = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest';
 
-// // Set up parameters for the request (e.g., top 50 cryptocurrencies)
-// const params = {
-//   start: 1,
-//   limit: 50,
-// };
+// Set up parameters for the request (e.g., top 50 cryptocurrencies)
+const params = {
+  start: 1,
+  limit: 50,
+};
 
-// const headers = {
-//   'X-CMC_PRO_API_KEY': apiKey,
-// };
+const headers = {
+  'X-CMC_PRO_API_KEY': apiKey,
+};
 
-// async function getTop50Cryptos() {
-//     try {
-//       const response = await axios.get(apiUrl, { params, headers });
+async function getTop50Cryptos() {
+    try {
+      const response = await axios.get(apiUrl, { params, headers });
   
-//       if (response.status === 200) {
-//         const data = response.data.data;
-//         const cryptoList = [];
+      if (response.status === 200) {
+        const data = response.data.data;
+        const cryptoList = [];
   
-//         data.forEach((crypto) => {
-//           const cryptoData = {
-//             name: crypto.name,
-//             symbol: crypto.symbol,
-//             price: crypto.quote.USD.price,
-//           };
-//           cryptoList.push(cryptoData);
-//         });
-  
-//         return cryptoList;
-//       } else {
-//         throw new Error('Failed to fetch data. Status code:', response.status);
-//       }
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
+        data.forEach((crypto) => {
+          const cryptoData = {
+            id: "", // TO FILL 
+            logo: "", // TO FILL 
+            name: crypto.name,  
+            ticker: crypto.symbol,  
+            decimals : 0, // TO FILL 
+            lastPrice: crypto.quote.USD.price*100,
+            circulatingSupplyOnChain: crypto.circulating_supply,
+            holders : 0, // TO FILL 
 
-//   getTop50Cryptos()
-//   .then((cryptoList) => {
-//     cryptoList.forEach((crypto) => {
-//       console.log('Name:', crypto.name);
-//       console.log('Symbol:', crypto.symbol);
-//       console.log('Price:', `$${crypto.price}`);
-//       console.log('--------------------------');
-//     });
-//   })
-//   .catch((error) => {
-//     console.error('Error:', error);
-//   });
+          };
+          cryptoList.push(cryptoData);
+        });
+  
+        return cryptoList;
+      } else {
+        throw new Error('Failed to fetch data. Status code:', response.status);
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  getTop50Cryptos()
+  .then((cryptoList) => {
+    cryptoList.forEach((crypto) => {
+      console.log('Name:', crypto.name);
+      console.log('Symbol:', crypto.symbol);
+      console.log('Price:', `$${crypto.price}`);
+      console.log('--------------------------');
+    });
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
