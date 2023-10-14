@@ -280,7 +280,6 @@ async function getTransactionSender(transactionHash) {
       }
 }
 
-
 async function getBlockDate() {
   try {
       const last_block = await getLastBlockHash();
@@ -415,6 +414,8 @@ async function getSmartContractInfo(contractAddress) {
       console.error('Error:', error);
       }
 }
+
+
 
 // const apiKey = 'f94f3ccd-2ff3-4cee-b028-4c28c3e7166e'; // Get your API key from CoinMarketCap
 // const apiUrl = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest';
