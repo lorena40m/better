@@ -1,5 +1,6 @@
 {
     "change-locale": "fn",
+    "NftCollection": "Collection NFT",
     "needHelp" : "Besoin d'aide",
     "topHeader" : "Vous voulez faire de BetterScan votre explorateur par défaut",
     "topButton" : "Ajouter l’extension",
