@@ -65,6 +65,28 @@ async function get_top_nft_sales() {
         }
 }
 
+async function is_nft(address) {
+  const url = 'https://data.objkt.com/v3/graphql';
+
+  try {
+      const queryResult = await axios.post(url, {
+        query:`query MyQuery($distinct_on: [holder_select_column!] = address) {
+          fa(where: {contract: {_in: "KT1LjmAdYQCLBjwv4S2oFkEzyHVkomAf5MrW"}}) {
+            contract
+          }`
+      });
+      if (queryResult.data.data.fa.contract === address) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+      catch (error) {
+        console.error('Error calling API: ', error);
+        throw error;
+    }
+}
+
 async function get_top_nft_collection() {
     const url = 'https://data.objkt.com/v3/graphql';
     const isoDateLast24Hours = getISODateForLast24Hours();
@@ -277,7 +299,6 @@ async function getTransactionSender(transactionHash) {
       }
 }
 
-
 async function getBlockDate() {
   try {
       const last_block = await getLastBlockHash();
@@ -429,7 +450,11 @@ async function getSmartContractInfo(contractAddress) {
       } catch (error) {
       console.error('Error:', error);
       }
-}
+      
+
+    getT
+
+
 
 const apiKey = 'f94f3ccd-2ff3-4cee-b028-4c28c3e7166e'; // Get your API key from CoinMarketCap
 const apiUrl = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest';
