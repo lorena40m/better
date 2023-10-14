@@ -117,7 +117,6 @@ async function fetchData() {
             token {
               fa {
                 creator_address
-                contract_address
                 metadata
                 floor_price
               }
@@ -147,28 +146,3 @@ async function fetchData() {
       }
 }
   fetchData(); 
-
-// Call the async function to start the process
-// axios
-//   .post(apiUrl, {query})
-//   .then((response) => {
-//     const responseData = response.data.data;
-
-//     if (responseData && responseData.token_holder) {
-//       const nfts = responseData.token_holder;
-
-//       if (nfts.length > 0) {
-//         nfts.forEach((nft) => {
-//           const imageURL = nft.token.artifact_uri;
-//           console.log('NFT Image URL:', imageURL);
-//         });
-//       } else {
-//         console.log('No NFTs found for the user.');
-//       }
-//     } else {
-//       console.log('No data or token_holder field in the response.');
-//     }
-//   })
-//   .catch((error) => {
-//     console.error('Error:', error);
-//   });
