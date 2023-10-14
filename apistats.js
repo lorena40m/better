@@ -225,15 +225,15 @@ async function isOperation(string) {
   return 0;
 }
 
-async function  parsing(string) {
+async function  parsing_address(string) {
   if (typeof string !== 'string') {
       throw new Error('Input must be a string');
   }
   if (string.startsWith('tz')) {
-      return isWallet(string); 
+      return "wallet"; 
   }
   else if (string.startsWith('KT')){
-      return isSmartContract(string);
+      return "smartContract";
   }
   else {
       return isOperation(string); 
@@ -360,7 +360,25 @@ async function getTransactionTimestamp(transactionHash) {
       console.error('Error:', error);
       }
 }
+async function getTransactionStatus(transactionHash) {
+  try {
+      const url = `https://api.tzkt.io/v1/operations/${transactionHash}/status`;
 
+      const response = await axios.get(url);
+      
+
+      if (response.status === 200) {
+          const data = response.data;
+
+          return data; 
+
+      } else {
+        console.error('Failed to fetch external data. Status code:', response.status);
+      }
+      } catch (error) {
+      console.error('Error:', error);
+      }
+}
 
 async function getSmartContractInfo(contractAddress) {
 
