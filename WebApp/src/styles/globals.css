@@ -288,6 +288,7 @@ body {
   background: linear-gradient(152.26deg, #f7454520 0%, #3384f520 101.41%);
   border-radius: 10px;
   padding: 1px;
+  
 }
 
 .cardBox-inner {
@@ -339,6 +340,13 @@ body {
 
 .cardBox--info .cardBox-inner {
   background: linear-gradient(152.26deg, rgba(247, 69, 69, 0.06) 0%, rgba(51, 132, 245, 0.06) 101.41%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+}
+.cardBox-generalinfo{
+  background-color: white;
   display: flex;
   align-items: center;
   justify-content: space-between;

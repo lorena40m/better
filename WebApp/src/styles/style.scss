@@ -340,6 +340,31 @@
     display: inline-block;
   }
 }
+.treasuryBox_generalinfo{
+  background: #ffffff;
+  border: 1px solid rgba(181, 195, 214, 0.4);
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 35px 32px;
+  &__title {
+    font-weight: 700 !important;
+    font-size: 21px !important;
+    line-height: 28px !important;
+    color: #000000;
+    margin: 0 0 25px !important;
+  }
+  &__gradient {
+    display: inline-block;
+  }
+}
+
+.tokenInfo {
+  background: #ffffff;
+  border: 1px solid rgba(181, 195, 214, 0.4);
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 35px 32px;
+}
 .operationCard {
   background: #ffffff;
   border: 1px solid rgba(181, 195, 214, 0.4);
@@ -498,8 +523,11 @@
   border-radius: 5px;
   border: 1.05px solid rgba(131, 155, 187, 0.2);
   box-sizing: border-box;
-  padding: 5px 10px;
+  padding: 20px 9px;
   margin-top: 10px;
+  height: 10px;
+  display: flex;
+  align-items: center;
   &__text {
     font-size: 15px !important;
   }
@@ -698,8 +726,12 @@
       }
     }
   }
+  .crypto{
+    margin-top: 20px !important;
+  }
   .ElevationBox {
     padding: 20px 25px;
+    
     &__title {
       font-weight: 700;
       font-size: 21px;

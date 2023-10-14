@@ -91,7 +91,7 @@ let token ={
     coin: {
         decimals: 6
     },
-    quantity:" 1000000000000000000000"
+    quantity:"100000000000000000000"
 
 }
 convertisseur (token, "fr")
