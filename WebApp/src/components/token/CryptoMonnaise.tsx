@@ -39,8 +39,8 @@ const data: any = [
 const CryptoMonnaise = () => {
   const label = { inputProps: { "aria-label": "Color switch demo" } };
   return (
-    <Card className="ElevationBox">
-      <Box className="crypto" marginTop={"15px"}>
+    <Card className="ElevationBox" style={{marginTop: "15px"}}>
+      <Box className="crypto">
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography className="ElevationBox__title" variant="h5" gutterBottom>
             CryptoMonnaise

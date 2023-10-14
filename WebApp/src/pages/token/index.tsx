@@ -78,7 +78,7 @@ const Token = () => {
                 <Grid md={6} paddingRight={"15px"}>
                   
                   <NftView />
-                  <CryptoMonnaise/>
+                  <CryptoMonnaise />
                 </Grid>
                 <Grid md={6} paddingLeft={"15px"}>
                   <Operation />
