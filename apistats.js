@@ -222,13 +222,6 @@ async function isWallet(string) {
   console.log(wallet);
 }
 
-async function isSmartContract(string) {
-  return 0;
-}
-
-async function isOperation(string) {
-  return 0;
-}
 
 async function  parsing_address(string) {
   if (typeof string !== 'string') {
@@ -241,7 +234,7 @@ async function  parsing_address(string) {
       return "smartContract";
   }
   else if (string.startsWith('op') || string.startsWith('oo') || string.startsWith('on')){
-      return isOperation(string); 
+      return "operation"; 
   }
   else {
       throw new Error('This Hash is not a transaction, a wallet or a smart contract');

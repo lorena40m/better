@@ -3,10 +3,10 @@ export default (params: {
 }) => {
   return {
     stats : {
-      ethPrice: '150000',
-      normalFee: '1',
-      lastBlockNumber: '1000000000',
-      lastBlockDate: '2023-08-01',
+      ethPrice: get_xtz_price(),
+      normalFee: get_fee(),
+      lastBlockNumber: getBlockNumber(),
+      lastBlockDate: getBlockDate(),
     },
     collections: {
       trending: [], // paginated
