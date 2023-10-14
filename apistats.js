@@ -14,7 +14,18 @@ function getISODateForLast24Hours() {
     return isoDateString;
   }
 
+async function get_xtz_price() {
+    const url = 'https://api.tzstats.com/markets/tickers';
 
+    try {
+        const response = await axios.get(url);
+        return response.data[16].last; // Retourne les données de la réponse.
+    } catch (error) {
+        // Gère toutes les erreurs qui peuvent survenir lors de l'appel API.
+        console.error('Error calling API: ', error);
+        throw error; // L'erreur est lancée pour être éventuellement gérée par l'appelant.
+    }
+}
 
 async function get_top_nft_sales() {
     const url = 'https://data.objkt.com/v3/graphql';
