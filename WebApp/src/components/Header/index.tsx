@@ -25,8 +25,9 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 export default function Header() {
   // const locations = window?.location.href
   // false kr dena
+  const router = useRouter();
   const [search, setSearch] = useState(true);
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState(router.locale);
   // const [location, setLocation] = useState(`${locations}`);
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenu = (event: any) => {
@@ -36,7 +37,6 @@ export default function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const router = useRouter();
 
   const onToggleLanguageClick = (newLocale: any) => {
     console.log(newLocale, "THIS IS");
@@ -52,7 +52,7 @@ export default function Header() {
   // }
   const { t } = useTranslation("common");
 
-  const changeTo = router.locale === "en" ? "fn" : "en";
+  const changeTo = router.locale === "en" ? "fr" : "en";
   return (
     <AppBar
       position="static"
@@ -117,7 +117,7 @@ export default function Header() {
                           English
                         {/* </Link> */}
                       </MenuItem>
-                      <MenuItem value={"fn"}>
+                      <MenuItem value={"fr"}>
                         {/* <Link href="/" locale={changeTo}> */}
                           French
                         {/* </Link> */}

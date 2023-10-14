@@ -26,9 +26,30 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-export default function Home() {
+import { HomeResponse } from '../endpoints/API'
+import HomeEndpoint from '../endpoints/HomeEndpoint'
+
+
+export async function getServerSideProps({ locale }: any) {
+  const homeResponse: HomeResponse = HomeEndpoint({ pageSize: 100 })
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      homeResponse
+    },
+  };
+}
+
+
+export default function Home({ homeResponse }) {
   const { t } = useTranslation("common");
   const router = useRouter();
+  const {locale} = router
+
+  function formatEthPrice(ethPrice) {
+    return new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(ethPrice)
+  }
 
   return (
     <>
@@ -98,7 +119,7 @@ export default function Home() {
                         </Typography>
                       </Box>
                       <Typography variant="h4" className="cardBox-price">
-                        <span className="gradientText">1600 $</span>
+                        <span className="gradientText">{ formatEthPrice(homeResponse.stats.ethPrice) }</span>
                       </Typography>
                     </Box>
                     <Image
@@ -192,13 +213,4 @@ export default function Home() {
       </main>
     </>
   );
-}
-
-export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-      // Will be passed to the page component as props
-    },
-  };
 }
