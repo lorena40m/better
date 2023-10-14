@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import Header from "../../components/Header/index";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import Profile from "@/components/wallet/Profile";
-import NftView from "@/components/nft/NftView";
 import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
-import GeneralInfos from "@/components/nft/GeneralInfos";
-import OtherInfos from "@/components/nft/OtherInfos";
+import GeneralInfos from "@/components/smart-contract/GeneralInfos";
+import OtherInfos from "@/components/smart-contract/OtherInfos";
 import ConfirmModal from "@/components/wallet/ConfirmModal";
 import EthereumIcon from "../../assets/images/eth.svg";
 
@@ -14,18 +13,18 @@ import Operations from "@/components/wallet/Operations";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-const 	Nft = () => {
+const 	SmartContract = () => {
   const { t } = useTranslation("common");
 
   const [open, setOpen] = useState<Boolean>(false);
   return (
     <main>
       <Header />
-      <Box className="pageTemplate WalletOprationCard">
+      <Box className="pageTemplate">
         <Container maxWidth="xl">
 			<div className="pageTemplate__head">
 				<Typography variant="h4" className="pageTemplate__title">
-				{t("NftCollection")}
+				{t("SmartContractOn")}
 					<span className="pageTemplate__status">
 						<Image src={EthereumIcon} alt="" height={15} width={15} />
 						Tezos
@@ -35,20 +34,23 @@ const 	Nft = () => {
 			<Grid className="walletProfile" container>
 				<Grid md={6} paddingRight={"15px"}>
 					<GeneralInfos />
-					<NftView />
 					<OtherInfos />
 				</Grid>
 				<Grid md={6} paddingLeft={"15px"}>
 					<Operations />
 				</Grid>
 			</Grid>
+			<Box className="treasuryBox">
+				<Typography variant="h4" className="treasuryBox__title">Treasury</Typography>
+				<Typography variant="h4" className="treasuryBox__gradient gradientText">300 Million of $</Typography>
+			</Box>
         </Container>
       </Box>
     </main>
   );
 };
 
-export default Nft;
+export default SmartContract;
 
 export async function getStaticProps({ locale }: any) {
   return {

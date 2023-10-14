@@ -13,7 +13,7 @@ const data: any =[
 const Information = () => {
     const { t } = useTranslation("common");
     return(
-
+        <></>
     )
 }
 export default Information

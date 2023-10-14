@@ -269,11 +269,81 @@
     }
   }
 }
+.tokenOtherInfos {
+  background: #ffffff;
+  border: 1px solid rgba(181, 195, 214, 0.4);
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 35px 32px;
+  &__title {
+    font-weight: 700 !important;
+    font-size: 21px !important;
+    line-height: 28px !important;
+    color: #000000;
+    margin: 0 0 25px !important;
+  }
+  &__boldtext {
+    font-weight: 700 !important;
+    font-size: 18px !important;
+    color: #000000;
+    margin: 0 0 5px !important;
+  }
+  &__text {
+    font-weight: 500 !important;
+    font-size: 18px !important;
+    color: #000000;
+    margin: 0 0 5px !important;
+  }
+}
+.contractOtherInfos {
+  margin: 40px 0 40px 0;
+  background: #ffffff;
+  border: 1px solid rgba(181, 195, 214, 0.4);
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 35px 32px;
+  &__title {
+    font-weight: 700 !important;
+    font-size: 21px !important;
+    line-height: 28px !important;
+    color: #000000;
+    margin: 0 0 25px !important;
+  }
+  &__boldtext {
+    font-weight: 700 !important;
+    font-size: 18px !important;
+    color: #000000;
+    margin: 0 0 5px !important;
+  }
+  &__text {
+    font-weight: 500 !important;
+    font-size: 18px !important;
+    color: #000000;
+    margin: 0 0 5px !important;
+  }
+}
+.treasuryBox {
+  margin: 40px 0 0 0;
+  background: #ffffff;
+  border: 1px solid rgba(181, 195, 214, 0.4);
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 35px 32px;
+  &__title {
+    font-weight: 700 !important;
+    font-size: 21px !important;
+    line-height: 28px !important;
+    color: #000000;
+    margin: 0 0 25px !important;
+  }
+  &__gradient {
+    display: inline-block;
+  }
+}
 .operationCard {
   background: #ffffff;
   border: 1px solid rgba(181, 195, 214, 0.4);
   border-radius: 10px;
-  height: 100%;
   box-sizing: border-box;
   padding: 35px 32px;
   &__title {
@@ -422,13 +492,22 @@
     opacity: 100%;
   }
 }
+.costContract {
+  background-color: #ffffff;
+  display: inline-block;
+  border-radius: 5px;
+  border: 1.05px solid rgba(131, 155, 187, 0.2);
+  box-sizing: border-box;
+  padding: 5px 10px;
+  margin-top: 10px;
+  &__text {
+    font-size: 15px !important;
+  }
+}
 .WalletBoxCard {
   .cardBox-price {
     justify-content: center;
     text-align: center;
-    .gradientText {
-      border-top: 1px solid #acb0c9;
-    }
   }
   .cardBox-data {
     width: 100%;

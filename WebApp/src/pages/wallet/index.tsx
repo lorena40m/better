@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Header from "../../components/Header/index";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import Profile from "@/components/wallet/Profile";
-import Nft from "@/components/wallet/Nft";
+import NftView from "@/components/wallet/NftView";
 import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
 import ConfirmModal from "@/components/wallet/ConfirmModal";
 import EthereumIcon from "../../assets/images/eth.svg";
@@ -54,7 +54,7 @@ const Wallet = () => {
               </Grid> */}
             <Grid md={6} paddingRight={"15px"}>
               <Profile />
-              <Nft />
+              <NftView />
               <CryptoMonnaise />
             </Grid>
             <Grid md={6} paddingLeft={"15px"}>

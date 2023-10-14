@@ -1,5 +1,7 @@
 {
     "change-locale": "fr",
+    "SmartContractOn": "Contrat Intelligent sur",
+    "needTechnicalInfos": "Besoin d'informations techniques ?",
     "NftCollection": "Collection NFT",
     "needHelp" : "Besoin d'aide",
     "topHeader" : "Vous voulez faire de BetterScan votre explorateur par défaut",

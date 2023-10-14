@@ -88,7 +88,7 @@ const carouselData = [
   },
 ];
 
-export default function Nft() {
+export default function NftView() {
   return (
     <Box className="NftSlider">
       <Typography variant="h4" className="NftSlider__title">
@@ -100,7 +100,7 @@ export default function Nft() {
         centeredSlides={false}
         loop={true}
         autoplay={{
-          delay: 1000,
+          delay: 3000,
           disableOnInteraction: false,
         }}
         pagination={{
@@ -110,7 +110,7 @@ export default function Nft() {
         modules={[Autoplay, Navigation]}
         className="mySlider"
         breakpoints={{
-          100 : {
+          300 : {
             slidesPerView : 2,
             spaceBetween : 15
           },
@@ -118,7 +118,7 @@ export default function Nft() {
             slidesPerView: 4,
             spaceBetween: 15,
           },
-          900: {
+          90: {
             slidesPerView: 3,
             spaceBetween: 15,
           }

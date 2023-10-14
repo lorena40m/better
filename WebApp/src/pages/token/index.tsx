@@ -4,7 +4,6 @@ import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import Sandbox from "@/components/token/Sandbox";
 import Nft from "@/components/token/Nft";
 import Operations from "@/components/token/Operations";
-import Information from "@/components/token/Information";
 import EthereumIcon from "../../assets/images/eth.svg";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -50,7 +49,6 @@ const Token = () => {
               </Grid> */}
             <Grid md={6} paddingRight={"15px"}>
               <Sandbox />
-              <Information/>
               <Nft />
               
             </Grid>
