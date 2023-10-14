@@ -65,6 +65,28 @@ async function get_top_nft_sales() {
         }
 }
 
+async function is_nft(address) {
+  const url = 'https://data.objkt.com/v3/graphql';
+
+  try {
+      const queryResult = await axios.post(url, {
+        query:`query MyQuery($distinct_on: [holder_select_column!] = address) {
+          fa(where: {contract: {_in: "KT1LjmAdYQCLBjwv4S2oFkEzyHVkomAf5MrW"}}) {
+            contract
+          }`
+      });
+      if (queryResult.data.data.fa.contract === address) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+      catch (error) {
+        console.error('Error calling API: ', error);
+        throw error;
+    }
+}
+
 async function get_top_nft_collection() {
     const url = 'https://data.objkt.com/v3/graphql';
     const isoDateLast24Hours = getISODateForLast24Hours();
