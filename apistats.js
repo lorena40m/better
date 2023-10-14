@@ -128,3 +128,26 @@ async function get_publication_date(address) {
     }
   }
 
+
+  async function get_sold(address) {
+  
+    const url = `https://api.tzstats.com/explorer/account/${address}`;
+    try {
+      const response = await axios.get(url);
+      const data = response.data;
+      return data.spendable_balance; // Extract and return the creator address
+    } catch (error) {
+      // Handle any errors that may occur during the API call.
+      console.error('Error calling API: ', error);
+      throw error; // Throw the error to potentially be handled by the caller.
+    }
+  }
+
+  get_sold("KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC")
+  .then(data => {
+      console.log('Data from API: ', data);
+  })
+  .catch(error => {
+      console.error('Error: ', error);
+  });
+
