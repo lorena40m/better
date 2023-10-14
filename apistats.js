@@ -428,7 +428,9 @@ async function getSmartContractInfo(contractAddress) {
       } catch (error) {
       console.error('Error:', error);
       }
-}
+      
+
+    getT
 
 
 

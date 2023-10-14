@@ -25,9 +25,14 @@ async function getTransactionSender(transactionHash) {
     .then(result => {
       if (result) {
         console.log('Transaction Meta Data:', result);
-        console.log('THE TOKEN', result.parameter);
+        console.log('THE TOKEN value = ', result.value[0].txs.amount);
       } else {
         console.log('Transaction meta data not available or error occurred.');
       }
     });
   
+    //node transfert.js
+    // on voit alors apparaitre le token dans la console avec son alias, par exemple dans
+    // cette tx "Tether Token (usdct)"
+    // la value est dans array 
+    // la valeur en USDT est de 3100,26$
