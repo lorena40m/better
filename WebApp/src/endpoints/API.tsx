@@ -4,25 +4,25 @@
   https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/BigInt#utilisation_avec_json
 */
 
-type DollarCents = BigInt // in $ cents
-type TokenDecimals = BigInt // in decimals
-type UrlString = string // url
-type DateString = string // ISO string
+export type DollarCents = BigInt // in $ cents
+export type TokenDecimals = BigInt // in decimals
+export type UrlString = string // url
+export type DateString = string // ISO string
 
 /*****************************************/
 /*************** ENDPOINTS ***************/
 /*****************************************/
 
-type MiscellaneousEndpoint = () => MiscellaneousResponse
+export type MiscellaneousEndpoint = () => MiscellaneousResponse
 
 // Endpoint used to display the Home page
-type HomeEndpoint = (params: {
+export type HomeEndpoint = (params: {
   pageSize: BigInt,
 }) => HomeResponse
 
 // Endpoint used when the users scrolls
 // To load one more pages
-type LoadMoreHomeEndpoint = (params: {
+export type LoadMoreHomeEndpoint = (params: {
   type: 'collections' | 'coins',
   criteria: 'trending' | 'top' | 'byCap' | 'byVolume',
   page: BigInt,
@@ -32,7 +32,7 @@ type LoadMoreHomeEndpoint = (params: {
 // Endpoint used to load a page from an id
 // Can be an operation (transfer or call),
 // or an address (wallet, token, collection or contract)
-type ArtifactEndpoint = (params: {
+export type ArtifactEndpoint = (params: {
   id: string,
   pageSize: BigInt,
 }) => TransferResponse | CallResponse | // operations
@@ -40,25 +40,25 @@ type ArtifactEndpoint = (params: {
 
 // Endpoint to load more of history
 // Sorted by date
-type LoadMoreHistoryEndpoint = (params: {
+export type LoadMoreHistoryEndpoint = (params: {
   id: string,
   page: BigInt,
   pageSize: BigInt,
 }) => Operation[]
 
-type LoadMoreWalletNonCertifiedTokens = (params: {
+export type LoadMoreWalletNonCertifiedTokens = (params: {
   id: string,
   page: BigInt,
   pageSize: BigInt,
 }) => Token[]
 
-type LoadMoreCoinHolders = (params: {
+export type LoadMoreCoinHolders = (params: {
   id: string,
   page: BigInt,
   pageSize: BigInt,
 }) => Holder[]
 
-type LoadMoreCollectionItems = (params: {
+export type LoadMoreCollectionItems = (params: {
   id: string,
   page: BigInt,
   pageSize: BigInt,
@@ -68,7 +68,7 @@ type LoadMoreCollectionItems = (params: {
 /************* UTILITARIES ***************/
 /*****************************************/
 
-type Collection = {
+export type Collection = {
   id: string,
   image: UrlString,
   name: string,
@@ -78,7 +78,7 @@ type Collection = {
   marketplaceLink: UrlString,
 }
 
-type Coin = {
+export type Coin = {
   id: string,
   logo: UrlString,
   name: string,
@@ -89,7 +89,7 @@ type Coin = {
   holders: BigInt,
 }
 
-type Address = {
+export type Address = {
   id: string,
   // name is the best description of an address that we can have
   // it can be a domain name, social pseudo,
@@ -97,16 +97,16 @@ type Address = {
   name: string,
 }
 
-type Holder = Address & {
+export type Holder = Address & {
   quantity: TokenDecimals,
 }
 
-type Token = {
+export type Token = {
   coin: Coin,
   quantity: TokenDecimals,
 }
 
-type Nft = {
+export type Nft = {
   id: string,
   image: UrlString,
   name: string,
@@ -114,19 +114,19 @@ type Nft = {
   collection: Collection,
 }
 
-type Asset = Token | Nft
+export type Asset = Token | Nft
 
 /*****************************************/
 /********** ENDPOINTS RESPONSES **********/
 /*****************************************/
 
-type MiscellaneousResponse = {
+export type MiscellaneousResponse = {
   rates: {
     "EUR/USD": DollarCents,
   }
 }
 
-type HomeResponse = {
+export type HomeResponse = {
   stats : {
     ethPrice: DollarCents,
     normalFee: DollarCents,
@@ -143,7 +143,7 @@ type HomeResponse = {
   },
 }
 
-type Transfer = {
+export type Transfer = {
   id: string,
   status: 'waiting' | 'success' | 'failure',
   date: DateString,
@@ -156,14 +156,14 @@ type Transfer = {
   },
 }
 
-type Call = Transfer & {
+export type Call = Transfer & {
   contractName: string,
   functionName: string,
 }
 
-type Operation = Transfer | Call
+export type Operation = Transfer | Call
 
-type AbstractOperationResponse = {
+export type AbstractOperationResponse = {
   artifactType: 'transfer' | 'call'
   operation: Operation,
   fee: {
@@ -177,17 +177,17 @@ type AbstractOperationResponse = {
   },
 }
 
-type TransferResponse = AbstractOperationResponse & {
+export type TransferResponse = AbstractOperationResponse & {
   artifactType: 'transfer',
   operation: Transfer,
 }
 
-type CallResponse = AbstractOperationResponse & {
+export type CallResponse = AbstractOperationResponse & {
   artifactType: 'call',
   operation: Call,
 }
 
-type WalletResponse = {
+export type WalletResponse = {
   artifactType: 'wallet',
   wallet: Address & {
     nativeBalance: TokenDecimals,
@@ -200,7 +200,7 @@ type WalletResponse = {
   history: Operation[], // paginated
 }
 
-type CoinResponse = {
+export type CoinResponse = {
   artifactType: 'coin',
   coin: Coin & {
     yearlyTransfers: BigInt, // number of transfers on chain
@@ -211,7 +211,7 @@ type CoinResponse = {
   contract: ContractResponse,
 }
 
-type CollectionResponse = {
+export type CollectionResponse = {
   artifactType: 'collection',
   collection: Collection & {
   },
@@ -225,7 +225,7 @@ type CollectionResponse = {
   contract: ContractResponse,
 }
 
-type ContractResponse = {
+export type ContractResponse = {
   artifactType: 'collection',
   contract: Address & {
     contractName: string,
