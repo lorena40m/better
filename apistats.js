@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { TezosToolkit } = require('@taquito/taquito');
+const { get } = require('http');
 
 function getISODateForLast24Hours() {
     // Get the current date and time
@@ -248,7 +249,7 @@ async function getBlockNumber() {
 
     if (block && block.header && block.header.level) {
       const blockNumber = block.header.level;
-      console.log(`Current Block Number: ${blockNumber}`);
+      return blockNumber;
     } else {
       console.error('Block number not found in the response.');
     }
@@ -275,6 +276,29 @@ async function getTransactionSender(transactionHash) {
       console.error('Error:', error);
       }
 }
+
+
+async function getBlockDate() {
+  try {
+      const last_block = await getLastBlockHash();
+      const url = `https://api.tzstats.com/explorer/block/${last_block}`;
+
+      const response = await axios.get(url);    
+
+      if (response.status === 200) {
+          const data = response.data;
+             const timestamp = data.time;
+            
+              return timestamp;
+      } else {
+        console.error('Failed to fetch external data. Status code:', response.status);
+      }
+      } catch (error) {
+      console.error('Error:', error);
+      }
+}
+
+
 
 async function getTransactionReceiver(transactionHash) {
   try {
