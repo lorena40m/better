@@ -6,7 +6,7 @@ import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
 import GeneralInfos from "@/components/smart-contract/GeneralInfos";
 import OtherInfos from "@/components/smart-contract/OtherInfos";
 import ConfirmModal from "@/components/wallet/ConfirmModal";
-import EthereumIcon from "../../assets/images/eth.svg";
+import TezosIcon from "../../assets/images/tezos.svg";
 
 import Image from "next/image";
 import Operations from "@/components/wallet/Operations";
@@ -26,17 +26,17 @@ const 	SmartContract = () => {
 				<Typography variant="h4" className="pageTemplate__title">
 				{t("SmartContractOn")}
 					<span className="pageTemplate__status">
-						<Image src={EthereumIcon} alt="" height={15} width={15} />
 						Tezos
+						<Image src={TezosIcon} alt="" height={40} width={40}/>
 					</span>
 				</Typography>
 			</div>
 			<Grid className="walletProfile" container>
-				<Grid md={6} paddingRight={"15px"}>
+				<Grid sm={12} md={6} paddingLeft={"10px"} paddingRight={"10px"}>
 					<GeneralInfos />
 					<OtherInfos />
 				</Grid>
-				<Grid md={6} paddingLeft={"15px"}>
+				<Grid sm={12} md={6} paddingLeft={"10px"} paddingRight={"10px"}>
 					<Operations />
 				</Grid>
 			</Grid>

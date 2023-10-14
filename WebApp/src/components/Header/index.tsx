@@ -66,23 +66,26 @@ export default function Header() {
             alignItems={"center"}
             fontStyle={{ gap: "15px" }}
           >
-            <Image
-              priority
-              src={LogoIcon}
-              height={36}
-              width={36}
-              alt="LogoIcon"
-            />
-            <Image
-              className="TabNone"
-              priority
-              src={Logo}
-              height={35}
-              width={150}
-              alt="Logo"
-            />
+            <Link href="/" style={{display: "flex"}}>
+              <Image
+                priority
+                src={LogoIcon}
+                height={36}
+                width={36}
+                alt="LogoIcon"
+                style={{marginRight: "10px"}}
+              />
+              <Image
+                className="TabNone"
+                priority
+                src={Logo}
+                height={35}
+                width={150}
+                alt="Logo"
+              />
+            </Link>
           </Box>
-          {search && (
+          {search && router.pathname !== '/' && (
             <Box>
               <SearchInput />
             </Box>

@@ -7,7 +7,7 @@ import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
 import GeneralInfos from "@/components/nft/GeneralInfos";
 import OtherInfos from "@/components/nft/OtherInfos";
 import ConfirmModal from "@/components/wallet/ConfirmModal";
-import EthereumIcon from "../../assets/images/eth.svg";
+import tezosIcon from "../../assets/images/tezos.svg";
 
 import Image from "next/image";
 import Operations from "@/components/wallet/Operations";
@@ -27,7 +27,7 @@ const 	Nft = () => {
 				<Typography variant="h4" className="pageTemplate__title">
 				{t("NftCollection")}
 					<span className="pageTemplate__status">
-						<Image src={EthereumIcon} alt="" height={15} width={15} />
+						<Image src={tezosIcon} alt="" height={40} width={40} />
 						Tezos
 					</span>
 				</Typography>

@@ -1,6 +1,7 @@
 import React from "react";
 import { styled, alpha } from "@mui/material/styles";
-import SearchIcon from "@mui/icons-material/Search";
+import Image from "next/image";
+import searchIcon from "../../assets/iconSvg/searchIconBlack.svg";
 import InputBase from "@mui/material/InputBase";
 import TuneIcon from "@mui/icons-material/Tune";
 import { ChildCare } from "@mui/icons-material";
@@ -69,8 +70,7 @@ const SearchInput = () => {
     <div className="SearchBox">
       <Search>
         <SearchIconWrapper>
-          <TuneIcon />
-          <SearchIcon className="SearchIconBtn" />
+          <Image src={searchIcon} width={30} alt="Research icon" style={{margin: "0 5px"}} />
         </SearchIconWrapper>
         <StyledInputBase
           placeholder="Entrez votre recherche "

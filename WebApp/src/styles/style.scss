@@ -295,6 +295,29 @@
     margin: 0 0 5px !important;
   }
 }
+.mainSearchButton {
+  background: #bbc3cb !important;
+  margin-left: 0px;
+  position: relative;
+  transition: background 0.3s !important;
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(#e66465, #9198e5);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    border-radius: 0 10px 10px 0;
+  }
+  &:hover::before {
+    opacity: 1;
+  }
+}
 .contractOtherInfos {
   margin: 40px 0 40px 0;
   background: #ffffff;

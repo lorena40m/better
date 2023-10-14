@@ -135,6 +135,7 @@ export default function NftView() {
                     width={240}
                     height={140}
                     style={{
+                      height: "240px",
                       objectFit: "cover",
                     }}
                   />
