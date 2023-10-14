@@ -49,6 +49,7 @@ const Token = () => {
               </Grid> */}
             <Grid md={6} paddingRight={"15px"}>
               <Sandbox />
+              
               <Nft />
               
             </Grid>
