@@ -27,6 +27,10 @@ async function get_xtz_price() {
     }
 }
 
+async function get_fee() {
+  return 0.0015;
+}
+
 async function get_top_nft_sales() {
     const url = 'https://data.objkt.com/v3/graphql';
     const isoDateLast24Hours = getISODateForLast24Hours();
