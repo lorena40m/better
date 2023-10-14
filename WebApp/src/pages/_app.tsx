@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 
 import {appWithTranslation} from "next-i18next";
 
-const publicPages = ["/sign-in/[[...index]]", "/sign-up/[[...index]]", "/", "/wallet", "/operation"];
+const publicPages = ["/sign-in/[[...index]]", "/sign-up/[[...index]]", "/", "/wallet", "/operation", "/token"];
 
 function App({ Component, pageProps }: AppProps) {
 
