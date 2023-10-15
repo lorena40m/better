@@ -39,5 +39,6 @@
     "startingPrice": "Prix de base",
     "PriorityPrice": "Prix de prior ité",
     "net":"net",
-    "brunt":"Brûlé"
+    "burnt":"Brûlé",
+    "fee":"Frais"
   }

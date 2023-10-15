@@ -39,5 +39,6 @@
     "startingPrice": "Starting Price",
     "PriorityPrice": "Priority Price",
     "net":"gwei",
-    "Burnt":"Burnt"
+    "burnt":"burnt",
+    "fee":"fee"
   }

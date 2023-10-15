@@ -20,7 +20,7 @@ const Transaction = () => {
           variant="h5"
           className="transactionCard__head-text gradientText"
         >
-          Fee : 0,47 $ 
+          {t("fee")} : 0,47 $ 
         </Typography>
         <span
           className="transactionCard__head-icon"
@@ -68,7 +68,7 @@ const Transaction = () => {
             </Box>
             <ul className="transactionCard__listBox">
               <li>
-                <Typography variant="caption">{t("brunt")}</Typography>
+                <Typography variant="caption">{t("burnt")}</Typography>
                 <Typography variant="caption">0,00029 XTZ</Typography>
               </li>
             </ul>
