@@ -11,11 +11,9 @@ import Image from "next/image";
 import MenuItem from "@mui/material/MenuItem";
 import { Box } from "@mui/material";
 import Logo from "../../assets/images/logo.svg";
-import Ada from "../assets/images/ada.svg";
-import Bnb from "../assets/images/bnb.svg";
-import Btc from "../assets/images/btc.svg";
-import Eth from "../assets/images/eth.svg";
-import Luna from "../assets/images/luna.svg";
+import Wtz from "../assets/images/logoWTZ.png";
+import Usd from "../assets/images/LogoUSDtez.png";
+import Btc from "../assets/images/tzbtc.webp";
 import { useTranslation } from "next-i18next";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -55,11 +53,9 @@ function createData(
 }
 
 const rows = [
-  createData("BNB", Bnb, "BNB", 41263.0, 360000, 783392),
-  createData("Bitcoin", Btc, "BTC", 41263.0, 360000, 783392),
-  createData("Ethereum", Eth, "ETH", 41263.0, 360000, 783392),
-  createData("Terra", Luna, "LUNA", 41263.0, 360000, 783392),
-  createData("Cardano", Ada, "ADA", 41263.0, 360000, 783392),
+  createData("Wrapped Tezos", Wtz, "WTZ", 0.676, 36000, 73392),
+  createData("tzBTC", Btc, "TZBTC", 26671.3, 15000, 783392),
+  createData("USDtez", Usd, "USDTZ", 1.0, 300, 78392)
 ];
 
 export default function CustomizedTables() {
