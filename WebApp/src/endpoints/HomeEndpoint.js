@@ -1,6 +1,5 @@
-import { Collection, Coin } from './API';
 import axios from 'axios';
-import TezosToolkit from '@taquito/taquito'
+import {TezosToolkit} from '@taquito/taquito'
 
 const rpcEndpoint = 'https://tezosrpc.midl.dev/ak-lpuoz6fm0tjlm1';
 
@@ -28,7 +27,7 @@ async function getLastBlockHash() {
 
       if (response.status === 200) {
           const data = response.data;
-          const block_hash = data.hash;
+          const block_hash = data.block_hash;
           return block_hash;
       } else {
         console.error('Failed to fetch external data. Status code:', response.status);
@@ -98,7 +97,7 @@ async function get_trending_nft_collection() {
       const queryResult = await axios.post(url, {
         query: 
               `query test {
-                  gallery(order_by: {volume_24h: desc_nulls_last}, limit: 10) {
+                  gallery(order_by: {volume_24h: desc_nulls_last}, limit: 50) {
                     active_auctions
                     active_listing
                     description
@@ -118,7 +117,7 @@ async function get_trending_nft_collection() {
                   }
               }`,
       });
-  const collections: Collection[] = queryResult.data.gallery.map((item: any) => ({
+  const collections = queryResult.data.data.gallery.map((item) => ({
     id: item.gallery_id, 
     image: item.logo,
     name: item.name,
@@ -143,7 +142,7 @@ async function get_top_nft_collection() {
       const queryResult = await axios.post(url, {
         query: 
               `query test {
-                gallery(order_by: {volume_total: desc_nulls_last}, limit: 10) {
+                gallery(order_by: {volume_total: desc_nulls_last}, limit: 50) {
                   active_auctions
                   active_listing
                   description
@@ -163,7 +162,7 @@ async function get_top_nft_collection() {
                 }
               }`,
       });
-  const collections: Collection[] = queryResult.data.gallery.map((item: any) => ({
+  const collections = queryResult.data.data.gallery.map((item) => ({
     id: item.gallery_id, 
     image: item.logo,
     name: item.name,
@@ -199,18 +198,18 @@ async function getTop50Cryptos_on_cap() {
     });
     if (response.status === 200) {
       const data = response.data.data;
-      const cryptoList : Coin[] = [];
+      const cryptoList = [];
 
-      data.forEach((crypto:any) => {
+      data.forEach((crypto) => {
         const cryptoData = {
           id: "", // TO FILL 
           logo: "", // TO FILL 
           name: crypto.name,  
           ticker: crypto.symbol,  
-          decimals : BigInt(0), // TO FILL 
-          lastPrice: BigInt(crypto.quote.USD.price*100),
+          decimals : Math.floor(0), // TO FILL
+          lastPrice: Math.floor(crypto.quote.USD.price*100),
           circulatingSupplyOnChain: crypto.circulating_supply,
-          holders : BigInt(0), // TO FILL 
+          holders : Math.floor(0), // TO FILL
 
         };
         cryptoList.push(cryptoData);
@@ -242,18 +241,18 @@ async function getTop50Cryptos_on_volume_24() {
     });
     if (response.status === 200) {
       const data = response.data.data;
-      const cryptoList : Coin[] = [];
+      const cryptoList = [];
 
-      data.forEach((crypto:any) => {
+      data.forEach((crypto) => {
         const cryptoData = {
           id: "", // TO FILL 
           logo: "", // TO FILL 
           name: crypto.name,  
           ticker: crypto.symbol,  
-          decimals : BigInt(0), // TO FILL 
-          lastPrice: BigInt(crypto.quote.USD.price*100),
+          decimals : Math.floor(0), // TO FILL
+          lastPrice: Math.floor(crypto.quote.USD.price*100),
           circulatingSupplyOnChain: crypto.circulating_supply,
-          holders : BigInt(0), // TO FILL 
+          holders : Math.floor(0), // TO FILL
 
         };
         cryptoList.push(cryptoData);
@@ -270,24 +269,21 @@ async function getTop50Cryptos_on_volume_24() {
   }
 }
 
-export default (params: {
-  pageSize: number,
-}) => {
-
+export default async () => {
   return {
     stats : {
-      ethPrice: get_xtz_price(),
-      normalFee: get_fee(),
-      lastBlockNumber: getBlockNumber(),
-      lastBlockDate: getBlockDate(),
+      ethPrice: await get_xtz_price(),
+      normalFee: await get_fee(),
+      lastBlockNumber: await getBlockNumber(),
+      lastBlockDate: await getBlockDate(),
     },
     collections: {
-      trending: get_trending_nft_collection(), // paginated
-      top: get_top_nft_collection(), // paginated
+      trending: await get_trending_nft_collection(), // paginated
+      top: await get_top_nft_collection(), // paginated
     },
-    coins: {
-      byCap: getTop50Cryptos_on_cap(), // paginated
-      byVolume: getTop50Cryptos_on_volume_24(), // paginated
-    },
+    // coins: {
+    //   byCap: await getTop50Cryptos_on_cap(), // paginated
+    //   byVolume: await getTop50Cryptos_on_volume_24(), // paginated
+    // },
   }
 }

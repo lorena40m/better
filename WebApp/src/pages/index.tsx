@@ -1,3 +1,5 @@
+const RATE_USD_TO_EUR = 0.95
+
 import Head from "next/head";
 import Image from "next/image";
 import Header from "../components/Header";
@@ -31,7 +33,7 @@ import HomeEndpoint from '../endpoints/HomeEndpoint'
 
 
 export async function getServerSideProps({ locale }: any) {
-  const homeResponse: HomeResponse = {} // HomeEndpoint({ pageSize: 100 })
+  const homeResponse = await HomeEndpoint()
 
   return {
     props: {
@@ -48,7 +50,8 @@ export default function Home({ homeResponse }) {
   const {locale} = router
 
   function formatEthPrice(ethPrice) {
-    return new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(ethPrice)
+    return new Intl.NumberFormat(locale, { style: 'currency', currency: locale === 'en' ? 'USD' : 'EUR' })
+      .format(locale === 'en' ? ethPrice : ethPrice * RATE_USD_TO_EUR)
   }
 
   return (

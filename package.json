@@ -5,6 +5,7 @@
   "description": "",
   "main": "testEndpoints.js",
   "dependencies": {
+    "@taquito/taquito": "^17.3.2",
     "asynckit": "^0.4.0",
     "axios": "^1.5.1",
     "combined-stream": "^1.0.8",
@@ -17,7 +18,7 @@
     "typescript": "^5.2.2"
   },
   "scripts": {
-    "test": "cp WebApp/src/endpoints/ArtifactEndpoint.js SymbolicArtifactEndpoint.mjs; node testEndpoints.mjs"
+    "test": "cp WebApp/src/endpoints/ArtifactEndpoint.js SymbolicArtifactEndpoint.mjs; cp WebApp/src/endpoints/HomeEndpoint.js SymbolicHomeEndpoint.mjs; node testEndpoints.mjs"
   },
   "repository": {
     "type": "git",
