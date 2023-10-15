@@ -12,7 +12,22 @@ import Operations from "@/components/wallet/Operations";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-const Wallet = () => {
+import { HomeResponse } from '../../endpoints/API';
+import HomeEndpoint from '../../endpoints/HomeEndpoint';
+
+
+export async function getServerSideProps({ locale }: any) {
+  const homeResponse = await HomeEndpoint()
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      homeResponse,
+    },
+  };
+}
+
+const Wallet = ({ homeResponse }) => {
   const { t } = useTranslation("common");
 
   const [open, setOpen] = useState<Boolean>(false);
@@ -33,7 +48,7 @@ const Wallet = () => {
           <Grid className="walletProfile" container>
             <Grid md={6} paddingRight={"15px"}>
               <Profile />
-              <NftView />
+              <NftView trending={homeResponse.collections.trending} />
               <CryptoMonnaise />
             </Grid>
             <Grid md={6} paddingLeft={"15px"}>
@@ -48,12 +63,3 @@ const Wallet = () => {
 };
 
 export default Wallet;
-
-export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-      // Will be passed to the page component as props
-    },
-  };
-}

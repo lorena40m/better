@@ -11,6 +11,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "swiper/css/bundle";
 import Heart from "@/assets/iconSvg/Heart.svg";
+import Link from 'next/link'
 
 const carouselData = [
   {
@@ -69,7 +70,15 @@ const carouselData = [
   },
 ];
 
-export default function SpacingGrid() {
+export default function SpacingGrid(props) {
+
+  function ipfsToLink(stringIpfs) {
+    const baseUrl = "https://ipfs.io/ipfs/";
+    const ipfsId = stringIpfs.slice(7);
+    return (baseUrl + ipfsId);
+  }
+
+  const trendingData = props.trending;
   return (
     // <Box
     //   sx={{
@@ -112,12 +121,13 @@ export default function SpacingGrid() {
       modules={[Autoplay, Navigation]}
       className="mySlider"
     >
-      {carouselData.map((value) => (
+      {trendingData.map((value) => (
+        <Link href={'/nft?id='+value.id}>
         <SwiperSlide key={value.id}>
           <Box className="collectionBox">
             <Box className="collectionBox-img">
               <Image
-                src={value.image}
+                src={ipfsToLink(value.image)}
                 alt="crypto"
                 width={240}
                 height={140}
@@ -135,17 +145,18 @@ export default function SpacingGrid() {
               variant="h5"
               className="collectionBox-title"
             >
-              {value.title}
+              {value.name}
             </Typography>
             <Typography
               gutterBottom
               variant="h5"
               className="collectionBox-subTitle"
             >
-              Plancher: <b>{value.description}</b>
+              Supply: <b>{value.supply}</b>
             </Typography>
           </Box>
         </SwiperSlide>
+        </Link>
       ))}
     </Swiper>
   );

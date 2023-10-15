@@ -9,10 +9,26 @@ import OtherInfos from "@/components/token/OtherInfos";
 import Holders from "@/components/token/Holders";
 import GeneralInfo from "@/components/token/GeneralInfos";
 import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
-import MetamaskIcon from "../../assets/iconSvg/metamaskLogo.svg";
+import TempleIcon from "../../assets/images/temple-logo.png";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-const Token = () => {
+
+import { HomeResponse } from '../../endpoints/API';
+import HomeEndpoint from '../../endpoints/HomeEndpoint';
+
+
+export async function getServerSideProps({ locale }: any) {
+  const homeResponse = await HomeEndpoint()
+
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      homeResponse,
+    },
+  };
+}
+
+const Token = ({homeResponse}) => {
     const { t } = useTranslation("common");
 
     return(
@@ -36,12 +52,12 @@ const Token = () => {
               <Box className="addMetamaskParent">
                 <Box className="addMetamask">
                   <Image
-                    src={MetamaskIcon}
-                    width={50}
+                    src={TempleIcon}
+                    width={40}
                     alt="See on Metamask"
                   />
                   <Typography variant="h4" className="addMetamask__p">
-                    Add to Metamask
+                    See on Temple
                   </Typography>
                 </Box>
               </Box>
@@ -58,7 +74,7 @@ const Token = () => {
           <Grid className="walletProfile" container>
             <Grid md={6} paddingRight={"15px"}>
           
-              <NftView />
+              <NftView trending={homeResponse.collections.trending} />
               <CryptoMonnaise />
             </Grid>
             <Grid md={6} paddingLeft={"15px"}>
@@ -73,12 +89,3 @@ const Token = () => {
     )
 }
 export default Token;
-
-export async function getStaticProps({ locale }: any) {
-    return {
-      props: {
-        ...(await serverSideTranslations(locale, ["common"])),
-        // Will be passed to the page component as props
-      },
-    };
-  }
