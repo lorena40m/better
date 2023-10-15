@@ -1,11 +1,15 @@
 import React from "react";
 import Header from "../../components/Header";
+import Image from "next/image";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import Sandbox from "@/components/token/Sandbox";
-import Nft from "@/components/token/Nft";
-import Operations from "@/components/token/Operations";
-import Information from "@/components/token/Information";
-import EthereumIcon from "../../assets/images/eth.svg";
+import NftView from "../../components/wallet/NftView";
+import Operation from"@/components/token/Operations";
+import OtherInfos from "@/components/token/OtherInfos";
+import Holders from "@/components/token/Holders";
+import GeneralInfo from "@/components/token/GeneralInfos";
+import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
+import MetamaskIcon from "../../assets/iconSvg/metamaskLogo.svg";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 const Token = () => {
@@ -15,61 +19,55 @@ const Token = () => {
         <main>
             <Header/>
         
-            <Box className="pageTemplate Token">
+            <Box className="pageTemplate WalletOprationCard">
         <Container maxWidth="xl">
-          {/* <Button onClick={() => setOpen(true)}>Open Modal</Button>
-          <Box sx={{ display: "flex" }}>
-            <Typography variant="h4" gutterBottom>
-              Portfeuille sur
-            </Typography>
-            <Button variant="outlined">
-              <Image src={EthereumIcon} alt="" height={15} width={15} />
-              Ethereum
-            </Button>
-          </Box> */}
           <div className="pageTemplate__head">
             <Typography variant="h4" className="pageTemplate__title">
-              {t("JetonSur")}
+              {t("Token on")}
               <span className="pageTemplate__status">
                 
                 Tezos
               </span>
             </Typography>
           </div>
-          <Grid className="TokenSandbox" container>
-            {/* <Grid md={6} gap={4} paddingRight={"15px"}>
-                <Grid xs={12}>
-                  <Profile />
-                </Grid>
-                <Grid xs={12}>
-                  <Nft />
-                </Grid>
-                <Grid xs={12}>
-                  <CryptoMonnaise />
-                </Grid>
-              </Grid> */}
+          <Grid className="walletProfile" container>
             <Grid md={6} paddingRight={"15px"}>
               <Sandbox />
-              <Information/>
-              <Nft />
-              
+              <Box className="addMetamaskParent">
+                <Box className="addMetamask">
+                  <Image
+                    src={MetamaskIcon}
+                    width={50}
+                    alt="See on Metamask"
+                  />
+                  <Typography variant="h4" className="addMetamask__p">
+                    Add to Metamask
+                  </Typography>
+                </Box>
+              </Box>
+              <OtherInfos />
+              <Holders />
             </Grid>
             <Grid md={6} paddingLeft={"15px"}>
-              <Operations />
-              {/* <Grid xs={12} style={{ height: "100%" }}>
-                  <Box className="WalletCard">
-                    <Box className="WalletCard__head">
-                      <Typography variant="h4" className="WalletCard__title">
-                        Dernières opérations
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Grid> */}
+                <Operation/>
+            </Grid>
+          </Grid>
+          <GeneralInfo/>
+        
+      
+          <Grid className="walletProfile" container>
+            <Grid md={6} paddingRight={"15px"}>
+          
+              <NftView />
+              <CryptoMonnaise />
+            </Grid>
+            <Grid md={6} paddingLeft={"15px"}>
+              <Operation />
             </Grid>
           </Grid>
         </Container>
       </Box>
-
+      
     </main>
 
     )

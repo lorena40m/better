@@ -20,7 +20,7 @@ const Transaction = () => {
           variant="h5"
           className="transactionCard__head-text gradientText"
         >
-          0,00032 ETH (0,47 $)
+          {t("fee")} : 0,47 $ 
         </Typography>
         <span
           className="transactionCard__head-icon"
@@ -63,13 +63,13 @@ const Transaction = () => {
               </Typography>
 
               <Typography variant="h6" gutterBottom textAlign={"right"}>
-                0,00032 ETH (0,47 $)
+                0,00032 XTZ ( 0,47 $)
               </Typography>
             </Box>
             <ul className="transactionCard__listBox">
               <li>
-                <Typography variant="caption">{t("brunt")}</Typography>
-                <Typography variant="caption">0,00029 ETH</Typography>
+                <Typography variant="caption">{t("burnt")}</Typography>
+                <Typography variant="caption">0,00029 XTZ</Typography>
               </li>
             </ul>
           </Box>

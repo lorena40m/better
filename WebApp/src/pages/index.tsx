@@ -20,7 +20,10 @@ import SelectCustom from "../components/SelectCustom";
 import JetonsTable from "../components/JetonsTable";
 import HCarousel from "../components/HCarousel";
 import HeadCrumb from "@/components/Header/HeadCrumb";
-import ETH from "../assets/images/ethIcon.svg";
+import tezosLogo from "../assets/images/tezos_gradient.svg";
+import searchIcon from "../assets/iconSvg/searchIcon.svg";
+import TypingEffect from "../components/others/typingEffect";
+import Background from "../components/others/background";
 // import ScanIcon from "@/assets/iconSvg/ScanIcon.svg";
 
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -28,8 +31,8 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-import { HomeResponse } from '../endpoints/API'
-import HomeEndpoint from '../endpoints/HomeEndpoint'
+import { HomeResponse } from '../endpoints/API';
+import HomeEndpoint from '../endpoints/HomeEndpoint';
 
 
 export async function getServerSideProps({ locale }: any) {
@@ -48,6 +51,8 @@ export default function Home({ homeResponse }) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const {locale} = router
+
+  const h1WordsAnim = ["transaction^1000", "wallet^1000", "nft^1000"];
 
   function formatEthPrice(ethPrice) {
     return new Intl.NumberFormat(locale, { style: 'currency', currency: locale === 'en' ? 'USD' : 'EUR' })
@@ -73,7 +78,7 @@ export default function Home({ homeResponse }) {
               color="text.secondary"
               paragraph
             >
-              {t("title")} <span className="gradientText">{t("span")}</span>{" "}
+              {t("title")} <TypingEffect strings={h1WordsAnim} />{" "}<br />
               {t("title2")}
             </Typography>
             <Box className="searchBlock-form">
@@ -88,12 +93,9 @@ export default function Home({ homeResponse }) {
               <span className="scanIcon">{/* <ScanIcon /> */}</span>
               <Button
                 variant="contained"
-                style={{
-                  backgroundColor: "#bbc3cb",
-                  marginLeft: "0px",
-                }}
+                className="mainSearchButton"
               >
-                {/* <SearchIcon /> */}
+                <Image src={searchIcon} width={40} alt="Research icon" style={{zIndex: "1"}} />
               </Button>
             </Box>
           </Container>
@@ -125,9 +127,8 @@ export default function Home({ homeResponse }) {
                     </Box>
                     <Image
                       priority
-                      src={ETH}
-                      height={40}
-                      width={62}
+                      src={tezosLogo}
+                      width={100}
                       alt="Follow us on Twitter"
                     />
                   </Box>
@@ -185,7 +186,7 @@ export default function Home({ homeResponse }) {
                       <span className="cardBox-status">li y 2 min</span>
                     </Box>
                     <Typography variant="h4" className="cardBox-price">
-                      <span className="gradientText">-1.13 Eth/min</span>
+                      <span className="gradientText">-1.13 Tez/min</span>
                     </Typography>
                   </Box>
                 </Box>

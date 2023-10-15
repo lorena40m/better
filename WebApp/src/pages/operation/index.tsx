@@ -35,8 +35,8 @@ const Operation = () => {
                 <Image
                   priority
                   src={Tezos}
-                  height={16}
-                  width={10}
+                  height={40}
+                  width={40}
                   alt="Tezos"
                 />
                 Tezos

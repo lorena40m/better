@@ -10,6 +10,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Image from "next/image";
 import TransferIcon from "@/assets/iconSvg/TransferIcon.svg";
 import Ethereum from "../../assets/images/Ethereum.svg";
+import Tazos from "../../assets/images/tezos.svg"
 import RightArrow from "@/assets/iconSvg/RightArrow.svg";
 import { appWithTranslation, useTranslation } from "next-i18next";
 
@@ -150,10 +151,10 @@ export default function Operations() {
                   <Box className="TransmitterCard__status">
                     <Image
                       priority
-                      src={Ethereum}
-                      height={16}
-                      width={10}
-                      alt="Ethereum"
+                      src={Tazos}
+                      height={22} 
+                      width={22}
+                      alt="Tazos"
                     />
                     {data.coinvalue.price}
                   </Box>

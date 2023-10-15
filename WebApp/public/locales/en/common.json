@@ -1,15 +1,17 @@
 {
     "change-locale": "en",
+    "SmartContractOn": "Smart Contract On",
+    "needTechnicalInfos": "Need technical informations?",
     "NftCollection": "NFT Collection",
     "needHelp" : "Need help",
     "topHeader" : "You want to make BetterScan your default browser",
     "topButton" : "Add extension" ,
     "title": "Look for a",
     "span" : "transaction",
-    "title2" : "in AI Blockchain Tezos",
+    "title2" : "in Blockchain Tezos",
     "topPlaceholder": "Paste an address, a transaction, a tezos domain, a token, an NFT Collection...",
     "block1" : "Price of ",
-    "block2" : "Transaction fees",
+    "block2" : "Average fees",
     "block3" : "Last block",
     "jetson1" : "nom",
     "jetson2" : "Symbol",
@@ -37,5 +39,6 @@
     "startingPrice": "Starting Price",
     "PriorityPrice": "Priority Price",
     "net":"gwei",
-    "Burnt":"Burnt"
+    "burnt":"burnt",
+    "fee":"fee"
   }

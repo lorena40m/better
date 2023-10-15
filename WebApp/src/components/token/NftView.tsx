@@ -20,7 +20,7 @@ const carouselData = [
     title: "Monkey Ape",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 2,
@@ -28,7 +28,7 @@ const carouselData = [
     title: "Moonfall",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 3,
@@ -36,7 +36,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 4,
@@ -44,7 +44,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 5,
@@ -52,7 +52,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 6,
@@ -60,7 +60,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 7,
@@ -68,7 +68,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 8,
@@ -76,7 +76,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 9,
@@ -84,11 +84,11 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
 ];
 
-export default function Nft() {
+export default function NftView() {
   return (
     <Box className="NftSlider">
       <Typography variant="h4" className="NftSlider__title">
@@ -100,7 +100,7 @@ export default function Nft() {
         centeredSlides={false}
         loop={true}
         autoplay={{
-          delay: 1000,
+          delay: 3000,
           disableOnInteraction: false,
         }}
         pagination={{
@@ -110,7 +110,7 @@ export default function Nft() {
         modules={[Autoplay, Navigation]}
         className="mySlider"
         breakpoints={{
-          100 : {
+          300 : {
             slidesPerView : 2,
             spaceBetween : 15
           },
@@ -118,7 +118,7 @@ export default function Nft() {
             slidesPerView: 4,
             spaceBetween: 15,
           },
-          900: {
+          90: {
             slidesPerView: 3,
             spaceBetween: 15,
           }
@@ -135,6 +135,7 @@ export default function Nft() {
                     width={240}
                     height={140}
                     style={{
+                      height: "240px",
                       objectFit: "cover",
                     }}
                   />

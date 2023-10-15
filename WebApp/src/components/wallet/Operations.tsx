@@ -2,6 +2,7 @@ import RightArrow from "@/assets/iconSvg/RightArrow";
 import TransferIcon from "@/assets/iconSvg/TransferIcon";
 import { Box, Grid, Input, Typography } from "@mui/material";
 import Ethereum from "../../assets/images/Ethereum.svg";
+import Tezos from "../../assets/images/tezos.svg";
 import React from "react";
 import Image from "next/image";
 import { appWithTranslation, useTranslation } from "next-i18next";
@@ -62,12 +63,12 @@ const Operations = () => {
             <Box className="TransmitterCard__status">
               <Image
                 priority
-                src={Ethereum}
-                height={16}
-                width={10}
-                alt="Ethereum"
+                src={Tezos}
+                height={22} 
+                width={22}
+                alt="Tezos"
               />
-              1,22 ETH
+              1,22 XTZ
             </Box>
           </Box>
         </Box>
@@ -118,12 +119,12 @@ const Operations = () => {
             <Box className="TransmitterCard__status">
               <Image
                 priority
-                src={Ethereum}
-                height={16}
-                width={10}
-                alt="Ethereum"
+                src={Tezos}
+                height={22} 
+                width={22}
+                alt="Tezos"
               />
-              1,22 ETH
+              1,22 XTZ
             </Box>
           </Box>
         </Box>
@@ -174,12 +175,12 @@ const Operations = () => {
             <Box className="TransmitterCard__status">
               <Image
                 priority
-                src={Ethereum}
-                height={16}
-                width={10}
-                alt="Ethereum"
+                src={Tezos}
+                height={22} 
+                width={22}
+                alt="Tezos"
               />
-              1,22 ETH
+              1,22 XTZ
             </Box>
           </Box>
         </Box>
@@ -230,12 +231,12 @@ const Operations = () => {
             <Box className="TransmitterCard__status">
               <Image
                 priority
-                src={Ethereum}
-                height={16}
-                width={10}
-                alt="Ethereum"
+                src={Tezos}
+                height={22} 
+                width={22}
+                alt="Tezos"
               />
-              1,22 ETH
+              1,22 XTZ
             </Box>
           </Box>
         </Box>
@@ -286,12 +287,12 @@ const Operations = () => {
             <Box className="TransmitterCard__status">
               <Image
                 priority
-                src={Ethereum}
-                height={16}
-                width={10}
-                alt="Ethereum"
+                src={Tezos}
+                height={22} 
+                width={22}
+                alt="Tezos"
               />
-              1,22 ETH
+              1,22 XTZ
             </Box>
           </Box>
         </Box>
@@ -342,12 +343,12 @@ const Operations = () => {
             <Box className="TransmitterCard__status">
               <Image
                 priority
-                src={Ethereum}
-                height={16}
-                width={10}
-                alt="Ethereum"
+                src={Tezos}
+                height={22} 
+                width={22}
+                alt="Tezos"
               />
-              1,22 ETH
+              1,22 XTZ
             </Box>
           </Box>
         </Box>

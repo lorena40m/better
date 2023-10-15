@@ -2,45 +2,58 @@ import React, { useState } from "react";
 import Header from "../../components/Header/index";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import Profile from "@/components/wallet/Profile";
+import NftView from "@/components/nft/NftView";
 import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
+import GeneralInfos from "@/components/nft/GeneralInfos";
+import OtherInfos from "@/components/nft/OtherInfos";
 import ConfirmModal from "@/components/wallet/ConfirmModal";
-import EthereumIcon from "../../assets/images/eth.svg";
-
+import tezosIcon from "../../assets/images/tezos.svg";
 import Image from "next/image";
 import Operations from "@/components/wallet/Operations";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-const Nft = () => {
-	const { t } = useTranslation("common");
+const 	Nft = () => {
+  const { t } = useTranslation("common");
 
-	return (
-		<main>
-			<Header />
-			<Box className="pageTemplate">
-				<Container maxWidth="xl">
-					<div className="pageTemplate__head">
-						<Typography variant="h4" className="pageTemplate__title">
-						{t("NftCollection")}
-						<span className="pageTemplate__status">
-							<Image src={EthereumIcon} alt="" height={15} width={15} />
-							Tezos
-						</span>
-						</Typography>
-					</div>
-				</Container>
-			</Box>
-		</main>
-	);
-}
+  const [open, setOpen] = useState<Boolean>(false);
+  return (
+    <main>
+      <Header />
+      <Box className="pageTemplate WalletOprationCard">
+        <Container maxWidth="xl">
+			<div className="pageTemplate__head">
+				<Typography variant="h4" className="pageTemplate__title">
+				{t("NftCollection")}
+					<span className="pageTemplate__status">
+						<Image src={tezosIcon} alt="" height={40} width={40} />
+						Tezos
+					</span>
+				</Typography>
+			</div>
+			<Grid className="walletProfile" container>
+				<Grid md={6} paddingRight={"15px"}>
+					<GeneralInfos />
+					<NftView />
+					<OtherInfos />
+				</Grid>
+				<Grid md={6} paddingLeft={"15px"}>
+					<Operations />
+				</Grid>
+			</Grid>
+        </Container>
+      </Box>
+    </main>
+  );
+};
 
 export default Nft;
 
 export async function getStaticProps({ locale }: any) {
-	return {
-	  props: {
-		...(await serverSideTranslations(locale, ["common"])),
-		// Will be passed to the page component as props
-	  },
-	};
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      // Will be passed to the page component as props
+    },
+  };
 }
