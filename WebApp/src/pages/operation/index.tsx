@@ -13,7 +13,7 @@ import {
 import Transfert from "../../components/operation/Transfert";
 import Transaction from "../../components/operation/Transaction";
 import Operations from "../../components/operation/Operations";
-import Ethereum from "../../assets/images/Ethereum.svg";
+import Tezos from "../../assets/images/tezos.svg";
 import PlayCircle from "../../assets/images/PlayCircle.svg";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -24,7 +24,7 @@ const Operation = () => {
   const { t } = useTranslation("common");
 
   return (
-    <main>
+    <main  >
       <Header />
       <Box className="pageTemplate">
         <Container maxWidth="xl">
@@ -34,12 +34,12 @@ const Operation = () => {
               <span className="pageTemplate__status">
                 <Image
                   priority
-                  src={Ethereum}
+                  src={Tezos}
                   height={16}
                   width={10}
-                  alt="Ethereum"
+                  alt="Tezos"
                 />
-                Ethereum
+                Tezos
               </span>
             </Typography>
           </div>
