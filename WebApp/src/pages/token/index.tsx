@@ -19,27 +19,27 @@ const Token = () => {
             <Header/>
         
             <Box className="pageTemplate Token">
-        <Container maxWidth="xl">
-          {/* <Button onClick={() => setOpen(true)}>Open Modal</Button>
-          <Box sx={{ display: "flex" }}>
-            <Typography variant="h4" gutterBottom>
-              Portfeuille sur
-            </Typography>
-            <Button variant="outlined">
-              <Image src={EthereumIcon} alt="" height={15} width={15} />
-              Ethereum
-            </Button>
-          </Box> */}
-          <div className="pageTemplate__head">
-            <Typography variant="h4" className="pageTemplate__title">
-              {t("JetonSur")}
-              <span className="pageTemplate__status">
-                
-                Tezos
-              </span>
-            </Typography>
-          </div>
-          <Grid className="TokenSandbox" container>
+              <Container maxWidth="xl">
+              {/* <Button onClick={() => setOpen(true)}>Open Modal</Button>
+              <Box sx={{ display: "flex" }}>
+              <Typography variant="h4" gutterBottom>
+                Portfeuille sur
+              </Typography>
+              <Button variant="outlined">
+                <Image src={EthereumIcon} alt="" height={15} width={15} />
+                Ethereum
+              </Button>
+              </Box> */}
+             <div className="pageTemplate__head">
+                <Typography variant="h4" className="pageTemplate__title">
+                  {t("JetonSur")}
+                  <span className="pageTemplate__status">
+                    
+                    Tezos
+                  </span>
+                </Typography>
+              </div>
+             <Grid className="TokenSandbox" container>
             {/* <Grid md={6} gap={4} paddingRight={"15px"}>
                 <Grid xs={12}>
                   <Profile />

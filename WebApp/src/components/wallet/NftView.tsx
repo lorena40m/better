@@ -20,7 +20,7 @@ const carouselData = [
     title: "Monkey Ape",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 2,
@@ -28,7 +28,7 @@ const carouselData = [
     title: "Moonfall",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 3,
@@ -36,7 +36,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 4,
@@ -44,7 +44,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 5,
@@ -52,7 +52,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 6,
@@ -60,7 +60,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 7,
@@ -68,7 +68,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 8,
@@ -76,7 +76,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
   {
     id: 9,
@@ -84,7 +84,7 @@ const carouselData = [
     title: "Monkey Sun",
     by: "lil monkey",
     floor: { title: "FLOOR", value: "11 MATIC" },
-    value: { title: "PRIX DACHAT", value: "0.19 ETH" },
+    value: { title: "PRIX DACHAT", value: "0.19 XTZ" },
   },
 ];
 

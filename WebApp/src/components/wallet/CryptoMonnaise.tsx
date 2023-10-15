@@ -16,24 +16,25 @@ import React from "react";
 import Image from "next/image";
 import BitcoinIcon from "../../assets/images/btc.svg";
 import EthereumIcon from "../../assets/images/eth.svg";
+import TezosIcon from "../../assets/images/tezos.svg";
 
 const data: any = [
   { id: "1", icon: BitcoinIcon, value: 3.232, coin: "BTC", price: "122$" },
   {
     id: "2",
-    icon: EthereumIcon,
+    icon: TezosIcon,
     value: 0.232,
-    coin: "ETH",
+    coin: "XTZ",
     price: "4 223$",
   },
   {
     id: "3",
-    icon: EthereumIcon,
+    icon: TezosIcon,
     value: 2.32,
-    coin: "ETH",
+    coin: "XTZ",
     price: "2 333$",
   },
-  { id: "4", icon: EthereumIcon, value: 0.02, coin: "ETH", price: "22$" },
+  { id: "4", icon: TezosIcon, value: 0.02, coin: "XTZ", price: "22$" },
 ];
 
 const CryptoMonnaise = () => {

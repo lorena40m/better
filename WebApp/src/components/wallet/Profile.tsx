@@ -13,7 +13,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { appWithTranslation, useTranslation } from "next-i18next";
 
 const data: any = [
-  { id: "1", label: "Solid", value: "0,57", currency: "ETH" },
+  { id: "1", label: "Solid", value: "0,57", currency: "XTZ" },
   { id: "2", label: "totalValue", value: "124 786", currency: "$" },
   { id: "3", label: "operations", value: "1234", currency: "" },
 ];
@@ -28,7 +28,7 @@ const Profile: React.FC = () => {
           <Box className="cardBox-head">
             <Box sx={{ display: "flex" }}>
               <Typography gutterBottom variant="h3" className="cardBox-title">
-                vitalik.eth
+                Bryan.tez
               </Typography>
               <CreateIcon />
             </Box>

@@ -10,10 +10,10 @@ import {
   IconButton,
   Stack,
 } from "@mui/material";
-import Transfert from "../../components/operation/Transfert";
-import Transaction from "../../components/operation/Transaction";
-import Operations from "../../components/operation/Operations";
-import Tezos from "../../assets/images/tezos.svg";
+import SmartContract from "../../components/call/SmartContract";
+import Transaction from "../../components/call/Transaction";
+import Operations from "../../components/call/Operations";
+import Tezos from "../../assets/images/tezos.svg"
 import PlayCircle from "../../assets/images/PlayCircle.svg";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -47,7 +47,7 @@ const Operation = () => {
             <Grid item md={6}>
               <Grid container spacing={4}>
                 <Grid item xs={12}>
-                  <Transfert />
+                  <SmartContract/>
                 </Grid>
                 <Grid item xs={12}>
                   <Transaction />
