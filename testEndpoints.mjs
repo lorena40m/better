@@ -8,7 +8,7 @@ let id, response
 
 id = 'tz1YQqEDkFQCTHz5pRLLsKt9532ELtc8FcpX'
 response = await ArtifactEndpoint({ id })
-console.log(response)
+console.log(JSON.stringify(response, null, 2))
 assertArtifactType(response, 'wallet')
 
 id = 'KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb'
