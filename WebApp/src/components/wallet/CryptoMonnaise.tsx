@@ -41,25 +41,7 @@ const CryptoMonnaise = () => {
   const label = { inputProps: { "aria-label": "Color switch demo" } };
   return (
     <Card className="ElevationBox">
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography className="ElevationBox__title" variant="h5" gutterBottom>
-          Crypto Monnaies
-        </Typography>
-        <Stack direction="row" spacing={2}>
-          <Typography className="SwitchDetail" variant="caption" gutterBottom>
-            Non certifié
-          </Typography>
-          <Switch
-            className="SwitchBtnToggler"
-            {...label}
-            defaultChecked
-            color="warning"
-          />
-          <Typography className="SwitchDetail" variant="caption" gutterBottom>
-            Certifié
-          </Typography>
-        </Stack>
-      </Box>
+     
 
       <TableContainer className="MonnaiseTable" component={Paper}>
         <Table aria-label="simple table">
