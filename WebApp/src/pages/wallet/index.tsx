@@ -21,16 +21,6 @@ const Wallet = () => {
       <Header />
       <Box className="pageTemplate WalletOprationCard">
         <Container maxWidth="xl">
-          {/* <Button onClick={() => setOpen(true)}>Open Modal</Button>
-          <Box sx={{ display: "flex" }}>
-            <Typography variant="h4" gutterBottom>
-              Portfeuille sur
-            </Typography>
-            <Button variant="outlined">
-              <Image src={EthereumIcon} alt="" height={15} width={15} />
-              Ethereum
-            </Button>
-          </Box> */}
           <div className="pageTemplate__head">
             <Typography variant="h4" className="pageTemplate__title">
               {t("portfolioOn")}
@@ -41,17 +31,6 @@ const Wallet = () => {
             </Typography>
           </div>
           <Grid className="walletProfile" container>
-            {/* <Grid md={6} gap={4} paddingRight={"15px"}>
-                <Grid xs={12}>
-                  <Profile />
-                </Grid>
-                <Grid xs={12}>
-                  <Nft />
-                </Grid>
-                <Grid xs={12}>
-                  <CryptoMonnaise />
-                </Grid>
-              </Grid> */}
             <Grid md={6} paddingRight={"15px"}>
               <Profile />
               <NftView />
@@ -59,15 +38,6 @@ const Wallet = () => {
             </Grid>
             <Grid md={6} paddingLeft={"15px"}>
               <Operations />
-              {/* <Grid xs={12} style={{ height: "100%" }}>
-                  <Box className="WalletCard">
-                    <Box className="WalletCard__head">
-                      <Typography variant="h4" className="WalletCard__title">
-                        Dernières opérations
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Grid> */}
             </Grid>
           </Grid>
         </Container>

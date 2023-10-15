@@ -29,7 +29,7 @@ const Sandbox: React.FC =() => {
       <Box className="cardBox-data">
         <Box className="cardBox-head">
           <Box sx={{ display: "flex" }}>
-            <Typography gutterBottom variant="h3" className="cardBox-title">
+            <Typography gutterBottom variant="h3" className="cardBox-title" style={{padding:"10px"}}>
               Smart Contract
             </Typography>
             <CreateIcon />
@@ -69,10 +69,7 @@ const Sandbox: React.FC =() => {
         </Box>
       </Box>
     </Box>
-          <Box className="treasuryBox_generalinfo">
-            <Typography variant="h4" className="treasuryBox__title">Treasury</Typography>
-            <Typography variant="h4" className="treasuryBox__gradient gradientText">300 Million of $</Typography>
-			    </Box>
+          
           
   </Box>
   

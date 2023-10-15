@@ -861,7 +861,29 @@
     }
   }
 }
-.sliderBlock {
+.addMetamaskParent {
+  width: 100%;
+  display: flex;
+  justify-content: right;
+}
+.addMetamask {
+  cursor: pointer;
+  border: 1px solid #2a3b51;
+  background-color: #ffffff;
+  display: inline-block;
+  border-radius: 100px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 40%;
+  margin-top: 15px;
+  &__p {
+    font-size: 21px !important;
+  }
+}
+.sliderBlock
+{
   .mySlider {
     overflow-x: hidden;
   }
@@ -919,6 +941,12 @@
       padding: 40px 0;
     }
   }
+.metamaskBouton {
+  background-color: white;
+  border: 1px solid rgba(181, 195, 214, 0.4);
+  border-radius: 50%;
+}
+
   .cardsModule {
     .cardBox {
       &-head {
