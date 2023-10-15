@@ -23,7 +23,7 @@ const Token = () => {
         <Container maxWidth="xl">
           <div className="pageTemplate__head">
             <Typography variant="h4" className="pageTemplate__title">
-              {t("Token on")}
+              {t("Tokens on")}
               <span className="pageTemplate__status">
                 
                 Tezos
