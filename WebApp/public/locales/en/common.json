@@ -40,6 +40,7 @@
     "PriorityPrice": "Priority Price",
     "net":"gwei",
     "burnt":"burnt",
-    "fee":"fee",
-    "Tokens on":"Tokens on"
+    "fee":"Fees",
+    "Tokens on":"Tokens on",
+    "Add to Metamask": "Add to Metamask"
   }

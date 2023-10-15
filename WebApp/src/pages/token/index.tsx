@@ -41,7 +41,7 @@ const Token = () => {
                     alt="See on Metamask"
                   />
                   <Typography variant="h4" className="addMetamask__p">
-                    Add to Metamask
+                    {t("Add to Metamask")}
                   </Typography>
                 </Box>
               </Box>

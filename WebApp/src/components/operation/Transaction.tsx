@@ -14,13 +14,13 @@ const Transaction = () => {
         onClick={() => setOpenList(!openList)}
       >
         <Typography variant="h5" className="transactionCard__head-title">
-          {t("block2")}
+          {t("fee")}
         </Typography>
         <Typography
           variant="h5"
           className="transactionCard__head-text gradientText"
         >
-          {t("fee")} : 0,47 $ 
+          0,47 $ 
         </Typography>
         <span
           className="transactionCard__head-icon"
@@ -29,52 +29,7 @@ const Transaction = () => {
           {/* <DoubleDownArrow /> */}
         </span>
       </Box>
-      {openList && (
-        <Box className="transactionCard__body">
-          <Box className="transactionCard__list">
-            <Box className="transactionCard__listTitle">
-              <Typography variant="h6" gutterBottom>
-                {t("fuel")}
-              </Typography>
-
-              <Typography variant="h6" gutterBottom textAlign={"right"}>
-                21000
-              </Typography>
-            </Box>
-            <ul className="transactionCard__listBox transactionCard__listBox--main">
-              <li>
-                <Typography variant="caption">{t("fuelPrice")}</Typography>
-                <Typography variant="caption"> 21,84 {t("net")}</Typography>
-              </li>
-              <li>
-                <Typography variant="caption">{t("startingPrice")}</Typography>
-                <Typography variant="caption">20,84 {t("net")}</Typography>
-              </li>
-              <li>
-                <Typography variant="caption"> {t("PriorityPrice")}</Typography>
-                <Typography variant="caption">1 {t("net")}</Typography>
-              </li>
-            </ul>
-          </Box>
-          <Box className="transactionCard__total">
-            <Box className="transactionCard__listTitle">
-              <Typography variant="h6" gutterBottom>
-                {t("cost")}
-              </Typography>
-
-              <Typography variant="h6" gutterBottom textAlign={"right"}>
-                0,00032 XTZ ( 0,47 $)
-              </Typography>
-            </Box>
-            <ul className="transactionCard__listBox">
-              <li>
-                <Typography variant="caption">{t("burnt")}</Typography>
-                <Typography variant="caption">0,00029 XTZ</Typography>
-              </li>
-            </ul>
-          </Box>
-        </Box>
-      )}
+      
     </Box>
   );
 };
