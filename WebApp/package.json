@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "cypress:open": "cypress open"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.15.0",
@@ -14,6 +15,7 @@
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.1",
+    "@taquito/taquito": "^17.3.2",
     "@types/node": "18.15.11",
     "@types/react": "18.0.34",
     "@types/react-dom": "18.0.11",
@@ -29,6 +31,7 @@
     "typescript": "5.0.4"
   },
   "devDependencies": {
+    "cypress": "^13.3.1",
     "prettier": "^2.8.7"
   }
 }
