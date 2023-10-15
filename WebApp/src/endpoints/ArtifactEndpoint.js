@@ -1,3 +1,5 @@
+const XTZ_TO_USD_PRICE = 0.65
+
 
 import axios from 'axios';
 import { get } from 'http';
@@ -265,19 +267,167 @@ async function get10LastOperations(address) {
   }
 }
 
-async function getTransactionAssets() {
+
+async function getOperationTZKTId(operationHash) {
+
+  try {
+      const url = `https://api.tzkt.io/v1/operations/${operationHash}`;
+
+      const response = await axios.get(url);
+
+
+      if (response.status === 200) {
+        return response.data?.[0].id;
+      } else {
+        console.error('Failed to fetch external data. Status code:', response.status);
+      }
+      } catch (error) {
+      console.error('Error:', error);
+      }
+}
+
+
+async function getTransactionAssets(operationHash) {
+  try {
+      const tzktId = await getOperationTZKTId(operationHash)
+
+      const url = `https://api.tzkt.io/v1/tokens/transfers/?transactionId=${tzktId}`;
+
+      const response = await axios.get(url);
+
+
+      if (response.status === 200) {
+        const tokenList = response.data;
+
+        return await Promise.all(tokenList.map(async tokenData => {
+          return {
+            coin: {
+              id: tokenData.token.contract.address,
+              logo: tokenData.token.metadata.thumbnailUri,
+              name: tokenData.token.metadata.name,
+              ticker: tokenData.token.metadata.symbol,
+              decimals: tokenData.token.metadata.decimals,
+              lastPrice: null, // TO CHECK: don't need
+              circulatingSupplyOnChain: tokenData.token.totalSupply,
+              holders: null, // TO CHECK: don't need
+            },
+            quantity: tokenData.amount,
+          }
+        }));
+
+      } else {
+        console.error('Failed to fetch external data. Status code:', response.status);
+      }
+      } catch (error) {
+      console.error('Error:', error);
+      }
+
   return []
 }
 
-async function getTransactionContractName() {
-  return ""
+
+async function isCollection(hash) {
+  try {
+      const url = `https://api.tzkt.io/v1/tokens/transfers/?token.contract=${hash}`;
+
+      const response = await axios.get(url);
+
+
+      if (response.status === 200) {
+        const tokenList = response.data;
+
+        return tokenList[0].token.metadata.decimals == 0;
+
+      } else {
+        console.error('Failed to fetch external data. Status code:', response.status);
+      }
+      } catch (error) {
+      console.error('Error:', error);
+      }
+
+  return []
 }
 
-async function getTransactionFunctionName() {
-  return ""
+async function getTransactionFunctionName(operationHash) {
+  try {
+      const url = `https://api.tzkt.io/v1/operations/transactions/${operationHash}`;
+
+      const response = await axios.get(url);
+
+
+      if (response.status === 200) {
+          const internalTransactionList = response.data;
+          const masterTransaction = internalTransactionList[0]
+          return masterTransaction.parameter.entrypoint
+      } else {
+        console.error('Failed to fetch external data. Status code:', response.status);
+      }
+      } catch (error) {
+      console.error('Error:', error);
+      }
 }
 
-async function getTokenSortedByValue() {
+async function getCoinData(contractHash, lastPrice) {
+  try {
+      const url = `https://api.tzkt.io/v1/tokens/?contract.eq=${contractHash}`;
+
+      const response = await axios.get(url);
+
+
+      if (response.status === 200) {
+          const coin = response.data[0]; //mark
+
+          // TODO : get Coin data
+          return {
+            id: contractHash,
+            logo: "", // TODO: get logo of a coin
+            name: coin.contract.alias,
+            ticker: '', // TODO
+            decimals: 6, // TODO
+            lastPrice: lastPrice, // TODO also
+            circulatingSupplyOnChain: coin.totalSupply,
+            holders: coin.holdersCount,
+          };
+
+      } else {
+        console.error('Failed to fetch external data. Status code:', response.status);
+      }
+      } catch (error) {
+      console.error('Error:', error);
+      }
+}
+
+// Tokens of a wallet
+async function getTokenSortedByValue(ownerAddress) {
+  // try {
+  //     const url = `https://api.tzkt.io/v1/tokens/balances/?account.eq=${ownerAddress}`;
+
+  //     const response = await axios.get(url);
+
+
+  //     if (response.status === 200) {
+  //       const tokenList = response.data; //mark
+
+  //       return await Promise.all(tokenList.map(async tokenData => {
+  //         const coin = await getCoinData(
+  //           tokenData.token.contract.address,
+  //           Math.floor(tokenData.balanceValue / tokenData.balance * XTZ_TO_USD_PRICE * 100).toString()
+  //         )
+
+  //         return {
+  //           coin,
+  //           quantity: tokenData.balance,
+  //           valueInXtz: tokenData.balanceValue,
+  //         }
+  //       }));
+
+  //     } else {
+  //       console.error('Failed to fetch external data. Status code:', response.status);
+  //     }
+  //     } catch (error) {
+  //     console.error('Error:', error);
+  //     }
+
   return []
 }
 
@@ -309,6 +459,23 @@ async function getContractAverageFee() {
   return 0
 }
 
+async function getContractData(contractHash) {
+  try {
+      const url = `https://api.tzkt.io/v1/contracts?address=${contractHash}`;
+
+      const response = await axios.get(url);
+
+
+      if (response.status === 200) {
+        return response.data[0];
+      } else {
+        console.error('Failed to fetch external data. Status code:', response.status);
+      }
+      } catch (error) {
+      console.error('Error:', error);
+      }
+}
+
 export default async ({
   id,
   pageSize,
@@ -324,9 +491,11 @@ export default async ({
     const date = await getTransactionTimestamp(id);
     const status = await getTransactionStatus(id); // TODO : check if return value is correct (waiting, success, failure)
     const assets = await getTransactionAssets(id);
-
-    // if it's a transfer
-    if(await parsing_hash(receiver) == "wallet" && await parsing_hash(sender)=="wallet") {
+    const contractData = await getContractData(receiver)
+    // if it's a native transfer
+    const contractName = contractData.alias;
+    const functionName = await getTransactionFunctionName(id);
+    if(await parsing_hash(receiver) == "wallet" || contractData.kind === 'asset' && functionName === 'transfer') {
       const transfer = {
         id: id,
         status: status,
@@ -345,21 +514,19 @@ export default async ({
       }
     }
     else {
-      const contractName = await getTransactionContractName(id);
-      const functionName = await getTransactionFunctionName(id);
       const call = {
         id: id,
         status: status,
         date: date,
         from: sender,
         to: receiver,
-        transferedAssets: {
+        transferedAssets: assets.map(asset => ({
           from: sender,
           to: receiver,
-          asset: amount,
-        },
-        contractName: contractName,
-        functionName: functionName,
+          asset,
+        })),
+        contractName,
+        functionName,
       }
       return{
         artifactType: functionName === 'transfer' ? 'transfer' : 'call',
@@ -368,7 +535,7 @@ export default async ({
     }
   }
 
-  else if (await parsing_hash(id) == "wallet"){
+  else if (await parsing_hash(id) == "wallet") {
     const wallet = {
       id : id,
       name : id, // TODO : getWalletName(id),
@@ -386,7 +553,19 @@ export default async ({
     }
 
   }
-  else if (await parsing_hash(id) == "smartContract"){
+  // Case Coin or Collection
+  else if ((await getContractData(id)).kind === 'asset') {
+    if (await isCollection(id)) {
+      return {
+        artifactType: 'collection',
+      }
+    }
+
+    return {
+        artifactType: 'coin',
+    }
+  }
+  else {
     const contract = {
       id : id,
       name : "",
@@ -406,17 +585,5 @@ export default async ({
       contract : contract,
       history : get10LastOperations(id),
     }
-
-// }
-//  // TO DO : implement the case where the hash is a collection
-//   else if (await parsing_hash(id) == "collection"){
-
-
-//   }
-
-// // TO DO : implement the case where the hash is a coin contract
-//   else if (await parsing_hash(id) == "coin") {
-
-//   }
-}
+  }
 }

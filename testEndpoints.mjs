@@ -5,7 +5,7 @@ function log(response) {
 }
 
 function assertArtifactType(response, expected) {
-    console.assert(response.type === expected, `❌ Should be a ${expected} artifact`)
+    console.assert(response.artifactType === expected, `❌ Should be a ${expected} artifact`)
 }
 
 let id, response
@@ -25,7 +25,7 @@ response = await ArtifactEndpoint({ id })
 log(response)
 assertArtifactType(response, 'collection')
 
-id = 'KT1UN1vQ9dt2pz1vALnkisn8z1NqPjr7cXfS'
+id = 'KT1GbyoDi7H1sfXmimXpptZJuCdHMh66WS9u'
 response = await ArtifactEndpoint({ id })
 log(response)
 assertArtifactType(response, 'contract')
