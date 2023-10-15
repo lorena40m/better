@@ -226,7 +226,7 @@ export type CollectionResponse = {
 }
 
 export type ContractResponse = {
-  artifactType: 'collection',
+  artifactType: 'contract',
   contract: Address & {
     contractName: string,
     creationDate: DateString,

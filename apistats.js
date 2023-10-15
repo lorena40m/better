@@ -135,6 +135,16 @@ async function get_10_last_calls_smart_contract(address) {
         throw error; // Throw the error to potentially be handled by the caller.
     }
 }
+get_10_last_calls_smart_contract("KT1UN1vQ9dt2pz1vALnkisn8z1NqPjr7cXfS")
+.then(result => {
+  if (result) {
+    console.log(result.hash);
+    console.log(result.status);
+    console.log(result.timestamp);
+  } else {
+    console.log('Transaction meta data not available or error occurred.');
+  }
+});
 
 async function get_creator_address(address) {
   const url = `https://api.tzstats.com/explorer/contract/${address}`;
@@ -182,13 +192,90 @@ async function get_publication_date(address) {
     }
   }
 
-  get_sold("KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC")
-  .then(data => {
-      console.log('Data from API: ', data);
-  })
-  .catch(error => {
-      console.error('Error: ', error);
-  });
+  // get_sold("KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC")
+  // .then(data => {
+  //     console.log('Data from API: ', data);
+  // })
+  // .catch(error => {
+  //     console.error('Error: ', error);
+  // });
+
+  async function getWalletNFTs(address) {
+    const url = 'https://data.objkt.com/v3/graphql';
+  
+    try {
+        const queryResult = await axios.post(url, {
+            query: 
+            `query test {
+              holder(where: {address: {_in: [${address}]}}) {
+                held_tokens {
+                  token {
+                    fa {
+                      creator_address
+                      metadata
+                      floor_price
+                      name
+                      contract
+                      token_link
+                      index_contract_metadata
+                      website
+                      collection_id
+                      collection_type
+                    }
+                    display_uri
+                    token_id
+                    galleries {
+                      gallery {
+                        floor_price
+                        items
+                        max_items
+                        logo
+                      }
+                      fa_contract
+                    }
+                  }
+                }
+              }
+            }
+            `,
+        });
+        const holderData = queryResult.data.data.holder[0];
+        const heldTokens = holderData.held_tokens;
+        const NFTs = [] 
+        heldTokens.forEach((token) => {
+        const faData = token.token.fa;
+        const galleryData = token.token.galleries.gallery;
+        const creatorAddress = faData.creator_address;
+        const metadata = faData.metadata;
+        const floorPrice = faData.floor_price;
+        const displayUri = token.token.display_uri;
+  
+        const collection = {
+          id : faData.contract,
+          image : galleryData.logo,
+          name : galleryData.name,
+          supply : galleryData.max_items,
+          floorPrice : galleryData.floor_price, 
+          topSale : 0, // TO FILL
+          marketplaceLink : "", // TO FILL
+        }
+      // Use the extracted data as needed
+        const Nft = {
+          id : faData.contract.concat("#", token.token.token_id),
+          image : token.token.display_uri,
+          name : faData.name,
+          collection : collection
+        }
+        NFTs.append(Nft);
+  
+    })
+        return NFTs;
+    }
+    catch (error) {
+        console.error('Error calling API: ', error);
+        throw error;
+    }
+  }
 
   async function get_nft(address) {
     const url = 'https://data.objkt.com/v3/graphql';
@@ -196,20 +283,41 @@ async function get_publication_date(address) {
     try {
         const queryResult = await axios.post(url, {
             query: 
-            `query test {holder(where: {address: { _in: [${address}]}}){
-held_tokens {
-token {
-fa {
-creator_address
-metadata
-floor_price
-}
-display_uri
-}
-}
-}}`,
+            `query test {
+              holder(where: {address: {_in: ["tz2WiNBo7mAnVFpT8Ni81Kwk5iWN4DbstFnm"]}}) {
+                held_tokens {
+                  token {
+                    fa {
+                      creator_address
+                      metadata
+                      floor_price
+                      name
+                      contract
+                      token_link
+                      index_contract_metadata
+                      website
+                      collection_id
+                      collection_type
+                    }
+                    display_uri
+                    token_id
+                    galleries {
+                      gallery {
+                        floor_price
+                        items
+                        max_items
+                        logo
+                      }
+                      fa_contract
+                    }
+                  }
+                }
+              }
+            }
+            `,
         });
         const result = queryResult.data.data;
+        
         return result;
     }
     catch (error) {
@@ -217,6 +325,46 @@ display_uri
         throw error;
     }
 }
+
+// get_nft("tz2WiNBo7mAnVFpT8Ni81Kwk5iWN4DbstFnm")
+// .then(data => {
+//     // Access the relevant data
+//     const holderData = data.holder[0];
+//     const heldTokens = holderData.held_tokens;
+
+// // Process each held token
+//     const NFTs : Nft[] = [] 
+//     heldTokens.forEach((token) => {
+//     const faData = token.token.fa;
+//     const galleryData = token.token.galleries.gallery;
+//     const creatorAddress = faData.creator_address;
+//     const metadata = faData.metadata;
+//     const floorPrice = faData.floor_price;
+//     const displayUri = token.token.display_uri;
+
+//     const collection = {
+//       id : faData.contract,
+//       image : galleryData.logo,
+//       name : galleryData.name,
+//       supply : galleryData.max_items,
+//       floorPrice : galleryData.floor_price, 
+//       topSale : 0, // TO FILL
+//       marketplaceLink : "", // TO FILL
+//     }
+//   // Use the extracted data as needed
+//     const Nft = {
+//       id : faData.contract.concat("#", token.token.token_id),
+//       image : token.token.display_uri,
+//       name : faData.name,
+//       collection : collection
+//     }
+//     NFTs.append(Nft);
+
+// })
+// })
+// .catch(error => {
+//     console.error('Error: ', error);
+// });
 
 async function getAccountLastTenTxs(account_address) {
   const tmp = [];
@@ -500,16 +648,17 @@ async function getTop50Cryptos() {
       throw error;
     }
   }
+}
 
-  getTop50Cryptos()
-  .then((cryptoList) => {
-    cryptoList.forEach((crypto) => {
-      console.log('Name:', crypto.name);
-      console.log('Symbol:', crypto.symbol);
-      console.log('Price:', `$${crypto.price}`);
-      console.log('--------------------------');
-    });
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
+  // getTop50Cryptos()
+  // .then((cryptoList) => {
+  //   cryptoList.forEach((crypto) => {
+  //     console.log('Name:', crypto.name);
+  //     console.log('Symbol:', crypto.symbol);
+  //     console.log('Price:', `$${crypto.price}`);
+  //     console.log('--------------------------');
+  //   });
+  // })
+  // .catch((error) => {
+  //   console.error('Error:', error);
+  // })
