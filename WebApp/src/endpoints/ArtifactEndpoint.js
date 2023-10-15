@@ -404,7 +404,7 @@ export default async ({
     return {
       artifactType: 'contract',
       contract : contract,
-      history : get10LastOperations(params.id),
+      history : get10LastOperations(id),
     }
 
 // }
