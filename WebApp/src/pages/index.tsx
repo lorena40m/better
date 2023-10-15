@@ -1,5 +1,6 @@
 const RATE_USD_TO_EUR = 0.95
 
+import { useState, useEffect } from 'react'
 import Head from "next/head";
 import Image from "next/image";
 import Header from "../components/Header";
@@ -29,7 +30,6 @@ import Background from "../components/others/background";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 
 import { HomeResponse } from '../endpoints/API';
 import HomeEndpoint from '../endpoints/HomeEndpoint';
@@ -41,18 +41,23 @@ export async function getServerSideProps({ locale }: any) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
-      homeResponse
+      homeResponse,
+      iniSeconds: ((new Date()) - (new Date(homeResponse.stats.lastBlockDate)))
     },
   };
 }
 
-
-export default function Home({ homeResponse }) {
+const h1WordsAnim = ["transaction^1000", "wallet^1000", "nft^1000"];
+export default function Home({ homeResponse, iniSeconds }) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const {locale} = router
+  const [seconds, setSeconds] = useState(iniSeconds)
+  useEffect(() => {
+    let i = setInterval(() => setSeconds(seconds => seconds + 1), 1000)
+    return () => clearInterval(i)
+  }, [])
 
-  const h1WordsAnim = ["transaction^1000", "wallet^1000", "nft^1000"];
 
   function formatEthPrice(ethPrice) {
     return new Intl.NumberFormat(locale, { style: 'currency', currency: locale === 'en' ? 'USD' : 'EUR' })
@@ -107,7 +112,7 @@ export default function Home({ homeResponse }) {
               rowSpacing={2}
               columnSpacing={{ xs: 1, sm: 2, md: 3 }}
             >
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={12} sm={12} md={4}>
                 <Box className="cardBox cardBox--info">
                   <Box className="cardBox-inner">
                     <Box className="cardBox-data">
@@ -134,7 +139,7 @@ export default function Home({ homeResponse }) {
                   </Box>
                 </Box>
               </Grid>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={12} sm={12} md={4}>
                 <Box className="cardBox">
                   <Box className="cardBox-inner">
                     <Box className="cardBox-head">
@@ -147,13 +152,13 @@ export default function Home({ homeResponse }) {
                       </Typography>
                     </Box>
                     <Typography variant="h4" className="cardBox-price">
-                      <span className="gradientText">0,01 $</span>
-                      <span className="cardBox-status">(number XTZ)</span>
+                      <span className="gradientText">{formatEthPrice(homeResponse.stats.normalFee)} $</span>
+                      <span className="cardBox-status">({homeResponse.stats.normalFee} XTZ)</span>
                     </Typography>
                   </Box>
                 </Box>
               </Grid>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={12} sm={12} md={4}>
                 <Box className="cardBox">
                   <Box className="cardBox-inner">
                     <Box className="cardBox-head">
@@ -164,29 +169,10 @@ export default function Home({ homeResponse }) {
                       >
                         {t("block3")}
                       </Typography>
-                      <span className="cardBox-status">li y 2 min</span>
+                      {/*<span className="cardBox-status">{homeResponse.stats.lastBlockDate}</span>*/}
                     </Box>
                     <Typography variant="h4" className="cardBox-price">
-                      <span className="gradientText">1 650 500</span>
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={6} md={3}>
-                <Box className="cardBox">
-                  <Box className="cardBox-inner">
-                    <Box className="cardBox-head">
-                      <Typography
-                        gutterBottom
-                        variant="h5"
-                        className="cardBox-title"
-                      >
-                        Emission
-                      </Typography>
-                      <span className="cardBox-status">li y 2 min</span>
-                    </Box>
-                    <Typography variant="h4" className="cardBox-price">
-                      <span className="gradientText">-1.13 Tez/min</span>
+                      <span className="gradientText">il y a {seconds % 15} seconds</span>
                     </Typography>
                   </Box>
                 </Box>
@@ -200,7 +186,7 @@ export default function Home({ homeResponse }) {
               <Box className="sectionHead-title">Collection NFT</Box>
               <SelectCustom />
             </Box>
-            <HCarousel />
+            <HCarousel trending={homeResponse.collections.trending} />
           </Container>
         </Box>
         <Box className="listTableBlock">

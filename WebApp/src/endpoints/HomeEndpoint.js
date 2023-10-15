@@ -97,7 +97,7 @@ async function get_trending_nft_collection() {
       const queryResult = await axios.post(url, {
         query: 
               `query test {
-                  gallery(order_by: {volume_24h: desc_nulls_last}, limit: 50) {
+                  gallery(order_by: {volume_24h: desc_nulls_last}, limit: 20) {
                     active_auctions
                     active_listing
                     description
@@ -142,7 +142,7 @@ async function get_top_nft_collection() {
       const queryResult = await axios.post(url, {
         query: 
               `query test {
-                gallery(order_by: {volume_total: desc_nulls_last}, limit: 50) {
+                gallery(order_by: {volume_total: desc_nulls_last}, limit: 20) {
                   active_auctions
                   active_listing
                   description
