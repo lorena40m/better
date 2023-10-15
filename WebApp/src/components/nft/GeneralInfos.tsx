@@ -13,9 +13,9 @@ import {
   import { appWithTranslation, useTranslation } from "next-i18next";
 
   const data: any =[
-    {id: "1", label: "Quantity", value: "555", currency: ""},
-    {id: "2", label: "Record Sale", value: "65", currency: "ETH"},
-    {id: "3", label: "Creation Date", value: "08/08/2020", currency: ""}
+    {id: "1", label: "Quantity", value: "4010", currency: ""},
+    {id: "2", label: "Record Sale", value: "5000", currency: "XTZ"},
+    {id: "3", label: "Creation Date", value: "01/07/2022", currency: ""}
   ]
 
   const Sandbox: React.FC =() => {
