@@ -57,7 +57,7 @@ export default function Header() {
     <AppBar
       position="static"
       className="siteHeader"
-      style={{ background: "transparent", border: "none", boxShadow: "none" }}
+      style={{ background: "#FAFAFB", border: "none", boxShadow: "none" }}
     >
       <Container maxWidth="xl">
         <Toolbar className="siteHeader-inner">

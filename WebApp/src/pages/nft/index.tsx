@@ -8,7 +8,6 @@ import GeneralInfos from "@/components/nft/GeneralInfos";
 import OtherInfos from "@/components/nft/OtherInfos";
 import ConfirmModal from "@/components/wallet/ConfirmModal";
 import tezosIcon from "../../assets/images/tezos.svg";
-
 import Image from "next/image";
 import Operations from "@/components/wallet/Operations";
 import { appWithTranslation, useTranslation } from "next-i18next";

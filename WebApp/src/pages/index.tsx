@@ -21,6 +21,7 @@ import HeadCrumb from "@/components/Header/HeadCrumb";
 import tezosLogo from "../assets/images/tezos_gradient.svg";
 import searchIcon from "../assets/iconSvg/searchIcon.svg";
 import TypingEffect from "../components/others/typingEffect";
+import Background from "../components/others/background";
 // import ScanIcon from "@/assets/iconSvg/ScanIcon.svg";
 
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -28,9 +29,8 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-import { HomeResponse } from '../endpoints/API'
-import HomeEndpoint from '../endpoints/HomeEndpoint'
-import zIndex from "@mui/material/styles/zIndex";
+import { HomeResponse } from '../endpoints/API';
+import HomeEndpoint from '../endpoints/HomeEndpoint';
 
 
 export async function getServerSideProps({ locale }: any) {

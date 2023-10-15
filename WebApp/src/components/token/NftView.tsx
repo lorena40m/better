@@ -90,7 +90,7 @@ const carouselData = [
 
 export default function NftView() {
   return (
-    <Box className="NftSlider">
+    <Box className="NftSlider NftSliderToken">
       <Typography variant="h4" className="NftSlider__title">
         NFT
       </Typography>
@@ -135,6 +135,7 @@ export default function NftView() {
                     width={240}
                     height={140}
                     style={{
+                      height: "240px",
                       objectFit: "cover",
                     }}
                   />

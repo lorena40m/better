@@ -43,7 +43,7 @@ const CryptoMonnaise = () => {
     <Card className="ElevationBox">
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography className="ElevationBox__title" variant="h5" gutterBottom>
-          CryptoMonnaise
+          Crypto Monnaies
         </Typography>
         <Stack direction="row" spacing={2}>
           <Typography className="SwitchDetail" variant="caption" gutterBottom>
