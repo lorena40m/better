@@ -36,7 +36,7 @@ import HomeEndpoint from '../endpoints/HomeEndpoint';
 
 
 export async function getServerSideProps({ locale }: any) {
-  const homeResponse = await HomeEndpoint()
+  const homeResponse = await HomeEndpoint({ pageSize: 10 })
 
   return {
     props: {
