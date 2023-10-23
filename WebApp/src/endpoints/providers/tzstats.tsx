@@ -22,9 +22,21 @@ async function getLastBlockHash() {
 }
 
 export async function getBlockDate() {
-  const last_block = await getLastBlockHash()
-  const data = await fetch(`explorer/block/${last_block}`)
-  return data?.time
+  const last_block = await getLastBlockHash();
+  const data = await fetch(`explorer/block/${last_block}`);
+  const time = data?.time;
+
+  if (time) {
+    // Parse the original time string as a Date object
+    const date = new Date(time);
+
+    // Format the date in the desired format
+    const formattedTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}-${String(date.getMinutes()).padStart(2, '0')}-${String(date.getSeconds()).padStart(2, '0')}`;
+
+    return formattedTime;
+  }
+
+  return null; // Handle the case where data?.time is null or undefined
 }
 
 export async function getXtzPrice() {
