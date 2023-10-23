@@ -26,43 +26,41 @@ import searchIcon from "../assets/iconSvg/searchIcon.svg";
 import TypingEffect from "../components/others/typingEffect";
 import Background from "../components/others/background";
 // import ScanIcon from "@/assets/iconSvg/ScanIcon.svg";
-
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-
-import { HomeResponse } from '../endpoints/API';
+import { HomeResponse, MiscellaneousResponse } from '../endpoints/API';
 import HomeEndpoint from '../endpoints/HomeEndpoint';
-
+import MiscellaneousEndpoint from '../endpoints/MiscellaneousEndpoint';
+import { formatPrice, formatToken } from '../utils/format'
 
 export async function getServerSideProps({ locale }: any) {
   const homeResponse = await HomeEndpoint({ pageSize: 10 })
+  const miscResponse = await MiscellaneousEndpoint({})
+  console.log(homeResponse, miscResponse)
 
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
       homeResponse,
-      iniSeconds: ((new Date()) - (new Date(homeResponse.stats.lastBlockDate)))
+      miscResponse,
+      iniSeconds: Math.floor(((new Date(homeResponse.stats.lastBlockDate)) - (new Date())) / 1000),
     },
   };
 }
 
 const h1WordsAnim = ["transaction^1000", "wallet^1000", "nft^1000"];
-export default function Home({ homeResponse, iniSeconds }) {
+export default function Home({ homeResponse, miscResponse, iniSeconds }:
+  { homeResponse: HomeResponse, miscResponse: MiscellaneousResponse, iniSeconds: number }
+) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const {locale} = router
   const [seconds, setSeconds] = useState(iniSeconds)
   useEffect(() => {
-    let i = setInterval(() => setSeconds(seconds => seconds + 1), 1000)
+    let i = setInterval(() => setSeconds(seconds => seconds - 1), 1000)
     return () => clearInterval(i)
   }, [])
-
-
-  function formatEthPrice(ethPrice) {
-    return new Intl.NumberFormat(locale, { style: 'currency', currency: locale === 'en' ? 'USD' : 'EUR' })
-      .format(locale === 'en' ? ethPrice : ethPrice * RATE_USD_TO_EUR)
-  }
 
   return (
     <>
@@ -127,7 +125,7 @@ export default function Home({ homeResponse, iniSeconds }) {
                         </Typography>
                       </Box>
                       <Typography variant="h4" className="cardBox-price">
-                        <span className="gradientText">{ formatEthPrice(homeResponse.stats.ethPrice) }</span>
+                        <span className="gradientText">{ formatPrice(miscResponse.xtzPrice, locale, miscResponse.rates) }</span>
                       </Typography>
                     </Box>
                     <Image
@@ -152,8 +150,8 @@ export default function Home({ homeResponse, iniSeconds }) {
                       </Typography>
                     </Box>
                     <Typography variant="h4" className="cardBox-price">
-                      <span className="gradientText">{formatEthPrice(homeResponse.stats.normalFee)} $</span>
-                      <span className="cardBox-status">({homeResponse.stats.normalFee} XTZ)</span>
+                      <span className="gradientText">{formatPrice((homeResponse.stats.normalFee / 1_000_000) * miscResponse.xtzPrice, locale, miscResponse.rates)}</span>
+                      <span className="cardBox-status">({formatToken(homeResponse.stats.normalFee, 6, locale)} XTZ)</span>
                     </Typography>
                   </Box>
                 </Box>
@@ -172,7 +170,7 @@ export default function Home({ homeResponse, iniSeconds }) {
                       {/*<span className="cardBox-status">{homeResponse.stats.lastBlockDate}</span>*/}
                     </Box>
                     <Typography variant="h4" className="cardBox-price">
-                      <span className="gradientText">il y a {seconds % 15} seconds</span>
+                      <span className="gradientText">{t('inXSeconds', {seconds: 15 + seconds % 15})}</span>
                     </Typography>
                   </Box>
                 </Box>

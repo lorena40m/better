@@ -200,7 +200,7 @@ body {
   font-size: 16px;
   line-height: 22px;
   color: #2A3B51;
-  text-transform: capitalize;
+  text-transform: none;
   font-family: 'Manrope', sans-serif;
 }
 

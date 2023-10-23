@@ -16,7 +16,7 @@ const HeadCrumb = () => {
       >
         <Container maxWidth="xl">
           <Box className="topHeader-inner">
-            <Typography>{t("topHeader")} ? 🕵️‍♂️</Typography>
+            <Typography>{t("topHeader")}</Typography>
             <Button>{t("topButton")}</Button>
           </Box>
         </Container>

@@ -134,7 +134,7 @@ export type MiscellaneousResponse = {
 
 export type HomeResponse = {
   stats: {
-    normalFee: DollarCents, // ?
+    normalFee: TokenDecimals, // ?
     lastBlockNumber: Integer, // ?
     lastBlockDate: DateString, // ?
   },
