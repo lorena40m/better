@@ -55,12 +55,12 @@ export async function getTopNftCollection(pageSize, criteria: 'top' | 'trending'
     }
   }`))?.gallery?.map((item) => ({
     id: item.gallery_id,
-    image: item.logo,
+    image: item.logo ? `https://ipfs.io/ipfs/${item.logo.split('://')[1]}` : "", // Convert "ipfs" to "https"
     name: item.name,
-    supply: item.items,
-    floorPrice: item.floor_price,
-    topSale: null,
-    marketplaceLink: null,
+    supply: item.items ? item.items.toString() : "0",
+    floorPrice: item.floor_price ? item.floor_price.toString(): "0",
+    topSale: "", // TODO : request topSale
+    marketplaceLink:"", // TODO : request marketplaceLink
   } as Collection)) as Collection[]
 }
 
