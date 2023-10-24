@@ -34,7 +34,7 @@ export async function getTopNftCollection(pageSize, criteria: 'top' | 'trending'
     trending: '{volume_24h: desc_nulls_last}',
   }[criteria]
 
-  return await fetch(`query test {
+  return (await fetch(`query test {
     gallery(order_by: ${orderBy}, limit: ${pageSize}) {
       active_auctions
       active_listing
@@ -53,7 +53,7 @@ export async function getTopNftCollection(pageSize, criteria: 'top' | 'trending'
       volume_total
       gallery_id
     }
-  }`)?.gallery?.map((item) => ({
+  }`))?.gallery?.map((item) => ({
     id: item.gallery_id,
     image: item.logo,
     name: item.name,

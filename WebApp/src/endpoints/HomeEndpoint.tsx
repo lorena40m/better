@@ -7,8 +7,7 @@ import {} from './providers/coinmarketcap'
 export default (async ({ pageSize }) => {
   return {
     stats : {
-      ethPrice: await getXtzPrice(),
-      normalFee: '000', // 0.0015 XTZ
+      normalFee: '001500', // 0.0015 XTZ
       lastBlockNumber: (await getBlockNumber())?.toString() ?? null,
       lastBlockDate: await getBlockDate(),
     },
