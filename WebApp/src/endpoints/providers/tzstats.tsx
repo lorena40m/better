@@ -53,7 +53,25 @@ export async function getWallet(address) {
   }
 }
 
-export async function get10LastOperations(address) {
-  const data = await fetch(`explorer/contract/${address}/calls?prim=1&order=desc&limit=10`)
+export async function getLastOperations(address,number) {
+  const data = await fetch(`explorer/contract/${address}/calls?prim=1&order=desc&limit=${number}`)
   return data
+}
+// TODO : convert the averageFee to tez instead of gas
+// this function calculate the averageFee for an address based over the last 100 txs
+export async function getAverageFeeAddress(address) {
+  const NUMBER_OF_TXS = 100
+  const data = await getLastOperations(address,NUMBER_OF_TXS)
+  var totalGasUsed = 0
+  if (Array.isArray(data)) {
+    for (var index in data) {
+      totalGasUsed += data[index]?.gas_used;
+    }
+    const averageFee = totalGasUsed / NUMBER_OF_TXS;
+    return averageFee;
+  } else {
+    // Handle the case where data is not an array (e.g., if there's an issue with the API response)
+    console.error("Data is not an array:", data);
+    return null; // or another appropriate value
+  }
 }

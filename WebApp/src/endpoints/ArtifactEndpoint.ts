@@ -7,11 +7,11 @@ import {
 import {
   getTransaction, getTransactionStatus, isCollection,
   getCoinData, getTransactionAssets ,getContractData,
-  getTransactionFunctionName, getTokenSortedByValue,
+  getTransactionFunctionName, getTokenSortedByValue, 
 } from './providers/tzkt'
-import { getWallet, get10LastOperations } from './providers/tzstats'
+import { getWallet, getLastOperations } from './providers/tzstats'
 import { getWalletNfts } from './providers/objkt'
-import { getXtzPrice } from './providers/tzstats'
+import { getXtzPrice,getAverageFeeAddress } from './providers/tzstats'
 
 async function discrimateArtifactType(hash: string) {
   if (typeof hash !== 'string')
@@ -121,24 +121,25 @@ export default (async ({
   else if (artifactType === 'contract') {
     const contractData = await getContractData(id)
     const { nativeBalance, operationCount } = await getWallet(id)
-
+    const averageFee = await getAverageFeeAddress(id)
+    const NUMBER_OF_TXS=10
     return {
       artifactType: 'contract',
       contract : {
         id : id,
         name : "",
         contractName: contractData?.alias,
-        creationDate: contractData?.firstActivityTime, // TODO
-        creator: contractData?.creator.address, // TODO
-        operationCount: contractData?.numTransactions, // TODO
+        creationDate: contractData?.firstActivityTime,
+        creator: contractData?.creator.address,
+        operationCount: contractData?.numTransactions, // TODO : check why operationCount from tzstats getWallet is different from numTransactions of tzkt
         immutable: 0,
         autonomous : 0,
-        averageFee: null, // TODO
+        averageFee: averageFee, // TODO
         treasuryValue: nativeBalance, // TODO: compute total value
         auditCount: 0,
         officialWebsite: "",
       },
-      history : get10LastOperations(id),
+      history : getLastOperations(id,NUMBER_OF_TXS),
     } as ContractResponse
   }
 
