@@ -26,6 +26,7 @@ describe('ArtifactEndpoint', () => {
     for (const artifactType in ids) {
       const t1 = new Date()
       const params = {id: ids[artifactType], pageSize: 100}
+      console.log(artifactType)
 
       let res, response
       try {

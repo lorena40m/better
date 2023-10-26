@@ -128,9 +128,9 @@ export default (async ({
         id : id,
         name : "",
         contractName: contractData?.alias,
-        creationDate: null, // TODO
-        creator: null, // TODO
-        operationCount: null, // TODO
+        creationDate: contractData?.firstActivityTime, // TODO
+        creator: contractData?.creator.address, // TODO
+        operationCount: contractData?.numTransactions, // TODO
         immutable: 0,
         autonomous : 0,
         averageFee: null, // TODO
