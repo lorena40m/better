@@ -1,4 +1,9 @@
 import axios from 'axios'
+import {
+  getTransaction, getTransactionStatus, isCollection,
+  getCoinData, getTransactionAssets ,getContractData,
+  getTransactionFunctionName, getTokenSortedByValue, 
+} from './tzkt'
 
 async function fetch(urn: string) {
   try {
@@ -74,4 +79,67 @@ export async function getAverageFeeAddress(address) {
     console.error("Data is not an array:", data);
     return null; // or another appropriate value
   }
+}
+
+
+async function discrimateOperationType(receiver, contractData, functionName) {
+  return receiver.startsWith('tz') // native xtz transfer
+    || contractData.kind === 'asset' && functionName === 'transfer' // fa2 transfer
+    ? 'transfer' : 'call'
+}
+
+
+export async function listLastOperations(address, number) {
+    const data = await getLastOperations(address,number)
+    var listOfOperations = []
+    for (var index in data){
+       let id = data[index]?.hash 
+       var { tzktId, sender, receiver, amount, fee, timestamp } = await getTransaction(id)
+       var status = await getTransactionStatus(id)
+       var assets = await getTransactionAssets(tzktId);
+       var contractData = await getContractData(receiver)
+       var functionName = await getTransactionFunctionName(id);
+       var operationType = await discrimateOperationType(receiver, contractData, functionName)
+  
+        if (operationType === 'transfer') {
+          var transfer = {
+            artifactType: 'transfer',
+            operation: {
+              id: id,
+              status: status,
+              date: timestamp,
+              from: sender,
+              to: receiver,
+              transferedAssets: {
+                from: sender,
+                to: receiver,
+                asset: assets,
+              }
+            },
+          } 
+          listOfOperations.push(transfer)
+        }
+
+        else {
+          var call = {
+            artifactType: 'call',
+            operation: {
+              id: id,
+              status: status,
+              date: timestamp,
+              from: sender,
+              to: receiver,
+              transferedAssets: assets.map(asset => ({
+                from: sender,
+                to: receiver,
+                asset,
+              })),
+              contractName: contractData?.alias,
+              functionName,
+            },
+          }
+          listOfOperations.push(call)
+        }
+  }
+  return listOfOperations
 }

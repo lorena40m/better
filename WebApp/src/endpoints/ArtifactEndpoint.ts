@@ -9,7 +9,7 @@ import {
   getCoinData, getTransactionAssets ,getContractData,
   getTransactionFunctionName, getTokenSortedByValue, 
 } from './providers/tzkt'
-import { getWallet, getLastOperations } from './providers/tzstats'
+import { getWallet, getLastOperations, listLastOperations } from './providers/tzstats'
 import { getWalletNfts } from './providers/objkt'
 import { getXtzPrice,getAverageFeeAddress } from './providers/tzstats'
 
@@ -139,7 +139,7 @@ export default (async ({
         auditCount: 0,
         officialWebsite: "",
       },
-      history : getLastOperations(id,NUMBER_OF_TXS),
+      history : listLastOperations(id,NUMBER_OF_TXS),
     } as ContractResponse
   }
 
