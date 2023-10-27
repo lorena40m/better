@@ -92,17 +92,16 @@ async function discrimateOperationType(receiver, contractData, functionName) {
 export async function listLastOperations(address, number) {
     const data = await getLastOperations(address,number)
     var listOfOperations = []
-    for (var index in data){
-       let id = data[index]?.hash 
+    return data.map(async (operation) => {
+       let id = operation?.hash 
        var { tzktId, sender, receiver, amount, fee, timestamp } = await getTransaction(id)
        var status = await getTransactionStatus(id)
        var assets = await getTransactionAssets(tzktId);
        var contractData = await getContractData(receiver)
        var functionName = await getTransactionFunctionName(id);
        var operationType = await discrimateOperationType(receiver, contractData, functionName)
-  
         if (operationType === 'transfer') {
-          var transfer = {
+          return {
             artifactType: 'transfer',
             operation: {
               id: id,
@@ -115,9 +114,9 @@ export async function listLastOperations(address, number) {
                 to: receiver,
                 asset: assets,
               }
-            },
+            } as Transfer 
           } 
-          listOfOperations.push(transfer)
+          
         }
 
         else {
@@ -132,14 +131,15 @@ export async function listLastOperations(address, number) {
               transferedAssets: assets.map(asset => ({
                 from: sender,
                 to: receiver,
-                asset,
+                asset : assets,
               })),
               contractName: contractData?.alias,
               functionName,
             },
-          }
-          listOfOperations.push(call)
-        }
-  }
+          } as Call
+          
+        } 
+
+  }) as Operation[] 
   return listOfOperations
 }
