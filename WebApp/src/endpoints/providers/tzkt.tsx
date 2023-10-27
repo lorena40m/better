@@ -22,9 +22,9 @@ export async function getTransaction(hash) {
   return {
     tzktId: data?.[0]?.id as string | null,
     sender: data?.[0]?.sender?.address as string | null,
-    receiver: data?.[1]?.target?.address as string | null,
-    amount: data?.[1]?.amount as string | null,
-    fee: data?.[1]?.bakerFee as string | null,
+    receiver: data?.[1]?.target?.address || data?.[0]?.target?.address as string | null,
+    amount: data?.[1]?.amount || data?.[0]?.amount  as string | null,
+    fee: data?.[1]?.bakerFee || data?.[0]?.bakerFee as string | null,
     timestamp: data?.[0]?.timestamp as string | null,
   }
 }
