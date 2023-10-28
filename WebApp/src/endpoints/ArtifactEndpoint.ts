@@ -122,7 +122,7 @@ export default (async ({
     const contractData = await getContractData(id)
     const { nativeBalance, operationCount } = await getWallet(id)
     const averageFee = await getAverageFeeAddress(id)
-    const NUMBER_OF_TXS=10
+    const NUMBER_OF_TXS=5
     return {
       artifactType: 'contract',
       contract : {
@@ -139,7 +139,7 @@ export default (async ({
         auditCount: 0,
         officialWebsite: "",
       },
-      history : listLastOperations(id,NUMBER_OF_TXS),
+      history : await listLastOperations(id,NUMBER_OF_TXS),
     } as ContractResponse
   }
 

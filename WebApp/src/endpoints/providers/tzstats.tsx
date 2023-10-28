@@ -88,58 +88,55 @@ async function discrimateOperationType(receiver, contractData, functionName) {
     ? 'transfer' : 'call'
 }
 
-
 export async function listLastOperations(address, number) {
-    const data = await getLastOperations(address,number)
-    var listOfOperations = []
-    return data.map(async (operation) => {
-       let id = operation?.hash 
-       var { tzktId, sender, receiver, amount, fee, timestamp } = await getTransaction(id)
-       var status = await getTransactionStatus(id)
-       var assets = await getTransactionAssets(tzktId);
-       var contractData = await getContractData(receiver)
-       var functionName = await getTransactionFunctionName(id);
-       var operationType = await discrimateOperationType(receiver, contractData, functionName)
-        if (operationType === 'transfer') {
-          return {
-            artifactType: 'transfer',
-            operation: {
-              id: id,
-              status: status,
-              date: timestamp,
-              from: sender,
-              to: receiver,
-              transferedAssets: {
-                from: sender,
-                to: receiver,
-                asset: assets,
-              }
-            } as Transfer 
-          } 
-          
-        }
+  const data = await getLastOperations(address, number);
+  const listOfOperations = await Promise.all(data.map(async (operation) => {
+    let id = operation?.hash;
+    var { tzktId, sender, receiver, amount, fee, timestamp } = await getTransaction(id);
+    var status = await getTransactionStatus(id);
+    var assets = await getTransactionAssets(tzktId);
+    var contractData = await getContractData(receiver);
+    var functionName = await getTransactionFunctionName(id);
+    var operationType = await discrimateOperationType(receiver, contractData, functionName);
 
-        else {
-          var call = {
-            artifactType: 'call',
-            operation: {
-              id: id,
-              status: status,
-              date: timestamp,
-              from: sender,
-              to: receiver,
-              transferedAssets: assets.map(asset => ({
-                from: sender,
-                to: receiver,
-                asset : assets,
-              })),
-              contractName: contractData?.alias,
-              functionName,
-            },
-          } as Call
-          
-        } 
+    if (operationType === 'transfer') {
+      return {
+        artifactType: 'transfer',
+        operation: {
+          id: id,
+          status: status,
+          date: timestamp,
+          from: sender,
+          to: receiver,
+          transferedAssets: {
+            from: sender,
+            to: receiver,
+            asset: assets,
+          },
+        } as Transfer,
+      };
+    } else {
+      return {
+        artifactType: 'call',
+        operation: {
+          id: id,
+          status: status,
+          date: timestamp,
+          from: sender,
+          to: receiver,
+          transferedAssets: assets.map((asset) => ({
+            from: sender,
+            to: receiver,
+            asset: asset,
+          })),
+          contractName: contractData?.alias,
+          functionName,
+        },
+      } as Call;
+    }
+  }));
 
-  }) as Operation[] 
-  return listOfOperations
+  return listOfOperations;
 }
+
+
