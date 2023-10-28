@@ -61,7 +61,7 @@ export default (async ({
             asset: assets,
           }
         },
-      } as TransferResponse
+      } // as TransferResponse // TO FIX
     }
 
     else {
@@ -81,7 +81,7 @@ export default (async ({
           contractName: contractData?.alias,
           functionName,
         },
-      } as CallResponse
+      } // as CallResponse // TO FIX
     }
   }
 
@@ -139,7 +139,7 @@ export default (async ({
         officialWebsite: "",
       },
       history : get10LastOperations(id),
-    } as ContractResponse
+    } // as ContractResponse // TO FIX
   }
 
   throw new Error('Impossible to understand the hash: ' + id)

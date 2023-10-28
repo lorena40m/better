@@ -44,7 +44,7 @@ const Sandbox: React.FC =() => {
           >
             {data.map((item: any) => (
              
-                <Box textAlign={"center"}>
+                <Box textAlign={"center"} key={item.id}>
                   <Typography
                     variant="h6"
                     className="cardBox-price"

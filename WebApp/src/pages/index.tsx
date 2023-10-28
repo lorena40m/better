@@ -44,7 +44,7 @@ export async function getServerSideProps({ locale }: any) {
       ...(await serverSideTranslations(locale, ["common"])),
       homeResponse,
       miscResponse,
-      iniSeconds: Math.floor(((new Date(homeResponse.stats.lastBlockDate)) - (new Date())) / 1000),
+      iniSeconds: Math.floor((+(new Date(homeResponse.stats.lastBlockDate)) - +(new Date())) / 1000),
     },
   };
 }
@@ -150,7 +150,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds }:
                       </Typography>
                     </Box>
                     <Typography variant="h4" className="cardBox-price">
-                      <span className="gradientText">{formatPrice((homeResponse.stats.normalFee / 1_000_000) * miscResponse.xtzPrice, locale, miscResponse.rates)}</span>
+                      <span className="gradientText">{formatPrice(((+homeResponse.stats.normalFee / 1_000_000) * +miscResponse.xtzPrice).toString(), locale, miscResponse.rates)}</span>
                       <span className="cardBox-status">({formatToken(homeResponse.stats.normalFee, 6, locale)} XTZ)</span>
                     </Typography>
                   </Box>

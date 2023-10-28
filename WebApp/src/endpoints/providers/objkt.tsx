@@ -115,7 +115,7 @@ export async function getWalletNfts(address: string) {
         name : galleryData?.name,
         supply : galleryData?.max_items,
         floorPrice : galleryData?.floor_price,
-        topSale : 0, // TO FILL
+        topSale : "0", // TO FILL
         marketplaceLink : "", // TO FILL
       } as Collection,
     } as Nft

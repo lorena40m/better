@@ -16,7 +16,7 @@ export type DateString = string // ISO string
 /*************** ENDPOINTS ***************/
 /*****************************************/
 
-export type MiscellaneousEndpoint = () => Promise<MiscellaneousResponse>
+export type MiscellaneousEndpoint = ({}) => Promise<MiscellaneousResponse>
 
 // Endpoint used to display the Home page
 export type HomeEndpoint = (params: {
