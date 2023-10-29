@@ -87,7 +87,7 @@ export default (async ({
 
   else if (artifactType === 'wallet') {
     const { nativeBalance, operationCount } = await getWallet(id)
-
+    const NUMBER_OF_TXS=5
     return {
       artifactType: 'wallet',
       wallet: {
@@ -100,7 +100,7 @@ export default (async ({
       tokens: await getTokenSortedByValue(id, +(await getXtzPrice()) / 100), // sorted by value
       uncertifiedTokens: [], // paginated, sorted by last transfer date
       nfts: await getWalletNfts(id), // sorted by value
-      history: [], // paginated
+      history: await listLastOperations(id,NUMBER_OF_TXS), // paginated
     } as WalletResponse
   }
 

@@ -59,7 +59,13 @@ export async function getWallet(address) {
 }
 
 export async function getLastOperations(address,number) {
-  const data = await fetch(`explorer/contract/${address}/calls?prim=1&order=desc&limit=${number}`)
+  let data
+  if (address.startsWith('KT')) {
+  data = await fetch(`explorer/contract/${address}/calls?prim=1&order=desc&limit=${number}`)
+  }
+  else { 
+  data = await fetch(`explorer/account/${address}/operations?prim=1&order=desc&limit=${number}`)
+  }
   return data
 }
 // TODO : convert the averageFee to tez instead of gas
@@ -67,6 +73,7 @@ export async function getLastOperations(address,number) {
 export async function getAverageFeeAddress(address) {
   const NUMBER_OF_TXS = 100
   const data = await getLastOperations(address,NUMBER_OF_TXS)
+
   var totalGasUsed = 0
   if (Array.isArray(data)) {
     for (var index in data) {
