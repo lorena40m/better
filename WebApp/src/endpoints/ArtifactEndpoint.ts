@@ -105,16 +105,59 @@ export default (async ({
   }
 
   else if (artifactType === 'collection') {
+    const contractData = await getContractData(id)
+    const { nativeBalance, operationCount } = await getWallet(id)
+    const averageFee = await getAverageFeeAddress(id)
+    const NUMBER_OF_TXS=5
     return {
       artifactType: 'collection',
+      //collection,
+      //items,
+      //saleHistory,
+      history : await listLastOperations(id,NUMBER_OF_TXS),
+      contract : {
+        id : id,
+        name : "",
+        contractName: contractData?.alias,
+        creationDate: contractData?.firstActivityTime,
+        creator: contractData?.creator.address,
+        operationCount: contractData?.numTransactions, // TODO : check why operationCount from tzstats getWallet is different from numTransactions of tzkt
+        immutable: 0,
+        autonomous : 0,
+        averageFee: averageFee, // TODO
+        treasuryValue: nativeBalance, // TODO: compute total value
+        auditCount: 0,
+        officialWebsite: "",
+      },
     } as CollectionResponse
   }
 
   else if (artifactType === 'coin') {
     // const coin = await getCoinData(contractHash, lastPrice)
-
+    const contractData = await getContractData(id)
+    const { nativeBalance, operationCount } = await getWallet(id)
+    const averageFee = await getAverageFeeAddress(id)
+    const NUMBER_OF_TXS=5
     return {
-        artifactType: 'coin',
+      artifactType: 'coin',
+      //collection,
+      //items,
+      //saleHistory,
+      history : await listLastOperations(id,NUMBER_OF_TXS),
+      contract : {
+        id : id,
+        name : "",
+        contractName: contractData?.alias,
+        creationDate: contractData?.firstActivityTime,
+        creator: contractData?.creator.address,
+        operationCount: contractData?.numTransactions, // TODO : check why operationCount from tzstats getWallet is different from numTransactions of tzkt
+        immutable: 0,
+        autonomous : 0,
+        averageFee: averageFee, // TODO
+        treasuryValue: nativeBalance, // TODO: compute total value
+        auditCount: 0,
+        officialWebsite: "",
+      },
     } as CoinResponse
   }
 
