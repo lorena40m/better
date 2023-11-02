@@ -51,7 +51,6 @@ export async function getTransactionAssets(tzktId) {
       }
     }) as Token[] | null
 }
-
 export async function isCollection(hash) {
   return (await fetch(`v1/tokens/transfers/?token.contract=${hash}`))
     ?.[0]?.token?.metadata?.decimals == 0
@@ -63,16 +62,16 @@ export async function getTransactionFunctionName(hash) {
   return masterTransaction?.parameter?.entrypoint as string | null
 }
 
-export async function getCoinData(contractHash, lastPrice) {
+export async function getCoinData(contractHash) {
   const l = x => { console.log(x); return x }
   const coin = l(await fetch(`v1/tokens/?contract=${contractHash}`))?.[0]
   return {
     id: contractHash,
     logo: "", // TODO: get logo of a coin
     name: coin.contract.alias,
-    ticker: '', // TODO
-    decimals: 6, // TODO
-    lastPrice: lastPrice, // TODO also
+    ticker: coin.metadata.symbol, // TODO
+    decimals: coin.metadata.decimals, // TODO
+    lastPrice: 0, // TODO also
     circulatingSupplyOnChain: coin.totalSupply,
     holders: coin.holdersCount,
   } as Coin

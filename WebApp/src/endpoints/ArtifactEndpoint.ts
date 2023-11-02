@@ -138,12 +138,16 @@ export default (async ({
     const { nativeBalance, operationCount } = await getWallet(id)
     const averageFee = await getAverageFeeAddress(id)
     const NUMBER_OF_TXS=5
+    const coin = await getCoinData(id)
     return {
       artifactType: 'coin',
-      //collection,
-      //items,
-      //saleHistory,
-      history : await listLastOperations(id,NUMBER_OF_TXS),
+      coin:{
+        ...coin,
+        yearlyTransfers:0,
+        yearlyVolume:0,
+      },  
+      //holders,
+      //history : await listLastOperations(id,NUMBER_OF_TXS),
       contract : {
         id : id,
         name : "",
