@@ -67,7 +67,7 @@ export async function getCoinData(contractHash) {
   const coin = l(await fetch(`v1/tokens/?contract=${contractHash}`))?.[0]
   return {
     id: contractHash,
-    logo: "", // TODO: get logo of a coin
+    logo: coin.metadata.thumbnailUri, // TODO: get logo of a coin
     name: coin.contract.alias,
     ticker: coin.metadata.symbol, // TODO
     decimals: coin.metadata.decimals, // TODO
@@ -75,6 +75,17 @@ export async function getCoinData(contractHash) {
     circulatingSupplyOnChain: coin.totalSupply,
     holders: coin.holdersCount,
   } as Coin
+}
+
+export async function getCoinHolders(contractHash) {
+  return( await fetch(`v1/tokens/balances?token.contract=${contractHash}`))
+  ?.map(holderData => {
+      return {
+        id : holderData.account.address,
+        name : "",
+        quantity : holderData.balance,
+      }
+    }) as Holder[] | null
 }
 
 export async function getTokenSortedByValue(ownerAddress: string, xtzPrice: number) {

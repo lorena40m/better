@@ -7,7 +7,8 @@ import {
 import {
   getTransaction, getTransactionStatus, isCollection,
   getCoinData, getTransactionAssets ,getContractData,
-  getTransactionFunctionName, getTokenSortedByValue, 
+  getTransactionFunctionName, getTokenSortedByValue,
+  getCoinHolders,
 } from './providers/tzkt'
 import { getWallet, getLastOperations, listLastOperations } from './providers/tzstats'
 import { getWalletNfts } from './providers/objkt'
@@ -139,6 +140,7 @@ export default (async ({
     const averageFee = await getAverageFeeAddress(id)
     const NUMBER_OF_TXS=5
     const coin = await getCoinData(id)
+    const holders = await getCoinHolders(id)
     return {
       artifactType: 'coin',
       coin:{
@@ -146,7 +148,7 @@ export default (async ({
         yearlyTransfers:0,
         yearlyVolume:0,
       },  
-      //holders,
+      holders : holders,
       //history : await listLastOperations(id,NUMBER_OF_TXS),
       contract : {
         id : id,
