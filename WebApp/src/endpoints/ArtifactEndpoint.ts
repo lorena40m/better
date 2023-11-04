@@ -8,7 +8,7 @@ import {
   getTransaction, getTransactionStatus, isCollection,
   getCoinData, getTransactionAssets ,getContractData,
   getTransactionFunctionName, getTokenSortedByValue,
-  getCoinHolders,
+  getCoinHolders, getCoinYearlyTransfersAndVolume,
 } from './providers/tzkt'
 import { getWallet, getLastOperations, listLastOperations } from './providers/tzstats'
 import { getWalletNfts } from './providers/objkt'
@@ -141,12 +141,13 @@ export default (async ({
     const NUMBER_OF_TXS=5
     const coin = await getCoinData(id)
     const holders = await getCoinHolders(id)
+    const coinYearlyData = await getCoinYearlyTransfersAndVolume(id)
     return {
       artifactType: 'coin',
       coin:{
         ...coin,
-        yearlyTransfers:0,
-        yearlyVolume:0,
+        yearlyTransfers: coinYearlyData?.count,
+        yearlyVolume: coinYearlyData?.sum,
       },  
       holders : holders,
       //history : await listLastOperations(id,NUMBER_OF_TXS),
