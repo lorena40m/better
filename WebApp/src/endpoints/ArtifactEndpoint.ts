@@ -108,14 +108,28 @@ export default (async ({
   id,
   pageSize,
 }) => {
+  const { nativeBalance, operationCount } = await getWallet(id)
   const { artifactType, contractData } = await discrimateArtifactType(id)
+  const contractObject = {
+        id : id,
+        name : contractData?.alias,
+        contractName: contractData?.alias,
+        creationDate: contractData?.firstActivityTime,
+        creator: contractData?.creator.address,
+        operationCount: contractData?.numTransactions, // TODO : check why operationCount from tzstats getWallet is different from numTransactions of tzkt
+        immutable: 0,
+        autonomous : 0,
+        //averageFee: await getAddressAverageFee(id), // TODO
+        treasuryValue: nativeBalance, // TODO: compute total value
+        auditCount: 0,
+        officialWebsite: contractData?.metadata?.site,
+    }  
 
   if (artifactType === 'operation') {
     fetchOperation(id)
   }
 
   else if (artifactType === 'wallet') {
-    const { nativeBalance, operationCount } = await getWallet(id)
     const NUMBER_OF_TXS = 5
     return {
       artifactType: 'wallet',
@@ -134,36 +148,19 @@ export default (async ({
   }
 
   else if (artifactType === 'collection') {
-    const { nativeBalance, operationCount } = await getWallet(id)
-    const averageFee = await getAddressAverageFee(id)
     const NUMBER_OF_TXS = 5
     return {
       artifactType: 'collection',
       //collection,
       //items,
       //saleHistory,
-      history : await listLastOperations(id, NUMBER_OF_TXS),
-      contract : {
-        id : id,
-        name : "",
-        contractName: contractData?.alias,
-        creationDate: contractData?.firstActivityTime,
-        creator: contractData?.creator.address,
-        operationCount: contractData?.numTransactions, // TODO : check why operationCount from tzstats getWallet is different from numTransactions of tzkt
-        immutable: 0,
-        autonomous : 0,
-        averageFee: averageFee, // TODO
-        treasuryValue: nativeBalance, // TODO: compute total value
-        auditCount: 0,
-        officialWebsite: "",
-      },
+      //history : await listLastOperations(id, NUMBER_OF_TXS),
+      contract : contractObject, 
     } as CollectionResponse
   }
 
   else if (artifactType === 'coin') {
     // const coin = await getCoinData(contractHash, lastPrice)
-    const { nativeBalance, operationCount } = await getWallet(id)
-    const averageFee = await getAverageFeeAddress(id)
     const NUMBER_OF_TXS=5
     const coin = await getCoinData(id)
     const holders = await getCoinHolders(id)
@@ -177,44 +174,16 @@ export default (async ({
       },
       holders : holders,
       //history : await listLastOperations(id,NUMBER_OF_TXS),
-      contract : {
-        id : id,
-        name : "",
-        contractName: contractData?.alias,
-        creationDate: contractData?.firstActivityTime,
-        creator: contractData?.creator.address,
-        operationCount: contractData?.numTransactions, // TODO : check why operationCount from tzstats getWallet is different from numTransactions of tzkt
-        immutable: 0,
-        autonomous : 0,
-        averageFee: averageFee, // TODO
-        treasuryValue: nativeBalance, // TODO: compute total value
-        auditCount: 0,
-        officialWebsite: "",
-      },
+      contract : contractObject,
     } as CoinResponse
   }
 
   else if (artifactType === 'contract') {
-    const { nativeBalance, operationCount } = await getWallet(id)
-    const averageFee = await getAddressAverageFee(id)
     const NUMBER_OF_TXS = 5
     return {
       artifactType: 'contract',
-      contract : {
-        id : id,
-        name : "",
-        contractName: contractData?.alias,
-        creationDate: contractData?.firstActivityTime,
-        creator: contractData?.creator.address,
-        operationCount: contractData?.numTransactions, // TODO : check why operationCount from tzstats getWallet is different from numTransactions of tzkt
-        immutable: 0,
-        autonomous : 0,
-        averageFee: averageFee, // TODO
-        treasuryValue: nativeBalance, // TODO: compute total value
-        auditCount: 0,
-        officialWebsite: "",
-      },
-      history : await listLastOperations(id, NUMBER_OF_TXS),
+      contract : contractObject,
+      //history : await listLastOperations(id, NUMBER_OF_TXS),
     } as ContractResponse
   }
 

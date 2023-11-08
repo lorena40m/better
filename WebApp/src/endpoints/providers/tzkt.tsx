@@ -139,5 +139,5 @@ export async function getTokenSortedByValue(ownerAddress: string, xtzPrice: numb
 }
 
 export async function getContractData(contractHash) {
-  return (await fetch(`v1/contracts?address=${contractHash}`))?.[0]
+  return (await fetch(`v1/contracts/${contractHash}`))
 }
