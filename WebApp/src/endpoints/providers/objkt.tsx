@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Collection, Nft } from '../API'
+import { ipfsToHttps } from './utils'
 
 // function getISODateForLast24Hours() {
 //   // Get the current date and time
@@ -55,7 +56,7 @@ export async function getTopNftCollection(pageSize, criteria: 'top' | 'trending'
     }
   }`))?.gallery?.map((item) => ({
     id: item.gallery_id,
-    image: item.logo ? `https://ipfs.io/ipfs/${item.logo.split('://')[1]}` : "", // Convert "ipfs" to "https"
+    image: ipfsToHttps(item?.logo),
     name: item.name,
     supply: item.items ? item.items.toString() : "0",
     floorPrice: item.floor_price ? item.floor_price.toString(): "0",

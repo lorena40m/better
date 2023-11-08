@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Token, Coin } from '../API'
+import { ipfsToHttps } from './utils'
 
 async function fetch(urn: string) {
   try {
@@ -39,7 +40,7 @@ export async function getTransactionAssets(tzktId) {
       return {
         coin: {
           id: tokenData.token.contract.address,
-          logo: tokenData.token.metadata.thumbnailUri,
+          logo: ipfsToHttps(tokenData.token.metadata.thumbnailUri),
           name: tokenData.token.metadata.name,
           ticker: tokenData.token.metadata.symbol,
           decimals: tokenData.token.metadata.decimals,
@@ -62,16 +63,17 @@ export async function getTransactionFunctionName(hash) {
   return masterTransaction?.parameter?.entrypoint as string | null
 }
 
-export async function getCoinData(contractHash) {
-  const l = x => { console.log(x); return x }
+export async function getCoinData(contractHash, lastPrice) {
+  const l = x => { console.log('getCoinData', x); return x }
+  // Note: this fetch could also be used for NFTs!
   const coin = l(await fetch(`v1/tokens/?contract=${contractHash}`))?.[0]
   return {
     id: contractHash,
-    logo: coin.metadata.thumbnailUri, // TODO: get logo of a coin
+    logo: ipfsToHttps(coin.metadata.thumbnailUri),
     name: coin.contract.alias,
-    ticker: coin.metadata.symbol, // TODO
-    decimals: coin.metadata.decimals, // TODO
-    lastPrice: 0, // TODO also
+    ticker: coin.metadata.symbol,
+    decimals: coin.metadata.decimals,
+    lastPrice: lastPrice,
     circulatingSupplyOnChain: coin.totalSupply,
     holders: coin.holdersCount,
   } as Coin
@@ -105,7 +107,7 @@ export async function getCoinYearlyTransfersAndVolume(contractHash) {
         balance : transferData.amount
     }))
       const totalAmount = transfers.reduce((sum, transfer) => sum + Number(transfer.balance), 0);
-      const count = transfers.length; 
+      const count = transfers.length;
       return { sum: totalAmount, count: count };
   } catch (error) {
     console.error('Error:', error);
@@ -117,6 +119,13 @@ export async function getTokenSortedByValue(ownerAddress: string, xtzPrice: numb
   const tokens = await fetch(`v1/tokens/balances/?account.eq=${ownerAddress}`)
 
   return (await Promise.all(tokens.map(async tokenData => {
+    // Carefull: every NFT here is considered a token of the owner
+    // Carefull 2: The owner can own thousands of tokens
+    // Do we want to make thousands of request?
+    // On the other side we don't want to miss some important tokens...
+    // The answer would be to paginate, but will only be usefull for big wallets...
+    // Or to have an index of course
+    console.log('tokenData', tokenData)
     return {
       coin: await getCoinData(
         tokenData.token.contract.address,

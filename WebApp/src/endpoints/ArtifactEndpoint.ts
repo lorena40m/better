@@ -10,85 +10,113 @@ import {
   getTransactionFunctionName, getTokenSortedByValue,
   getCoinHolders, getCoinYearlyTransfersAndVolume,
 } from './providers/tzkt'
-import { getWallet, getLastOperations, listLastOperations } from './providers/tzstats'
+import { getWallet, getLastOperations } from './providers/tzstats'
 import { getWalletNfts } from './providers/objkt'
-import { getXtzPrice,getAverageFeeAddress } from './providers/tzstats'
+import { getXtzPrice, getAddressAverageFee } from './providers/tzstats'
 
-async function discrimateArtifactType(hash: string) {
+// Return contractData to avoid requesting multiple times
+async function discrimateArtifactType(hash: string): Promise<{
+  artifactType: 'wallet' | 'operation' | 'collection' | 'coin' | 'contract' | null,
+  contractData: any | null
+}> {
   if (typeof hash !== 'string')
     throw new Error('Input must be a string');
 
-  return hash.startsWith('tz') ? 'wallet' :
+  const hashType = hash.startsWith('tz') ? 'wallet' :
     hash.startsWith('o') ? 'operation' : // can start with: op | oo | on // should return: 'transfer' | 'call'
-    hash.startsWith('KT') ? (
-      (await getContractData(hash)).kind === 'asset' ? (
-        (await isCollection(hash)) ? 'collection' : 'coin'
-      ) : 'contract'
-    ) : null
+    hash.startsWith('KT') ? 'contract' :
+    null
+
+  if (hashType === 'contract') {
+    const contractData = await getContractData(hash)
+    const contractType = contractData.kind === 'asset' ? (
+      (await isCollection(hash)) ? 'collection' : 'coin'
+    ) : 'contract'
+
+    return { artifactType: contractType, contractData }
+  }
+
+  return { artifactType: hashType, contractData: null }
 }
 
-async function discrimateOperationType(receiver, contractData, functionName) {
+function discrimateOperationType(receiver, contractData, functionName) {
   return receiver.startsWith('tz') // native xtz transfer
     || contractData.kind === 'asset' && functionName === 'transfer' // fa2 transfer
     ? 'transfer' : 'call'
+}
+
+async function fetchOperation(id: string) {
+  const [ transaction, status, functionName ] = await Promise.all([
+    await getTransaction(id),
+    await getTransactionStatus(id),
+    await getTransactionFunctionName(id),
+  ])
+  const { tzktId, sender, receiver, amount, fee, timestamp } = transaction
+  const [ assets, contractData ] = await Promise.all([
+    await getTransactionAssets(tzktId),
+    await getContractData(receiver),
+  ])
+  const operationType = discrimateOperationType(receiver, contractData, functionName)
+
+  if (operationType === 'transfer') {
+    return {
+      artifactType: 'transfer',
+      operation: {
+        id: id,
+        status: status,
+        date: timestamp,
+        from: sender,
+        to: receiver,
+        transferedAssets: {
+          from: sender,
+          to: receiver,
+          asset: assets,
+        }
+      },
+    } as TransferResponse
+  }
+
+  else {
+    return {
+      artifactType: 'call',
+      operation: {
+        id: id,
+        status: status,
+        date: timestamp,
+        from: sender,
+        to: receiver,
+        transferedAssets: assets.map(asset => ({
+          from: sender,
+          to: receiver,
+          asset,
+        })),
+        contractName: contractData?.alias,
+        functionName,
+      },
+    } as CallResponse
+  }
+}
+
+export async function listLastOperations(address, number) {
+  const data = await getLastOperations(address, number)
+  return await Promise.all(data.map(async operation => {
+    return await fetchOperation(operation?.hash)
+  }))
 }
 
 export default (async ({
   id,
   pageSize,
 }) => {
-  const artifactType = await discrimateArtifactType(id)
+  const { artifactType, contractData } = await discrimateArtifactType(id)
 
   if (artifactType === 'operation') {
-    const { tzktId, sender, receiver, amount, fee, timestamp } = await getTransaction(id)
-    const status = await getTransactionStatus(id)
-    const assets = await getTransactionAssets(tzktId);
-    const contractData = await getContractData(receiver)
-    const functionName = await getTransactionFunctionName(id);
-    const operationType = await discrimateOperationType(receiver, contractData, functionName)
-
-    if (operationType === 'transfer') {
-      return {
-        artifactType: 'transfer',
-        operation: {
-          id: id,
-          status: status,
-          date: timestamp,
-          from: sender,
-          to: receiver,
-          transferedAssets: {
-            from: sender,
-            to: receiver,
-            asset: assets,
-          }
-        },
-      } as TransferResponse
-    }
-
-    else {
-      return {
-        artifactType: 'call',
-        operation: {
-          id: id,
-          status: status,
-          date: timestamp,
-          from: sender,
-          to: receiver,
-          transferedAssets: assets.map(asset => ({
-            from: sender,
-            to: receiver,
-            asset,
-          })),
-          contractName: contractData?.alias,
-          functionName,
-        },
-      } as CallResponse
-    }
+    fetchOperation(id)
   }
 
   else if (artifactType === 'wallet') {
     const { nativeBalance, operationCount } = await getWallet(id)
-    const NUMBER_OF_TXS=5
+    const NUMBER_OF_TXS = 5
     return {
       artifactType: 'wallet',
       wallet: {
@@ -101,21 +129,20 @@ export default (async ({
       tokens: await getTokenSortedByValue(id, +(await getXtzPrice()) / 100), // sorted by value
       uncertifiedTokens: [], // paginated, sorted by last transfer date
       nfts: await getWalletNfts(id), // sorted by value
-      history: await listLastOperations(id,NUMBER_OF_TXS), // paginated
+      history: await listLastOperations(id, NUMBER_OF_TXS), // paginated
     } as WalletResponse
   }
 
   else if (artifactType === 'collection') {
-    const contractData = await getContractData(id)
     const { nativeBalance, operationCount } = await getWallet(id)
-    const averageFee = await getAverageFeeAddress(id)
-    const NUMBER_OF_TXS=5
+    const averageFee = await getAddressAverageFee(id)
+    const NUMBER_OF_TXS = 5
     return {
       artifactType: 'collection',
       //collection,
       //items,
       //saleHistory,
-      history : await listLastOperations(id,NUMBER_OF_TXS),
+      history : await listLastOperations(id, NUMBER_OF_TXS),
       contract : {
         id : id,
         name : "",
@@ -135,7 +162,6 @@ export default (async ({
 
   else if (artifactType === 'coin') {
     // const coin = await getCoinData(contractHash, lastPrice)
-    const contractData = await getContractData(id)
     const { nativeBalance, operationCount } = await getWallet(id)
     const averageFee = await getAverageFeeAddress(id)
     const NUMBER_OF_TXS=5
@@ -148,7 +174,7 @@ export default (async ({
         ...coin,
         yearlyTransfers: coinYearlyData?.count,
         yearlyVolume: coinYearlyData?.sum,
-      },  
+      },
       holders : holders,
       //history : await listLastOperations(id,NUMBER_OF_TXS),
       contract : {
@@ -169,10 +195,9 @@ export default (async ({
   }
 
   else if (artifactType === 'contract') {
-    const contractData = await getContractData(id)
     const { nativeBalance, operationCount } = await getWallet(id)
-    const averageFee = await getAverageFeeAddress(id)
-    const NUMBER_OF_TXS=5
+    const averageFee = await getAddressAverageFee(id)
+    const NUMBER_OF_TXS = 5
     return {
       artifactType: 'contract',
       contract : {
@@ -189,7 +214,7 @@ export default (async ({
         auditCount: 0,
         officialWebsite: "",
       },
-      history : await listLastOperations(id,NUMBER_OF_TXS),
+      history : await listLastOperations(id, NUMBER_OF_TXS),
     } as ContractResponse
   }
 
