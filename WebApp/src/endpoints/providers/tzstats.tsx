@@ -2,7 +2,17 @@ import axios from 'axios'
 
 async function fetch(urn: string) {
   try {
-    const response = await axios.get('https://api.tzstats.com/' + urn);
+    const apiKey = process.env.TZPRO_API_KEY
+    console.log('API Key:', apiKey);
+    console.log('Request Headers:', {
+      'Api-Key': apiKey,
+    });
+    const response = await axios.get(`https://api.tzpro.io/${urn}`, {
+      headers : { 
+        'X-API-Key': apiKey,
+      },
+    }
+    );
 
     if (response.status === 200) {
       return response.data;
