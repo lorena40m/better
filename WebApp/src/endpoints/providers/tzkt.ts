@@ -64,9 +64,9 @@ export async function getTransactionFunctionName(hash) {
 }
 
 export async function getCoinData(contractHash, lastPrice) {
-  // const l = x => { console.log('getCoinData', x); return x }
   // Note: this fetch could also be used for NFTs!
-  const coin = /*l(*/await fetch(`v1/tokens/?contract=${contractHash}`)/*)*/?.[0]
+  const data = await fetch(`v1/tokens/?contract=${contractHash}`)
+  const coin = data?.[0]
   return {
     id: contractHash,
     logo: ipfsToHttps(coin.metadata.thumbnailUri),
@@ -139,5 +139,5 @@ export async function getTokenSortedByValue(ownerAddress: string, xtzPrice: numb
 }
 
 export async function getContractData(contractHash) {
-  return (await fetch(`v1/contracts/${contractHash}`))
+  return await fetch(`v1/contracts/${contractHash}`)
 }

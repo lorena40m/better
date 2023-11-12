@@ -10,8 +10,8 @@
 
   How to log during testing:
     Don't use console.log() that prints in the console
-    Use console.warn() that prints in file `unittests_error.log`
-    Or logResult() that prints in file `unittests_result.log`
+    Use console.warn() that prints in file `errors.log`
+    Or logResult() that prints in file `results.log`
 */
 
 // Import .env
@@ -21,20 +21,28 @@ config()
 
 // Define framework functions
 
-import { basename } from 'path'
+import { basename, extname } from 'path'
+const filename = p => basename(p, extname(p))
 
 var testCaseCount = 0
 var testCaseSuccess = 0
 var testAssertionCount = 0
 var testAssertionSuccess = 0
+var testAssertionWarning = 0
+var testAssertionFailure = 0
 
-export function expect(testName: string, cond: boolean) {
+export function expect(testName: string, cond: boolean, severity: 'failure' | 'warning' = 'failure') {
   const assertionMsg = `Test Assertion #${testAssertionCount++}: ${testName}`
   if (cond) {
     testAssertionSuccess++
     console.log(`    ✔️  Success on ${assertionMsg}`)
   }
+  else if (severity === 'warning') {
+    testAssertionWarning++
+    console.log(`    ⚠️  Warning on ${assertionMsg}`)
+  }
   else {
+    testAssertionFailure++
     console.log(`    ❌ Fail on ${assertionMsg}`)
   }
 }
@@ -42,13 +50,13 @@ export function expect(testName: string, cond: boolean) {
 export async function TestCase(testCaseName: string, fc: Function) {
   writeLog(`\n\nTest Case #${testCaseCount}: ${testCaseName}\n`)
   console.log(`\n\nTest Case #${testCaseCount++}: ${testCaseName}`)
-  const failuresBefore = testAssertionCount - testAssertionSuccess
+  const failuresBefore = testAssertionWarning + testAssertionFailure
   try {
     await fc()
   } catch (error) {
     console.log(`    ❌ Error happened: ${error}`)
   }
-  const failuresAfter = testAssertionCount - testAssertionSuccess
+  const failuresAfter = testAssertionWarning + testAssertionFailure
   if (failuresAfter === failuresBefore) testCaseSuccess++
 }
 
@@ -57,14 +65,16 @@ export async function TestScript(fc: Function) {
   console.log(`*** Test Script ${basename(process.argv[1])} ***`)
   await fc()
   console.log(`\n\nSummary ${basename(process.argv[1])}:`)
-  console.log(`    ✔️  ${testCaseSuccess}/${testCaseCount} Cases completed, ❌ ${testCaseCount - testCaseSuccess} incomplete`)
-  console.log(`    ✔️  ${testAssertionSuccess}/${testAssertionCount} Assertions succeeds, ❌ ${testAssertionCount - testAssertionSuccess} fails`)
+  console.log(`    ✔️  ${testCaseSuccess}/${testCaseCount} Cases complete, ❌ ${testCaseCount - testCaseSuccess} incomplete`)
+  console.log(`    ✔️  ${testAssertionSuccess}/${testAssertionCount} Assertions succeed, ⚠️  ${testAssertionWarning} warn, ❌ ${testAssertionFailure} fail`)
   console.log(`\n`)
 }
 
+// Define log helper
+
 import { writeFileSync } from 'fs'
 
-const LOG_FILE = __dirname + '/../../unittests_result.log'
+const LOG_FILE = __dirname + `/../../unittests_logs/${filename(process.argv[1])}.results`
 console.warn(LOG_FILE)
 
 function writeLog(msg: string) {

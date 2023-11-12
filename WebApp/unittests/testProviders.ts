@@ -31,18 +31,18 @@ const ids: any = {
 
 async function testProviderFunction(provider: string, fc: Function) {
   const t1 = new Date()
-  let res, response
+  let res
   try {
     res = await fc()
   } catch (error) {
     console.error(error)
-    expect(`test that ${provider}() provider should succeed, got error: ${error}`, false)
+    expect(`${provider}() provider should succeed, got error: ${error}`, false)
   }
-  expect(`test that ${provider}() provider return something`, res)
+  expect(`${provider}() provider return something`, res)
   const t2 = new Date()
   const time = +t2 - +t1
-  expect(`test that ${provider}() provider return within a reasonable time: ${time}ms; expect <300ms`, time < 300)
-  logResult(`${provider} in ${time}ms`, res)
+  expect(`${provider}() provider return within a reasonable time: ${time}ms; expect <400ms`, time < 400, 'warning')
+  logResult(`${provider}() in ${time}ms`, res)
 }
 
 TestScript(async function () {

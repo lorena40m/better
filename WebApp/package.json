@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "cypress open",
-    "unittest": "mkdir -p unittests_build; npx tsc unittests/* --outDir unittests_build; node unittests_build/unittests/testProviders.js 2>unittests_error.log"
+    "unittest": "mkdir -p unittests_build unittests_logs; npx tsc unittests/* --outDir unittests_build; node unittests_build/unittests/testProviders.js 2>unittests_logs/testProviders.errors"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.15.0",
