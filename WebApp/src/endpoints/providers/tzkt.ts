@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Token, Coin } from '../API'
+import { Token, Coin, Holder } from '../API'
 import { ipfsToHttps } from './utils'
 
 async function fetch(urn: string) {
@@ -64,9 +64,9 @@ export async function getTransactionFunctionName(hash) {
 }
 
 export async function getCoinData(contractHash, lastPrice) {
-  const l = x => { console.log('getCoinData', x); return x }
+  // const l = x => { console.log('getCoinData', x); return x }
   // Note: this fetch could also be used for NFTs!
-  const coin = l(await fetch(`v1/tokens/?contract=${contractHash}`))?.[0]
+  const coin = /*l(*/await fetch(`v1/tokens/?contract=${contractHash}`)/*)*/?.[0]
   return {
     id: contractHash,
     logo: ipfsToHttps(coin.metadata.thumbnailUri),
@@ -125,7 +125,7 @@ export async function getTokenSortedByValue(ownerAddress: string, xtzPrice: numb
     // On the other side we don't want to miss some important tokens...
     // The answer would be to paginate, but will only be usefull for big wallets...
     // Or to have an index of course
-    console.log('tokenData', tokenData)
+    // console.log('tokenData', tokenData)
     return {
       coin: await getCoinData(
         tokenData.token.contract.address,
@@ -133,7 +133,7 @@ export async function getTokenSortedByValue(ownerAddress: string, xtzPrice: numb
       ),
       quantity: tokenData.balance,
       valueInXtz: tokenData.balanceValue,
-    } as Token
+    } // as Token
   })))
     .sort((a, b) => a.valueInXtz - b.valueInXtz) as Token[]
 }

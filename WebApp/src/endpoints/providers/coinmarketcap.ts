@@ -27,7 +27,8 @@ export async function getTop50Cryptos(pageSize, criteria: 'market_cap' | 'volume
         lastPrice: Math.floor(crypto.quote.USD.price*100),
         circulatingSupplyOnChain: crypto.circulating_supply,
         holders : Math.floor(0), // TO FILL
-      } as Coin)) as Coin[];
+      }))
+      // } as Coin)) as Coin[];
     }
     else {
       console.error(`Failed to fetch data. Status code: ${response.status}`);
