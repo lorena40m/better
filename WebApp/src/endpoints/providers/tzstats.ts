@@ -3,8 +3,8 @@ import axios from 'axios'
 async function fetch(urn: string) {
   try {
     const apiKey = process.env.TZPRO_API_KEY
-    console.log('API Key:', apiKey);
-    console.log('Request Headers:', {
+    console.warn('API Key:', apiKey);
+    console.warn('Request Headers:', {
       'Api-Key': apiKey,
     });
     const response = await axios.get(`https://api.tzpro.io/${urn}`, {

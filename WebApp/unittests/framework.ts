@@ -1,5 +1,24 @@
+/*
+  This is a simple, custom testing framework for our needs.
+
+  Easy to use: TestScript(), TestCase() and expect()
+  as in testProviders.ts
+
+  Configure command to run as in package.json
+
+  Designed for ts files only, not tsx
+
+  How to log during testing:
+    Don't use console.log() that prints in the console
+    But rather console.warn() that prints in file `unittests_error.log`
+*/
+
+// Import .env
+
 import { config } from 'dotenv'
 config()
+
+// Define framework functions
 
 import { basename } from 'path'
 
@@ -31,10 +50,11 @@ export async function TestCase(testCaseName: string, fc: Function) {
   if (failuresAfter === failuresBefore) testCaseSuccess++
 }
 
-export async function TestFramework(fc: Function) {
+export async function TestScript(fc: Function) {
   console.log(`*** Test Script ${basename(process.argv[1])} ***`)
   await fc()
   console.log(`\n\nSummary ${basename(process.argv[1])}:`)
   console.log(`    ✔️  ${testCaseSuccess}/${testCaseCount} Cases completed, ❌ ${testCaseCount - testCaseSuccess} incomplete`)
   console.log(`    ✔️  ${testAssertionSuccess}/${testAssertionCount} Assertions succeeds, ❌ ${testAssertionCount - testAssertionSuccess} fails`)
+  console.log(`\n`)
 }

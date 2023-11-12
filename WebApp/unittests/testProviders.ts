@@ -1,4 +1,4 @@
-import { expect, TestCase, TestFramework } from './framework'
+import { expect, TestCase, TestScript } from './framework'
 
 import { getTop50Cryptos } from '../src/endpoints/providers/coinmarketcap'
 import {
@@ -44,7 +44,7 @@ async function testProviderFunction(provider: string, fc: Function) {
   expect('test that ${provider}() provider return within a reasonable time', (+t2 - +t1) < 300)
 }
 
-TestFramework(async function () {
+TestScript(async function () {
   await TestCase('CoinMarketCap provider', async function () {
     await testProviderFunction('getTop50Cryptos', () => getTop50Cryptos(100, 'market_cap'))
   })
