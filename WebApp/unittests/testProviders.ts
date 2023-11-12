@@ -1,4 +1,4 @@
-import { expect, TestCase, TestScript } from './framework'
+import { expect, TestCase, TestScript, logResult } from './framework'
 
 import { getTop50Cryptos } from '../src/endpoints/providers/coinmarketcap'
 import {
@@ -33,14 +33,16 @@ async function testProviderFunction(provider: string, fc: Function) {
   const t1 = new Date()
   let res, response
   try {
-    res = fc()
+    res = await fc()
   } catch (error) {
-    console.log(error)
-    expect(`test that ${provider}() provider should succeed`, false)
+    console.error(error)
+    expect(`test that ${provider}() provider should succeed, got error: ${error}`, false)
   }
-  expect(`test that ${provider}() provider return something`, await res)
+  expect(`test that ${provider}() provider return something`, res)
   const t2 = new Date()
-  expect(`test that ${provider}() provider return within a reasonable time`, (+t2 - +t1) < 300)
+  const time = +t2 - +t1
+  expect(`test that ${provider}() provider return within a reasonable time: ${time}ms; expect <300ms`, time < 300)
+  logResult(`${provider} in ${time}ms`, res)
 }
 
 TestScript(async function () {

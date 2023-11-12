@@ -10,7 +10,8 @@
 
   How to log during testing:
     Don't use console.log() that prints in the console
-    But rather console.warn() that prints in file `unittests_error.log`
+    Use console.warn() that prints in file `unittests_error.log`
+    Or logResult() that prints in file `unittests_result.log`
 */
 
 // Import .env
@@ -39,6 +40,7 @@ export function expect(testName: string, cond: boolean) {
 }
 
 export async function TestCase(testCaseName: string, fc: Function) {
+  writeLog(`\n\nTest Case #${testCaseCount}: ${testCaseName}\n`)
   console.log(`\n\nTest Case #${testCaseCount++}: ${testCaseName}`)
   const failuresBefore = testAssertionCount - testAssertionSuccess
   try {
@@ -51,10 +53,26 @@ export async function TestCase(testCaseName: string, fc: Function) {
 }
 
 export async function TestScript(fc: Function) {
+  writeLog(`*** Test Script ${basename(process.argv[1])} ***`)
   console.log(`*** Test Script ${basename(process.argv[1])} ***`)
   await fc()
   console.log(`\n\nSummary ${basename(process.argv[1])}:`)
   console.log(`    ✔️  ${testCaseSuccess}/${testCaseCount} Cases completed, ❌ ${testCaseCount - testCaseSuccess} incomplete`)
   console.log(`    ✔️  ${testAssertionSuccess}/${testAssertionCount} Assertions succeeds, ❌ ${testAssertionCount - testAssertionSuccess} fails`)
   console.log(`\n`)
+}
+
+import { writeFileSync } from 'fs'
+
+const LOG_FILE = __dirname + '/../../unittests_result.log'
+console.warn(LOG_FILE)
+
+function writeLog(msg: string) {
+  writeFileSync(LOG_FILE, msg + '\n', { flag: 'a+' })
+}
+writeFileSync(LOG_FILE, '') // Empty the file initially
+
+export function logResult(name: string, objct: any) {
+  const toLog = JSON.stringify(objct, null, 2)
+  writeLog(`Result of ${name}:\n\n ${toLog} \n\n\n`)
 }
