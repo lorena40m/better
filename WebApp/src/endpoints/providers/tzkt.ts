@@ -95,24 +95,23 @@ export async function getCoinYearlyTransfersAndVolume(contractHash) {
   const oneYearAgo = new Date(currentDate)
   oneYearAgo.setFullYear(currentDate.getFullYear() - 1)
 
-// Format the ISO 8601 timestamps for the start and end dates
+  // Format the ISO 8601 timestamps for the start and end dates
   const startDateISO = oneYearAgo.toISOString()
   let sum = 0
   let count = 0
   try {
-      const response = await fetch(`v1/tokens/transfers?token.contract=${contractHash}&timestamp.gt=${startDateISO}`)
+    const response = await fetch(`v1/tokens/transfers?token.contract=${contractHash}&timestamp.gt=${startDateISO}`)
 
-      const transfers = response?.map(transferData => ({
-        id : transferData.id,
-        balance : transferData.amount
+    const transfers = response?.map(transferData => ({
+      id : transferData.id,
+      balance : transferData.amount
     }))
-      const totalAmount = transfers.reduce((sum, transfer) => sum + Number(transfer.balance), 0);
-      const count = transfers.length;
-      return { sum: totalAmount, count: count };
+    const totalAmount = transfers.reduce((sum, transfer) => sum + Number(transfer.balance), 0);
+    const count = transfers.length;
+    return { sum: totalAmount, count: count };
   } catch (error) {
     console.error('Error:', error);
   }
-
 }
 
 export async function getTokenSortedByValue(ownerAddress: string, xtzPrice: number) {

@@ -108,28 +108,29 @@ export default (async ({
   id,
   pageSize,
 }) => {
-  const { nativeBalance, operationCount } = await getWallet(id)
   const { artifactType, contractData } = await discrimateArtifactType(id)
-  const contractObject = {
-        id : id,
-        name : contractData?.alias,
-        contractName: contractData?.alias,
-        creationDate: contractData?.firstActivityTime,
-        creator: contractData?.creator.address,
-        operationCount: contractData?.numTransactions, // TODO : check why operationCount from tzstats getWallet is different from numTransactions of tzkt
-        immutable: 0,
-        autonomous : 0,
-        //averageFee: await getAddressAverageFee(id), // TODO
-        treasuryValue: nativeBalance, // TODO: compute total value
-        auditCount: 0,
-        officialWebsite: contractData?.metadata?.site,
-    }  
 
   if (artifactType === 'operation') {
-    fetchOperation(id)
+    return fetchOperation(id)
   }
 
-  else if (artifactType === 'wallet') {
+  const { nativeBalance, operationCount } = await getWallet(id)
+  const contractObject = {
+    id : id,
+    name : contractData?.alias,
+    contractName: contractData?.alias,
+    creationDate: contractData?.firstActivityTime,
+    creator: contractData?.creator.address,
+    operationCount: contractData?.numTransactions, // TODO : check why operationCount from tzstats getWallet is different from numTransactions of tzkt
+    immutable: 0,
+    autonomous : 0,
+    //averageFee: await getAddressAverageFee(id), // TODO
+    treasuryValue: nativeBalance, // TODO: compute total value
+    auditCount: 0,
+    officialWebsite: contractData?.metadata?.site,
+  }
+
+  if (artifactType === 'wallet') {
     const NUMBER_OF_TXS = 5
     return {
       artifactType: 'wallet',
@@ -147,19 +148,19 @@ export default (async ({
     } as WalletResponse
   }
 
-  else if (artifactType === 'collection') {
+  if (artifactType === 'collection') {
     const NUMBER_OF_TXS = 5
     return {
       artifactType: 'collection',
-      //collection,
-      //items,
-      //saleHistory,
-      //history : await listLastOperations(id, NUMBER_OF_TXS),
-      contract : contractObject, 
+      // collection,
+      // items,
+      // saleHistory,
+      // history: await listLastOperations(id, NUMBER_OF_TXS),
+      contract: contractObject,
     } as CollectionResponse
   }
 
-  else if (artifactType === 'coin') {
+  if (artifactType === 'coin') {
     // const coin = await getCoinData(contractHash, lastPrice)
     const NUMBER_OF_TXS=5
     const coin = await getCoinData(id)
@@ -167,23 +168,23 @@ export default (async ({
     const coinYearlyData = await getCoinYearlyTransfersAndVolume(id)
     return {
       artifactType: 'coin',
-      coin:{
+      coin: {
         ...coin,
         yearlyTransfers: coinYearlyData?.count,
         yearlyVolume: coinYearlyData?.sum,
       },
-      holders : holders,
-      //history : await listLastOperations(id,NUMBER_OF_TXS),
+      holders: holders,
+      // history: await listLastOperations(id,NUMBER_OF_TXS),
       contract : contractObject,
     } as CoinResponse
   }
 
-  else if (artifactType === 'contract') {
+  if (artifactType === 'contract') {
     const NUMBER_OF_TXS = 5
     return {
       artifactType: 'contract',
-      contract : contractObject,
-      //history : await listLastOperations(id, NUMBER_OF_TXS),
+      contract: contractObject,
+      // history: await listLastOperations(id, NUMBER_OF_TXS),
     } as ContractResponse
   }
 

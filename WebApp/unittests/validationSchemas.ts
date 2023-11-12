@@ -1,4 +1,15 @@
 import { object, array, string, number, date, boolean } from 'yup'
+import { InferType } from 'yup'
+import {
+  HomeResponse,
+  MiscellaneousResponse,
+  TransferResponse,
+  CallResponse,
+  CoinResponse,
+  CollectionResponse,
+  WalletResponse,
+  ContractResponse,
+} from '../src/endpoints/API'
 
 const integerStringSchema = () => string().required().matches(/^\d+$/)
 const dateStringSchema = () => string().required().matches(/^\d\d\d\d-\d\d-\d\dT\d\d-\d\d-\d\d/)
@@ -191,3 +202,58 @@ export let collectionResponseSchema = (params: { id: string, pageSize: number, }
   history: historySchema(params), // paginated
   contract: contractResponseSchema(params),
 })
+
+/**** TYPE CHECKING ****/
+
+// Let Typescript check is the yup schemas are compatible with the respective Typescript type
+
+// How it works:
+// yup generates a Typescript type with InferType
+// If compatibility is broken, InferedType will not extend MiscellaneousResponse
+// Therefore CheckedResponse will resolve at `never`
+// It will then trigger a Typescript error on `ShouldNotBeNever`!
+// Try to change a yup schema and you will see :p
+
+// TL;DR:
+// if shouldNotBeNever triggers an error,
+// it means there are inconsistencies between yup schema and API.ts
+
+const testHomeResponseSchema = homeResponseSchema({ pageSize: 100 })
+type HomeInferedType = InferType<typeof testHomeResponseSchema>
+type HomeCheckedResponse = HomeInferedType extends HomeResponse ? HomeResponse : never
+const HomeShouldNotBeNever: HomeCheckedResponse = <any> null
+
+const testMiscellaneousResponseSchema = miscellaneousResponseSchema()
+type MiscellaneousInferedType = InferType<typeof testMiscellaneousResponseSchema>
+type MiscellaneousCheckedResponse = MiscellaneousInferedType extends MiscellaneousResponse ? MiscellaneousResponse : never
+const MiscShouldNotBeNever: MiscellaneousCheckedResponse = <any> null
+
+const testTransferResponseSchema = transferResponseSchema({ id: '0x', pageSize: 100 })
+type TransferInferedType = InferType<typeof testTransferResponseSchema>
+type TransferCheckedResponse = TransferInferedType extends TransferResponse ? TransferResponse : never
+const TransferShouldNotBeNever: TransferCheckedResponse = <any> null
+
+const testCallResponseSchema = callResponseSchema({ id: '0x', pageSize: 100 })
+type CallInferedType = InferType<typeof testCallResponseSchema>
+type CallCheckedResponse = CallInferedType extends CallResponse ? CallResponse : never
+const CallShouldNotBeNever: CallCheckedResponse = <any> null
+
+const testCoinResponseSchema = coinResponseSchema({ id: '0x', pageSize: 100 })
+type CoinInferedType = InferType<typeof testCoinResponseSchema>
+type CoinCheckedResponse = CoinInferedType extends CoinResponse ? CoinResponse : never
+const CoinShouldNotBeNever: CoinCheckedResponse = <any> null
+
+const testCollectionResponseSchema = collectionResponseSchema({ id: '0x', pageSize: 100 })
+type CollectionInferedType = InferType<typeof testCollectionResponseSchema>
+type CollectionCheckedResponse = CollectionInferedType extends CollectionResponse ? CollectionResponse : never
+const CollectionShouldNotBeNever: CollectionCheckedResponse = <any> null
+
+const testWalletResponseSchema = walletResponseSchema({ id: '0x', pageSize: 100 })
+type WalletInferedType = InferType<typeof testWalletResponseSchema>
+type WalletCheckedResponse = WalletInferedType extends WalletResponse ? WalletResponse : never
+const WalletShouldNotBeNever: WalletCheckedResponse = <any> null
+
+const testContractResponseSchema = contractResponseSchema({ id: '0x', pageSize: 100 })
+type ContractInferedType = InferType<typeof testContractResponseSchema>
+type ContractCheckedResponse = ContractInferedType extends ContractResponse ? ContractResponse : never
+const ContractShouldNotBeNever: ContractCheckedResponse = <any> null
