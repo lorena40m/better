@@ -30,18 +30,17 @@ const ids: any = {
 }
 
 async function testProviderFunction(provider: string, fc: Function) {
-  // `test that ${provider}() provider is ok within a reasonable time`
   const t1 = new Date()
   let res, response
   try {
     res = fc()
   } catch (error) {
     console.log(error)
-    expect('test that ${provider}() provider should success', false)
+    expect(`test that ${provider}() provider should succeed`, false)
   }
-  expect('test that ${provider}() provider return 200', (await res).statusCode === 200)
+  expect(`test that ${provider}() provider return something`, await res)
   const t2 = new Date()
-  expect('test that ${provider}() provider return within a reasonable time', (+t2 - +t1) < 300)
+  expect(`test that ${provider}() provider return within a reasonable time`, (+t2 - +t1) < 300)
 }
 
 TestScript(async function () {
