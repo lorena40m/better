@@ -1,28 +1,9 @@
 import { expect, TestCase, TestScript, logResult } from './framework'
-
-import { getTop50Cryptos } from '../src/endpoints/providers/coinmarketcap'
-import { getTopNftCollection, getWalletNfts } from '../src/endpoints/providers/objkt'
-import { getBlockNumber } from '../src/endpoints/providers/rpc'
-import {
-  getBlockDate,
-  getXtzPrice,
-  getWallet,
-  getLastOperations,
-  getAddressAverageFee,
-} from '../src/endpoints/providers/tzstats'
-import {
-  getTransaction,
-  getTransactionStatus,
-  getTransactionAssets,
-  isCollection,
-  getTransactionFunctionName,
-  getCoinData,
-  getCoinHolders,
-  getCoinYearlyTransfersAndVolume,
-  getTokenSortedByValue,
-  getContractData,
-} from '../src/endpoints/providers/tzkt'
-
+import * as coinmarketcap from '../src/endpoints/providers/coinmarketcap'
+import * as objkt from '../src/endpoints/providers/objkt'
+import * as rpc from '../src/endpoints/providers/rpc'
+import * as tzstats from '../src/endpoints/providers/tzstats'
+import * as tzkt from '../src/endpoints/providers/tzkt'
 import { ids } from './sampleIds'
 
 async function testProviderFunction(provider: string, fc: Function) {
@@ -37,36 +18,36 @@ async function testProviderFunction(provider: string, fc: Function) {
 
 TestScript(async function () {
   await TestCase('CoinMarketCap provider', async function () {
-    await testProviderFunction('getTop50Cryptos', () => getTop50Cryptos(100, 'market_cap'))
+    await testProviderFunction('getTop50Cryptos', () => coinmarketcap.getTop50Cryptos(100, 'market_cap'))
   })
 
   await TestCase('ObjKT provider', async function () {
-    await testProviderFunction('getTopNftCollection', () => getTopNftCollection(100, 'trending'))
-    await testProviderFunction('getWalletNfts', () => getWalletNfts(ids.wallet))
+    await testProviderFunction('getTopNftCollection', () => objkt.getTopNftCollection(100, 'trending'))
+    await testProviderFunction('getWalletNfts', () => objkt.getWalletNfts(ids.wallet))
   })
 
   await TestCase('RPC provider', async function () {
-    await testProviderFunction('getBlockNumber', () => getBlockNumber())
+    await testProviderFunction('getBlockNumber', () => rpc.getBlockNumber())
   })
 
   await TestCase('TzKT provider', async function () {
-    await testProviderFunction('getTransaction', () => getTransaction(ids.transfer))
-    await testProviderFunction('getTransactionStatus', () => getTransactionStatus(ids.transfer))
-    await testProviderFunction('getTransactionAssets', () => getTransactionAssets('792209768054784'))
-    await testProviderFunction('isCollection', () => isCollection(ids.collection))
-    await testProviderFunction('getTransactionFunctionName', () => getTransactionFunctionName(ids.call))
-    await testProviderFunction('getCoinData', () => getCoinData(ids.coin, '1'))
-    await testProviderFunction('getCoinHolders', () => getCoinHolders(ids.coin))
-    await testProviderFunction('getCoinYearlyTransfersAndVolume', () => getCoinYearlyTransfersAndVolume(ids.coin))
-    await testProviderFunction('getTokenSortedByValue', () => getTokenSortedByValue(ids.wallet, 0.65))
-    await testProviderFunction('getContractData', () => getContractData(ids.contract))
+    await testProviderFunction('getTransaction', () => tzkt.getTransaction(ids.transfer))
+    await testProviderFunction('getTransactionStatus', () => tzkt.getTransactionStatus(ids.transfer))
+    await testProviderFunction('getTransactionAssets', () => tzkt.getTransactionAssets('792209768054784'))
+    await testProviderFunction('isCollection', () => tzkt.isCollection(ids.collection))
+    await testProviderFunction('getTransactionFunctionName', () => tzkt.getTransactionFunctionName(ids.call))
+    await testProviderFunction('getCoinData', () => tzkt.getCoinData(ids.coin, '1'))
+    await testProviderFunction('getCoinHolders', () => tzkt.getCoinHolders(ids.coin))
+    await testProviderFunction('getCoinYearlyTransfersAndVolume', () => tzkt.getCoinYearlyTransfersAndVolume(ids.coin))
+    await testProviderFunction('getTokenSortedByValue', () => tzkt.getTokenSortedByValue(ids.wallet, 0.65))
+    await testProviderFunction('getContractData', () => tzkt.getContractData(ids.contract))
   })
 
   await TestCase('TzStats provider', async function () {
-    await testProviderFunction('getBlockDate', () => getBlockDate())
-    await testProviderFunction('getXtzPrice', () => getXtzPrice())
-    await testProviderFunction('getWallet', () => getWallet(ids.wallet))
-    await testProviderFunction('getLastOperations', () => getLastOperations(ids.wallet, 100))
-    await testProviderFunction('getAddressAverageFee', () => getAddressAverageFee(ids.wallet))
+    await testProviderFunction('getBlockDate', () => tzstats.getBlockDate())
+    await testProviderFunction('getXtzPrice', () => tzstats.getXtzPrice())
+    await testProviderFunction('getWallet', () => tzstats.getWallet(ids.wallet))
+    await testProviderFunction('getLastOperations', () => tzstats.getLastOperations(ids.wallet, 100))
+    await testProviderFunction('getAddressAverageFee', () => tzstats.getAddressAverageFee(ids.wallet))
   })
 })

@@ -1,24 +1,24 @@
-import { HomeResponse, HomeEndpoint } from './API'
-import { getXtzPrice, getBlockDate } from './providers/tzstats'
-import { getBlockNumber } from './providers/rpc'
-import { getTopNftCollection } from './providers/objkt'
-import {} from './providers/coinmarketcap'
+import { HomeEndpoint } from './API'
+import * as tzstats from './providers/tzstats'
+import * as rpc from './providers/rpc'
+import * as objkt from './providers/objkt'
+import * as coinmarketcap from './providers/coinmarketcap'
 
 export default (async ({ pageSize }) => {
   return {
     stats : {
-      normalFee: '001500', // 0.0015 XTZ
-      lastBlockNumber: (await getBlockNumber())?.toString() ?? null,
-      lastBlockDate: await getBlockDate(),
+      normalFee: '001500', // 0.0015 XTZ // await tzstatsgetXtzPrice(),
+      lastBlockNumber: (await rpc.getBlockNumber())?.toString() ?? null,
+      lastBlockDate: await tzstats.getBlockDate(),
     },
     collections: {
-      trending: await getTopNftCollection(pageSize, 'trending'), // paginated
-      top: await getTopNftCollection(pageSize, 'top'), // paginated
+      trending: await objkt.getTopNftCollection(pageSize, 'trending'), // paginated
+      top: await objkt.getTopNftCollection(pageSize, 'top'), // paginated
     },
     // TODO: should fetch **tokens on the blockchain**, not coins
     coins: {
-      byCap: [],// await getTop50Cryptos('market_cap'), // paginated
-      byVolume: [],// await getTop50Cryptos('volume_24h'), // paginated
+      byCap: [],// await coinmarketcap.getTop50Cryptos('market_cap'), // paginated
+      byVolume: [],// await coinmarketcap.getTop50Cryptos('volume_24h'), // paginated
     },
   }
 }) as HomeEndpoint

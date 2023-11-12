@@ -1,19 +1,8 @@
 import { expect, TestCase, TestScript, logResult } from './framework'
-
 import HomeEndpoint from '../src/endpoints/HomeEndpoint'
 import MiscellaneousEndpoint from '../src/endpoints/MiscellaneousEndpoint'
 import ArtifactEndpoint from '../src/endpoints/ArtifactEndpoint'
-import {
-  TransferResponse, CallResponse,
-  CoinResponse, CollectionResponse, ContractResponse, WalletResponse,
-} from '../src/endpoints/API'
-import {
-  homeResponseSchema, miscellaneousResponseSchema,
-  transferResponseSchema, callResponseSchema,
-  coinResponseSchema, collectionResponseSchema, contractResponseSchema, walletResponseSchema,
-} from './validationSchemas'
-import { InferType } from 'yup'
-
+import * as schemas from './validationSchemas'
 import { ids } from './sampleIds'
 
 const TEST_CASES = [
@@ -22,63 +11,63 @@ const TEST_CASES = [
     endpoint: HomeEndpoint,
     artifactType: null,
     params: {pageSize: 100},
-    schema: homeResponseSchema,
+    schema: schemas.homeResponseSchema,
   },
   {
     testCaseName: 'MiscellaneousEndpoint endpoint',
     endpoint: MiscellaneousEndpoint,
     artifactType: null,
     params: {pageSize: 100},
-    schema: miscellaneousResponseSchema,
+    schema: schemas.miscellaneousResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: coin artifact',
     endpoint: ArtifactEndpoint,
     artifactType: 'coin',
     params: {id: ids.coin, pageSize: 100},
-    schema: coinResponseSchema,
+    schema: schemas.coinResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: collection artifact',
     endpoint: ArtifactEndpoint,
     artifactType: 'collection',
     params: {id: ids.collection, pageSize: 100},
-    schema: collectionResponseSchema,
+    schema: schemas.collectionResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: wallet artifact',
     endpoint: ArtifactEndpoint,
     artifactType: 'wallet',
     params: {id: ids.wallet, pageSize: 100},
-    schema: walletResponseSchema,
+    schema: schemas.walletResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: contract artifact',
     endpoint: ArtifactEndpoint,
     artifactType: 'contract',
     params: {id: ids.contract, pageSize: 100},
-    schema: contractResponseSchema,
+    schema: schemas.contractResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: transfer artifact',
     endpoint: ArtifactEndpoint,
     artifactType: 'transfer',
     params: {id: ids.transfer, pageSize: 100},
-    schema: transferResponseSchema,
+    schema: schemas.transferResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: transfer artifact #2 Tezos Transfer',
     endpoint: ArtifactEndpoint,
     artifactType: 'transfer',
     params: {id: ids.tezosTransfer, pageSize: 100},
-    schema: transferResponseSchema,
+    schema: schemas.transferResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: call artifact',
     endpoint: ArtifactEndpoint,
     artifactType: 'call',
     params: {id: ids.call, pageSize: 100},
-    schema: callResponseSchema,
+    schema: schemas.callResponseSchema,
   },
 ]
 
