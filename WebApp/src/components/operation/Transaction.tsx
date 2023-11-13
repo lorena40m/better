@@ -14,17 +14,16 @@ const Transaction = () => {
         onClick={() => setOpenList(!openList)}
       >
         <Typography variant="h5" className="transactionCard__head-title">
-          {t("Fee")}:
+          {t("fee")}
         </Typography>
         <Typography
           variant="h5"
           className="transactionCard__head-text gradientText"
         >
-           0,47 $ 
+          0,47 $
         </Typography>
-       
+
       </Box>
-     
     </Box>
   );
 };

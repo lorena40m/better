@@ -39,7 +39,7 @@ const Token = ({homeResponse}) => {
         <Container maxWidth="xl">
           <div className="pageTemplate__head">
             <Typography variant="h4" className="pageTemplate__title">
-              {t("Token on")}
+              {t("Tokens on")}
               <span className="pageTemplate__status">
                 
                 Tezos
@@ -57,7 +57,7 @@ const Token = ({homeResponse}) => {
                     alt="See on Metamask"
                   />
                   <Typography variant="h4" className="addMetamask__p">
-                    See on Temple
+                    {t("Add to Metamask")}
                   </Typography>
                 </Box>
               </Box>
