@@ -83,7 +83,7 @@ export let homeResponseSchema = (params: { pageSize: number }) => object({
     byCap: array().required().length(params.pageSize).of(coinSchema()),
     byVolume: array().required().length(params.pageSize).of(coinSchema()),
   }).required(),
-})
+}).required()
 
 export let miscellaneousResponseSchema = () => object({
   rates: object({
@@ -104,7 +104,7 @@ const abstractOperationSchema = (params: { id: string, pageSize: number, }) => o
   }).required(),
 })
 
-const historySchema = (params) => array().required().length(params.pageSize).of(transferSchema())
+const historySchema = (params: { pageSize: number }) => array().required().length(params.pageSize).of(transferSchema())
 
 export let transferResponseSchema = (params: { id: string, pageSize: number, }) =>
   abstractOperationSchema(params).concat(object({
@@ -126,7 +126,7 @@ export let walletResponseSchema = (params: { id: string, pageSize: number, }) =>
   }).required()),
   tokens: array().required().of(tokenSchema())
     .test('sorted by value', 'Tokens should be sorted by value',
-      (tokens: any) => tokens.reduce((acc, token, index) =>
+      (tokens: any) => tokens.reduce((acc: any, token: any, index: any) =>
         acc && (index === tokens.length - 1 || (
           +token.quantity * +token.coin.lastPrice > +tokens[index + 1].quantity * +tokens[index + 1].coin.lastPrice
         )),
@@ -135,7 +135,7 @@ export let walletResponseSchema = (params: { id: string, pageSize: number, }) =>
     ),
   uncertifiedTokens: array().required().length(params.pageSize).of(tokenSchema())
     .test('sorted by last transfer date', 'Tokens should be sorted by last transfer date',
-      (tokens: any) => tokens.reduce((acc, token, index) =>
+      (tokens: any) => tokens.reduce((acc: any, token: any, index: any) =>
         acc && (index === tokens.length - 1 || (
           +token.lastTransferDate >= +tokens[index + 1].lastTransferDate
         )),
@@ -171,7 +171,7 @@ export let coinResponseSchema = (params: { id: string, pageSize: number, }) => o
   }).required()),
   holders: array().required().length(params.pageSize).of(holderSchema())
     .test('sorted by share', 'Holders should be sorted by share',
-      (holders: any) => holders.reduce((acc, holder, index) =>
+      (holders: any) => holders.reduce((acc: any, holder: any, index: any) =>
         acc && (index === holders.length - 1 || (
           +holder.quantity >= +holders[index + 1].quantity
         )),
@@ -187,7 +187,7 @@ export let collectionResponseSchema = (params: { id: string, pageSize: number, }
   collection: collectionSchema(),
   items: array().required().length(params.pageSize).of(nftSchema())
     .test('sorted by last transfer date', 'Nfts should be sorted by last transfer date',
-      (tokens: any) => tokens.reduce((acc, token, index) =>
+      (tokens: any) => tokens.reduce((acc: any, token: any, index: any) =>
         acc && (index === tokens.length - 1 || (
           +token.lastTransferDate >= +tokens[index + 1].lastTransferDate
         )),

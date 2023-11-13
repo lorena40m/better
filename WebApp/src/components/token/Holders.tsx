@@ -17,7 +17,7 @@ import {
 			</Typography>
 			<Container maxWidth="xl">
 				{Array.from({ length: 5 }, (_, index) => (
-					<Grid container spacing={3} style={{textAlign: "center", height: "60px"}}>
+					<Grid container spacing={3} style={{textAlign: "center", height: "60px"}} key={index}>
 						<Grid sm={4}>
 							<Typography variant="body1" className="tokenOtherInfos__text">
 							0dFghg...Hgfd

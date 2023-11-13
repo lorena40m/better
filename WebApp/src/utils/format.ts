@@ -64,7 +64,7 @@ export function formatToken(quantity: string, decimals: number, locale: string) 
       console.log("supérieur à 6")
   }
   else {
-    let termNumber = quantity / Math.pow(10, 6);
+    let termNumber = +quantity / Math.pow(10, 6);
 
     term = new Intl.NumberFormat(locale).format(termNumber) ;
   }

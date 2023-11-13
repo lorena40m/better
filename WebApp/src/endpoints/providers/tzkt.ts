@@ -132,7 +132,8 @@ export async function getTokenSortedByValue(ownerAddress: string, xtzPrice: numb
       ),
       quantity: tokenData.balance,
       valueInXtz: tokenData.balanceValue,
-    } // as Token
+      lastTransferDate: "",
+    } as Token
   })))
     .sort((a, b) => a.valueInXtz - b.valueInXtz) as Token[]
 }

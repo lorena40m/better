@@ -67,7 +67,7 @@ async function fetchOperation(id: string) {
           asset: assets,
         }
       },
-    } as TransferResponse
+    } // as TransferResponse
   }
 
   else {
@@ -87,7 +87,7 @@ async function fetchOperation(id: string) {
         contractName: contractData?.alias,
         functionName,
       },
-    } as CallResponse
+    } // as CallResponse
   }
 }
 
@@ -151,13 +151,14 @@ export default (async ({
       // saleHistory,
       // history: await listLastOperations(id, NUMBER_OF_TXS),
       contract: contractObject,
-    } as CollectionResponse
+    } // as CollectionResponse
   }
 
   if (artifactType === 'coin') {
     // const coin = await tzkt.getCoinData(contractHash, lastPrice)
-    const NUMBER_OF_TXS=5
-    const coin = await tzkt.getCoinData(id)
+    const NUMBER_OF_TXS = 5
+    const lastPrice = null // TODO
+    const coin = await tzkt.getCoinData(id, lastPrice)
     const holders = await tzkt.getCoinHolders(id)
     const coinYearlyData = await tzkt.getCoinYearlyTransfersAndVolume(id)
     return {
@@ -170,7 +171,7 @@ export default (async ({
       holders: holders,
       // history: await listLastOperations(id,NUMBER_OF_TXS),
       contract : contractObject,
-    } as CoinResponse
+    } // as CoinResponse
   }
 
   if (artifactType === 'contract') {
@@ -179,7 +180,7 @@ export default (async ({
       artifactType: 'contract',
       contract: contractObject,
       // history: await listLastOperations(id, NUMBER_OF_TXS),
-    } as ContractResponse
+    } // as ContractResponse
   }
 
   throw new Error('Impossible to understand the hash: ' + id)

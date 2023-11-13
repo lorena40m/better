@@ -122,7 +122,7 @@ export default function SpacingGrid(props) {
       className="mySlider"
     >
       {trendingData.map((value) => (
-        <Link href={'/nft?id='+value.id}>
+        <Link href={'/nft?id='+value.id} key={value.id}>
         <SwiperSlide key={value.id}>
           <Box className="collectionBox">
             <Box className="collectionBox-img">

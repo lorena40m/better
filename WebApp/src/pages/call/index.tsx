@@ -47,15 +47,15 @@ const Operation = () => {
             <Grid item md={6}>
               <Grid container spacing={4}>
                 <Grid item xs={12}>
-                  <SmartContract/>
+                  {/*{<SmartContract/>}*/}
                 </Grid>
                 <Grid item xs={12}>
-                  <Transaction />
+                  {<Transaction />}
                 </Grid>
               </Grid>
             </Grid>
             <Grid item md={6}>
-              <Operations />
+              {<Operations />}
             </Grid>
           </Grid>
           <Box className="pageTemplate__PlayBtnText">
