@@ -30,7 +30,7 @@ async function getLastBlockHash() {
 export async function getBlockDate() {
   const last_block = await getLastBlockHash()
   const data = await fetch(`explorer/block/${last_block}`)
-  return data?.time ? (new Date(data.time)).toISOString() : null
+  return data?.time ? (new Date(data.time)).toISOString().replace(/[:]/g, '-').slice(0,-1) : null
 }
 
 export async function getXtzPrice() {

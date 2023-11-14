@@ -57,13 +57,25 @@ async function fetchOperation(id: string) {
       artifactType: 'transfer',
       operation: {
         id: id,
-        status: status,
-        date: timestamp,
-        from: sender,
-        to: receiver,
+        status: status.toString(),
+        date: timestamp ? (new Date(timestamp)).toISOString().replace(/[:]/g, '-').slice(0,-1) : null,
+        from: {
+          id : sender,
+          name : "",
+        },
+        to: {
+          id: receiver,
+          name : "",
+        },
         transferedAssets: {
-          from: sender,
-          to: receiver,
+          from: {
+          id : sender,
+          name : ""
+          },
+          to: {
+            id : receiver,
+            name : "",
+          },
           asset: assets,
         }
       },
@@ -75,13 +87,25 @@ async function fetchOperation(id: string) {
       artifactType: 'call',
       operation: {
         id: id,
-        status: status,
-        date: timestamp,
-        from: sender,
-        to: receiver,
+        status: status.toString(),
+        date: timestamp ? (new Date(timestamp)).toISOString().replace(/[:]/g, '-').slice(0,-1) : null,
+        from: {
+          id : sender,
+          name : ""
+          },
+        to: {
+          id : receiver,
+          name : ""
+          },
         transferedAssets: assets.map(asset => ({
-          from: sender,
-          to: receiver,
+          from: {
+          id : sender,
+          name : ""
+          },
+          to: {
+          id : receiver,
+          name : ""
+          },
           asset,
         })),
         contractName: contractData?.alias,
@@ -113,13 +137,16 @@ export default (async ({
     id : id,
     name : contractData?.alias,
     contractName: contractData?.alias,
-    creationDate: contractData?.firstActivityTime,
-    creator: contractData?.creator.address,
-    operationCount: contractData?.numTransactions, // TODO : check why operationCount from tzstats tzstats.getWallet is different from numTransactions of tzkt
-    immutable: 0,
-    autonomous : 0,
-    //averageFee: await tzstats.getAddressAverageFee(id), // TODO
-    treasuryValue: nativeBalance, // TODO: compute total value
+    creationDate: contractData?.firstActivityTime ? (new Date(contractData.firstActivityTime)).toISOString().replace(/[:]/g, '-').slice(0,-1) : null,
+    creator: {
+        id : contractData?.creator.address,
+        name : "",
+      },
+    operationCount: contractData?.numTransactions.toString(), // TODO : check why operationCount from tzstats tzstats.getWallet is different from numTransactions of tzkt
+    immutable: false, 
+    autonomous : false,
+    averageFee: await tzstats.getAddressAverageFee(id).toString(), // TODO
+    treasuryValue: nativeBalance.toString(), // TODO: compute total value
     auditCount: 0,
     officialWebsite: contractData?.metadata?.site,
   }
@@ -150,7 +177,9 @@ export default (async ({
       // items,
       // saleHistory,
       // history: await listLastOperations(id, NUMBER_OF_TXS),
-      contract: contractObject,
+      contract: {
+          artifactType:'contract',
+          contractObject,}
     } // as CollectionResponse
   }
 
@@ -165,12 +194,14 @@ export default (async ({
       artifactType: 'coin',
       coin: {
         ...coin,
-        yearlyTransfers: coinYearlyData?.count,
-        yearlyVolume: coinYearlyData?.sum,
+        yearlyTransfers: coinYearlyData?.count.toString(),
+        yearlyVolume: coinYearlyData?.sum.toString(),
       },
       holders: holders,
       // history: await listLastOperations(id,NUMBER_OF_TXS),
-      contract : contractObject,
+      contract : {
+          artifactType:'contract',
+          contractObject,}
     } // as CoinResponse
   }
 
