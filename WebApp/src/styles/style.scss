@@ -1,3 +1,351 @@
+
+body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Open Sans', sans-serif !important;
+  background: #FAFAFB;
+}
+
+.MuiContainer-maxWidthXl {
+  max-width: 1328px;
+}
+
+.gradientText {
+  background: linear-gradient(152.26deg, #F74545 0%, #3384F5 101.41%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+/* TopHeader CSS */
+.headCrumb button {
+  background: #FFFFFF;
+  border-radius: 4px;
+  padding: 6px 18px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 22px;
+  color: #2A3B51;
+  text-transform: none;
+  font-family: 'Manrope', sans-serif;
+}
+
+.headCrumb-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+}
+
+.headCrumb p {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  /* identical to box height */
+
+
+  color: #2A3B51;
+}
+
+/* SiteHeader CSS */
+.siteHeader-inner {
+  padding: 25px 0;
+  border-bottom: 1px solid rgba(42, 59, 81, 0.1);
+  justify-content: space-between;
+}
+
+@media (min-width: 500px) {
+  .displayIfSmall {
+    display: none;
+  }
+}
+@media (max-width: 500px) {
+  .hideIfSmall {
+    display: none;
+  }
+}
+
+/* SearchBlock CSS */
+.searchBlock {
+  padding: 120px 0;
+}
+
+.searchBlock p {
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 52px;
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+  color: #2A3B51;
+  margin: 0 auto 32px;
+}
+
+.searchBlock-form {
+  border: 1px solid rgba(179, 193, 213, 0.8);
+  border-radius: 40px;
+  display: flex;
+  max-width: 852px;
+  margin: 0 auto;
+  background: #FFFFFF;
+  position: relative;
+
+  &:hover, &:has(input:focus) {
+    border-color: transparent;
+    box-shadow: 0 1px 6px rgba(32,33,36,.28);
+  }
+
+  .mainSearchButton {
+    margin: -1px;
+  }
+}
+
+.searchBlock-form .MuiButtonBase-root {
+  background: rgba(131, 155, 187, 0.6);
+  border-radius: 0px 40px 40px 0px;
+  min-width: 50px;
+  padding: 10px;
+
+  width: 70px;
+  box-shadow: none !important;
+
+  @media (max-width: 500px) {
+    width: 50px;
+  }
+}
+
+.searchBlock-form fieldset {
+  border: none;
+}
+
+.searchBlock-form input {
+  padding: 20px 48px;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 22px;
+  color: #2A3B51;
+  border-radius: 40px 0 0 40px !important; /* For Chrome Completion Background */
+}
+
+.searchBlock-form input::placeholder {
+  color: #839BBB;
+  opacity: 1; /* Firefox */
+}
+
+.searchBlock-form .scanIcon {
+  position: absolute;
+  right: 65px;
+  top: 18px;
+}
+
+.cardsModule {}
+
+.cardBox {
+  background: linear-gradient(152.26deg, #f7454520 0%, #3384f520 101.41%);
+  border-radius: 10px;
+  padding: 1px;
+
+}
+
+.cardBox-inner {
+  background: #FFFFFF;
+  border-radius: 10px;
+  padding: 30px 24px;
+}
+
+.cardBox-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  margin: 0 0 8px !important;
+}
+
+.cardBox-title {
+  font-weight: 300 !important;
+  font-size: 20px !important;
+  line-height: 27px !important;
+  color: #2A3B51 !important;
+  font-family: 'Open Sans', sans-serif !important;
+  margin: 0 !important;
+
+}
+
+.cardBox-price {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.cardBox-price span {
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 44px;
+  font-family: 'Open Sans', sans-serif !important;
+}
+
+.cardBox-status {
+  font-weight: 300 !important;
+  font-size: 18px !important;
+  line-height: 25px !important;
+  font-family: 'Open Sans', sans-serif !important;
+  color: #839BBB;
+}
+
+.cardBox--info .cardBox-inner {
+  background: linear-gradient(152.26deg, rgba(247, 69, 69, 0.06) 0%, rgba(51, 132, 245, 0.06) 101.41%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+}
+.cardBox-generalinfo{
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+}
+
+.sliderBlock {
+  margin: 60px 0;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 8px 0;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.sectionHead::after {
+  content: '';
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+  position: absolute;
+  background: linear-gradient(180deg, #f7454520 0%, #3384f520 101.41%);
+}
+
+.sectionHead-title {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 27px;
+  color: #2A3B51;
+}
+
+.selectBox fieldset {
+  border: 1px solid rgba(131, 155, 187, 0.4);
+  border-radius: 5px;
+}
+
+.selectBox .MuiSelect-select {
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 19px;
+  color: #2A3B51;
+  font-family: 'Open Sans', sans-serif !important;
+  padding: 10px 15px;
+}
+
+.collectionBox-title {
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  line-height: 22px !important;
+  color: #2A3B51;
+  margin: 0 !important;
+}
+
+.collectionBox-subTitle {
+  font-weight: 300 !important;
+  font-size: 14px !important;
+  line-height: 19px !important;
+  color: #839BBB;
+  margin: 0 !important;
+}
+
+.collectionBox-img {
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.collectionBox-likeBtn {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  background: rgba(160, 163, 189, 0.6);
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* .mySlider {
+  padding: 0 !important;
+  cursor: grab;
+} */
+
+.listTableBlock {
+  margin: 60px 0;
+}
+
+.listTableBlock table td,
+.listTableBlock table th {
+  padding: 15px 0;
+  border: none;
+  background: transparent !important;
+}
+
+.listTableBlock table tr {
+  background: transparent !important;
+}
+
+.listTableBlock table .MuiTableHead-root th {
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 19px;
+  font-family: 'Open Sans', sans-serif !important;
+  color: #839BBB;
+}
+
+.listTableBlock table .MuiTableBody-root td {
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 19px;
+  font-family: 'Open Sans', sans-serif !important;
+  color: rgba(44, 49, 49, 0.8);
+}
+
+.MuiTableContainer-root {
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+.userBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 22px;
+  font-family: 'Open Sans', sans-serif !important;
+  color: #2C3131;
+}
+
+
 .MuiTypography-root {
   font-family: "Open Sans", sans-serif !important;
 }
@@ -315,12 +663,31 @@
     opacity: 0;
     transition: opacity 0.3s;
     pointer-events: none;
-    border-radius: 0 10px 10px 0;
+    border-radius: 0 40px 40px 0;
   }
   &:hover::before {
     opacity: 1;
   }
 }
+/*
+Project: less intrusive search button
+.mainSearchButton {
+  background: transparent !important;
+  img {
+    filter: invert(0.4);
+  }
+}
+.searchBlock-form {
+  &:hover, &:has(input:focus) {
+    .mainSearchButton {
+      background: #bbc3cb !important;
+      img {
+        filter: invert(0);
+      }
+    }
+  }
+}
+*/
 .contractOtherInfos {
   margin: 40px 0 40px 0;
   background: #ffffff;
@@ -941,22 +1308,16 @@
       padding: 40px 0;
     }
   }
-.metamaskBouton {
-  background-color: white;
-  border: 1px solid rgba(181, 195, 214, 0.4);
-  border-radius: 50%;
-}
+  .metamaskBouton {
+    background-color: white;
+    border: 1px solid rgba(181, 195, 214, 0.4);
+    border-radius: 50%;
+  }
 
   .cardsModule {
     .cardBox {
-      &-head {
-        .cardBox-title {
-          font-size: 18px !important;
-        }
-      }
       &-price {
         span {
-          font-size: 26px !important;
           line-height: normal !important;
         }
         .cardBox-status {
@@ -970,7 +1331,13 @@
   }
 }
 @media only screen and (max-width: 575px) {
-  .topHeader-inner {
+  .cryptoLogo {
+    height: 70px;
+  }
+  .headCrumb {
+    padding: 15px 0 !important;
+  }
+  .headCrumb-inner {
     gap: 15px;
     p,
     button {
@@ -1134,10 +1501,6 @@
         padding: 15px;
       }
       &-head {
-        .cardBox-title {
-          font-size: 24px !important;
-          font-weight: 700 !important;
-        }
         .InputField {
           max-width: 115px;
           input {
@@ -1147,9 +1510,12 @@
         }
       }
       &-price {
-        span,
+        span, .cardBox-status {
+          font-size: 24px !important;
+          line-height: 22px !important;
+        }
         .cardBox-status {
-          font-size: 16px !important;
+          font-size: 14px !important;
           line-height: 22px !important;
         }
       }
@@ -1230,7 +1596,7 @@
     }
   }
   .searchBlock {
-    padding: 80px 0;
+    padding: 80px 0 100px;
     p {
       font-size: 28px;
       line-height: normal;
@@ -1244,4 +1610,14 @@
   .listTableBlock {
     margin: 30px 0;
   }
+}
+.languageSelect {
+  transform: scale(1.2);
+  position: relative;
+  right: 16px;
+}
+// :has is compatible with only 90% of users.
+// However it's not a big deal if this rule is not applied ;p
+div.MuiPaper-root:has(> [aria-labelledby="languageSelect"]) {
+  transform: scale(1.2) !important;
 }

@@ -7,7 +7,7 @@ const TypingEffect = ({ strings }) => {
       strings: strings,
       typeSpeed: 80,
       backSpeed: 40,
-	  showCursor: false,
+	    showCursor: true,
       loop: true
     };
     const typed = new Typed("#typed-output", options);
@@ -17,7 +17,7 @@ const TypingEffect = ({ strings }) => {
   }, [strings]);
 
   return (
-	<span className="gradientText" id="typed-output"></span>
+	<span id="typed-output"></span>
   );
 };
 

@@ -7,7 +7,7 @@ const HeadCrumb = () => {
   return (
     <Box style={{background: "#FAFAFB"}}>
       <Stack
-        className="topHeader"
+        className="headCrumb"
         padding="8px 0"
         sx={{
           background:
@@ -15,9 +15,9 @@ const HeadCrumb = () => {
         }}
       >
         <Container maxWidth="xl">
-          <Box className="topHeader-inner">
-            <Typography>{t("topHeader")}</Typography>
-            <Button>{t("topButton")}</Button>
+          <Box className="headCrumb-inner">
+            <Typography>{t("headCrumb")}</Typography>
+            <Button>{t("headCrumbButton")}</Button>
           </Box>
         </Container>
       </Stack>

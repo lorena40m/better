@@ -94,37 +94,19 @@ export default function Header() {
             <Box sx={{ flexGrow: 0 }}>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Stack>
-                  <Box>
-                    <Typography variant="body1" style={{ color: "black" }}>
-                      {t("needHelp")}
-                    </Typography>
-                    {/* <Typography variant="body2" style={{ color: "#839BBB" }}>
-                      changer la langue
-                    </Typography> */}
-                  </Box>
-
-                  <FormControl sx={{ minWidth: 150 }} size="small">
+                  <FormControl sx={{ minWidth: 150 }}>
                     <Select
-                      labelId="demo-select-small"
-                      id="demo-select-small"
-                      className="selectBox"
+                      labelId="languageSelect"
+                      id="languageSelect"
+                      className="selectBox languageSelect"
                       value={language}
                       onChange={(e) => {
-
                         onToggleLanguageClick(changeTo)
                         setLanguage(e.target.value)
                       }}
                     >
-                      <MenuItem value={"en"}>
-                        {/* <Link href="/" locale={changeTo}> */}
-                          English
-                        {/* </Link> */}
-                      </MenuItem>
-                      <MenuItem value={"fr"}>
-                        {/* <Link href="/" locale={changeTo}> */}
-                          French
-                        {/* </Link> */}
-                      </MenuItem>
+                      <MenuItem value={"en"}>🇺🇸 English</MenuItem>
+                      <MenuItem value={"fr"}>🇫🇷 Français</MenuItem>
                     </Select>
                   </FormControl>
                 </Stack>

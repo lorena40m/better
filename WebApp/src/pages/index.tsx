@@ -12,6 +12,7 @@ import {
   Box,
   Container,
   Stack,
+  FormControl,
   TextField,
   Card,
   CardContent,
@@ -33,6 +34,7 @@ import { HomeResponse, MiscellaneousResponse } from '../endpoints/API';
 import HomeEndpoint from '../endpoints/HomeEndpoint';
 import MiscellaneousEndpoint from '../endpoints/MiscellaneousEndpoint';
 import { formatPrice, formatToken } from '../utils/format'
+import useWindowSize from '../hooks/useWindowSize'
 
 export async function getServerSideProps({ locale }: any) {
   const homeResponse = await HomeEndpoint({ pageSize: 10 })
@@ -49,9 +51,8 @@ export async function getServerSideProps({ locale }: any) {
   };
 }
 
-const h1WordsAnim = ["transaction^1000", "wallet^1000", "nft^1000"];
-export default function Home({ homeResponse, miscResponse, iniSeconds }:
-  { homeResponse: HomeResponse, miscResponse: MiscellaneousResponse, iniSeconds: number }
+export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18Next }:
+  { homeResponse: HomeResponse, miscResponse: MiscellaneousResponse, iniSeconds: number, _nextI18Next: any }
 ) {
   const { t } = useTranslation("common");
   const router = useRouter();
@@ -61,6 +62,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds }:
     let i = setInterval(() => setSeconds(seconds => seconds - 1), 1000)
     return () => clearInterval(i)
   }, [])
+  const windowWidth = useWindowSize().width;
 
   return (
     <>
@@ -71,7 +73,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds }:
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <HeadCrumb />
+        {/*<HeadCrumb /> Temporarely disabled*/}
         <Header />
         <Box className="searchBlock">
           <Container maxWidth="xl">
@@ -81,26 +83,28 @@ export default function Home({ homeResponse, miscResponse, iniSeconds }:
               color="text.secondary"
               paragraph
             >
-              {t("title")} <TypingEffect strings={h1WordsAnim} />{" "}<br />
-              {t("title2")}
+              {t("animTitle")} <span className="displayIfSmall"><br /></span>
+              <TypingEffect strings={_nextI18Next.initialI18nStore[locale].common.anim} /> <br />
+              {t("animTitle2")}
             </Typography>
-            <Box className="searchBlock-form">
+            <form onSubmit={() => {alert('Search!')}} className="searchBlock-form">
               <TextField
                 hiddenLabel
                 id="filled-hidden-label-small"
                 defaultValue=""
-                placeholder={t("topPlaceholder")}
+                placeholder={t("inputPlaceholder") + (windowWidth > 500 ? t("inputPlaceholderIfLarge") : '')}
                 fullWidth
                 sx={{ ml: 0 }}
               ></TextField>
               <span className="scanIcon">{/* <ScanIcon /> */}</span>
               <Button
+                type="submit"
                 variant="contained"
                 className="mainSearchButton"
               >
                 <Image src={searchIcon} width={40} alt="Research icon" style={{zIndex: "1"}} />
               </Button>
-            </Box>
+            </form>
           </Container>
         </Box>
         <Box className="cardsModule">
@@ -132,7 +136,8 @@ export default function Home({ homeResponse, miscResponse, iniSeconds }:
                       priority
                       src={tezosLogo}
                       width={100}
-                      alt="Follow us on Twitter"
+                      alt=""
+                      className="cryptoLogo"
                     />
                   </Box>
                 </Box>
