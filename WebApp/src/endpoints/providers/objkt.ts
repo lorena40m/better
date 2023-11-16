@@ -60,6 +60,20 @@ export async function getTopNftCollection(pageSize, criteria: 'top' | 'trending'
   } as Collection)) as Collection[]
 }
 
+export async function getAddressDomain(address: string) { 
+  const queryResult = await fetch(`query MyQuery {
+     tzd_domain( where: {owner: {_eq: ${address}}}
+      order_by: {expiry: desc}
+  ) {
+    id
+    owner
+    expiry
+  }
+}`)
+  const domain = queryResult.tzd_domain[0].id 
+  return domain
+}
+
 export async function getWalletNfts(address: string) {
   const queryResult = await fetch(`query test {
     holder(where: {address: {_in: [${address}]}}) {

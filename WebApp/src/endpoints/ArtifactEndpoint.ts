@@ -149,12 +149,12 @@ export default (async ({
       artifactType: 'wallet',
       wallet: {
         id: id,
-        name: null, // TODO Tezos domains, sinon null=on va afficher "Anonyme" dans le front
-        nativeBalance,
-        totalValue: nativeBalance, // TODO: compute sum of data from TzPro
-        operationCount,
+        name: await objkt.getAddressDomain(id), // TODO Tezos domains, sinon null=on va afficher "Anonyme" dans le front
+        nativeBalance: nativeBalance?.toString(),
+        totalValue: await tzstats.getWalletTotalValue(id), // TODO: compute sum of data from TzPro
+        operationCount: operationCount?.toString(),
       },
-      tokens: await tzkt.getTokenSortedByValue(id, +(await tzstats.getXtzPrice()) / 100), // sorted by value
+      //tokens: await tzkt.getTokenSortedByValue(id, +(await tzstats.getXtzPrice()) / 100), // sorted by value
       uncertifiedTokens: [], // paginated, sorted by last transfer date
       nfts: await objkt.getWalletNfts(id), // sorted by value
       history: await listLastOperations(id, NUMBER_OF_TXS), // paginated

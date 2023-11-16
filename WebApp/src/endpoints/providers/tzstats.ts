@@ -47,6 +47,20 @@ export async function getWallet(address) {
   }
 }
 
+export async function getWalletTotalValue(address){
+  let sum = 0
+  try {
+    const data = await fetch(`v1/wallets/${address}/balances`)
+    const assets = data?.map(asset => ({
+      value : asset?.value_usd,
+    }))
+    const totalValue = assets.reduce((sum, asset) => sum + Number(asset.value),0) 
+    return totalValue
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
 export async function getLastOperations(address, number) {
   if (address.startsWith('KT')) {
     return await fetch(`explorer/contract/${address}/calls?prim=1&order=desc&limit=${number}`)
