@@ -5,7 +5,7 @@ import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useTranslation } from "next-i18next";
 
-export default function ({ onChange, values, labels }) {
+export default function SelectCustom({ onChange, values, labels }) {
   const { t } = useTranslation("common");
   const [value, setValue] = React.useState(values[0]);
 

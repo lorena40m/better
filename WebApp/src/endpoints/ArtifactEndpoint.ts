@@ -57,14 +57,26 @@ async function fetchOperation(id: string) {
       artifactType: 'transfer',
       operation: {
         id: id,
-        status: status,
-        date: timestamp,
-        from: sender,
-        to: receiver,
+        status: status?.toString(),
+        date: timestamp ? (new Date(timestamp)).toISOString() : null,
+        from: {
+          id: sender,
+          name: null,
+        },
+        to: {
+          id: receiver,
+          name: null,
+        },
         transferedAssets: {
-          from: sender,
-          to: receiver,
-          asset: assets,
+          from: {
+            id: sender,
+            name: null,
+          },
+          to: {
+            id: receiver,
+            name: null,
+          },
+          asset: assets?.[0],
         }
       },
     } // as TransferResponse
@@ -75,17 +87,38 @@ async function fetchOperation(id: string) {
       artifactType: 'call',
       operation: {
         id: id,
-        status: status,
-        date: timestamp,
-        from: sender,
-        to: receiver,
-        transferedAssets: assets.map(asset => ({
-          from: sender,
-          to: receiver,
+        status: status?.toString(),
+        date: timestamp ? (new Date(timestamp)).toISOString() : null,
+        from: {
+          id: sender,
+          name: null,
+          },
+        to: {
+          id: receiver,
+          name: null,
+        },
+        transferedAssets: assets?.map(asset => ({
+          from: {
+            id: sender,
+            name: null,
+          },
+          to: {
+            id: receiver,
+            name: null,
+          },
           asset,
         })),
         contractName: contractData?.alias,
         functionName,
+      },
+      fee: {
+        value: null,
+        nativeValue: null,
+        burned: null,
+      },
+      history: {
+        from: [], // paginated
+        to: [], // paginated
       },
     } // as CallResponse
   }
@@ -109,20 +142,6 @@ export default (async ({
   }
 
   const { nativeBalance, operationCount } = await tzstats.getWallet(id)
-  const contractObject = {
-    id: id,
-    name: contractData?.alias,
-    contractName: contractData?.alias,
-    creationDate: contractData?.firstActivityTime,
-    creator: contractData?.creator.address,
-    operationCount: contractData?.numTransactions, // TODO : check why operationCount from tzstats tzstats.getWallet is different from numTransactions of tzkt
-    immutable: 0,
-    autonomous: 0,
-    //averageFee: await tzstats.getAddressAverageFee(id), // TODO
-    treasuryValue: nativeBalance, // TODO: compute total value
-    auditCount: 0,
-    officialWebsite: contractData?.metadata?.site,
-  }
 
   if (artifactType === 'wallet') {
     const NUMBER_OF_TXS = 5
@@ -142,6 +161,27 @@ export default (async ({
     } as WalletResponse
   }
 
+  const contract = {
+    artifactType: 'contract',
+    contract: {
+      id: id,
+      name: contractData?.alias,
+      contractName: contractData?.alias,
+      creationDate: contractData?.firstActivityTime ? (new Date(contractData.firstActivityTime)).toISOString() : null,
+      creator: {
+        id: contractData?.creator?.address,
+        name: null,
+      },
+      operationCount: contractData?.numTransactions?.toString(), // TODO : check why operationCount from tzstats tzstats.getWallet is different from numTransactions of tzkt
+      immutable: null,
+      autonomous : null,
+      averageFee: (await tzstats.getAddressAverageFee(id))?.toString(), // TODO
+      treasuryValue: nativeBalance?.toString(), // TODO: compute total value
+      auditCount: null,
+      officialWebsite: contractData?.metadata?.site,
+    }
+  } as ContractResponse
+
   if (artifactType === 'collection') {
     const NUMBER_OF_TXS = 5
     return {
@@ -150,8 +190,8 @@ export default (async ({
       // items,
       // saleHistory,
       // history: await listLastOperations(id, NUMBER_OF_TXS),
-      contract: contractObject,
-    } // as CollectionResponse
+      contract,
+    } as CollectionResponse
   }
 
   if (artifactType === 'coin') {
@@ -165,22 +205,18 @@ export default (async ({
       artifactType: 'coin',
       coin: {
         ...coin,
-        yearlyTransfers: coinYearlyData?.count,
-        yearlyVolume: coinYearlyData?.sum,
+        yearlyTransfers: coinYearlyData?.count?.toString(),
+        yearlyVolume: coinYearlyData?.sum?.toString(),
       },
       holders: holders,
       // history: await listLastOperations(id,NUMBER_OF_TXS),
-      contract : contractObject,
-    } // as CoinResponse
+      contract,
+    } as CoinResponse
   }
 
   if (artifactType === 'contract') {
     const NUMBER_OF_TXS = 5
-    return {
-      artifactType: 'contract',
-      contract: contractObject,
-      // history: await listLastOperations(id, NUMBER_OF_TXS),
-    } // as ContractResponse
+    return contract
   }
 
   throw new Error('Impossible to understand the hash: ' + id)

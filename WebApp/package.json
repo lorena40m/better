@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "cypress open",
-    "unittest": "mkdir -p unittests_build unittests_logs; npx tsc unittests/* --outDir unittests_build; for file in \"unittests_build/unittests/test${TEST_ONLY}*.js\"; do node $file 2>unittests_logs/$(basename $file .js).errors; done",
+    "unittest": "mkdir -p unittests_build unittests_logs; npx tsc unittests/* --outDir unittests_build; for file in unittests_build/unittests/test${TEST_ONLY}*.js; do node $file 2>unittests_logs/$(basename $file .js).errors; done",
     "unittest-utils": "TEST_ONLY=Utils npm run unittest"
   },
   "dependencies": {

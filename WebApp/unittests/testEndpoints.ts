@@ -84,7 +84,7 @@ TestScript(async function () {
       expect(`should return something serializable`, response)
       const t2 = new Date()
       const time = +t2 - +t1
-      logResult('${testCaseName} in ${time}ms', response)
+      logResult(`${testCaseName} in ${time}ms`, response)
 
       // Wait for a second
       await new Promise(resolve => setTimeout(resolve, 1000))

@@ -72,10 +72,10 @@ export async function getCoinData(contractHash, lastPrice) {
     logo: ipfsToHttps(coin.metadata.thumbnailUri),
     name: coin.contract.alias,
     ticker: coin.metadata.symbol,
-    decimals: coin.metadata.decimals,
+    decimals: Number(coin.metadata.decimals),
     lastPrice: lastPrice,
     circulatingSupplyOnChain: coin.totalSupply,
-    holders: coin.holdersCount,
+    holders: coin.holdersCount.toString(),
   } as Coin
 }
 

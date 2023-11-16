@@ -157,7 +157,7 @@ export type Transfer = {
   transferedAssets: {
     from: Address,
     to: Address,
-    asset: Asset[],
+    asset: Asset,
   },
 }
 
