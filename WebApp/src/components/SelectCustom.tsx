@@ -3,27 +3,26 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { useTranslation } from "next-i18next";
 
-export default function SelectSmall() {
-  const [age, setAge] = React.useState("10");
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
-  };
+export default function ({ onChange, values, labels }) {
+  const { t } = useTranslation("common");
+  const [value, setValue] = React.useState(values[0]);
 
   return (
-    <FormControl sx={{ minWidth: 150 }} size="small">
+    <FormControl sx={{ minWidth: 150 }}>
       <Select
         labelId="demo-select-small"
         id="demo-select-small"
-        value={age}
+        value={value}
         label=""
-        onChange={handleChange}
+        onChange={(event: SelectChangeEvent) => {
+          setValue(event.target.value)
+          onChange?.(event.target.value)
+        }}
         className="selectBox"
       >
-        <MenuItem value={10}>Tendances</MenuItem>
-        <MenuItem value={20}>Twenty</MenuItem>
-        <MenuItem value={30}>Thirty</MenuItem>
+      {values.map((value, i) => <MenuItem key={value} value={value}>{labels[i]}</MenuItem>)}
       </Select>
     </FormControl>
   );

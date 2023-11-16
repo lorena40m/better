@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useEffect, useRef } from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -12,90 +12,25 @@ import "swiper/css/navigation";
 import "swiper/css/bundle";
 import Heart from "@/assets/iconSvg/Heart.svg";
 import Link from 'next/link'
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import { formatToken } from '../utils/format';
 
-const carouselData = [
-  {
-    id: 1,
-    image: "/monkey_ape.jpg",
-    title: "Monkey Ape",
-    description: "19 XTZ",
-  },
-  {
-    id: 2,
-    image: "/assets/svg-icons/NFTpic1.svg",
-    title: "Moonfall",
-    description: "46 XTZ",
-  },
-  {
-    id: 3,
-    image: "/assets/svg-icons/NFTpic2.svg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-  {
-    id: 4,
-    image: "/assets/svg-icons/NFTpic3.svg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-  {
-    id: 5,
-    image: "/assets/svg-icons/NFTpic4.svg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-  {
-    id: 6,
-    image: "/assets/svg-icons/NFTpic5.svg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-  {
-    id: 7,
-    image: "/assets/svg-icons/NFTpic6.svg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-  {
-    id: 8,
-    image: "/monkey_ape.jpg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-  {
-    id: 9,
-    image: "/assets/svg-icons/NFTpic2.svg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-];
+export default function SpacingGrid({ collections }) {
+  const { t } = useTranslation("common");
+  const {locale} = useRouter();
+  const swiperRef = useRef(null);
 
-export default function SpacingGrid(props) {
+  useEffect(() => {
+    swiperRef.current.slideTo(0)
+  }, [collections])
 
-  function ipfsToLink(stringIpfs) {
-    const baseUrl = "https://ipfs.io/ipfs/";
-    const ipfsId = stringIpfs.slice(7);
-    return (baseUrl + ipfsId);
-  }
-
-  const trendingData = props.trending;
   return (
-    // <Box
-    //   sx={{
-    //     display: "flex",
-    //     flexDirection: "row",
-    //     gap: 4,
-    //     overflowX: "auto",
-    //     overflowY: "hidden",
-    //     "&::-webkit-scrollbar": { height: 8 },
-    //   }}
-    // >
-    // </Box>
     <Swiper
+      onSwiper={(swiper) => swiperRef.current = swiper}
       spaceBetween={40}
-      slidesPerView={5.5}
       centeredSlides={false}
-      loop={true}
+      loop={false}
       autoplay={{
         delay: 1000,
         disableOnInteraction: false,
@@ -105,58 +40,54 @@ export default function SpacingGrid(props) {
       }}
       breakpoints={{
         100 : {
-          slidesPerView : 2,
+          slidesPerView : 1,
           spaceBetween : 15
         },
         640: {
-          slidesPerView: 4,
+          slidesPerView: 2,
           spaceBetween: 15,
         },
         900: {
-          slidesPerView: 6,
+          slidesPerView: 3,
           spaceBetween: 15,
-        }
+        },
+        1400: {
+          slidesPerView: 4,
+          spaceBetween: 15,
+        },
       }}
       navigation={false}
       modules={[Autoplay, Navigation]}
       className="mySlider"
     >
-      {trendingData.map((value) => (
-        <Link href={'/nft?id='+value.id} key={value.id}>
+      {collections.map((value) => (
         <SwiperSlide key={value.id}>
-          <Box className="collectionBox">
-            <Box className="collectionBox-img">
-              <Image
-                src={ipfsToLink(value.image)}
-                alt="crypto"
-                width={240}
-                height={140}
-                style={{
-                  height: "240px",
-                  objectFit: "cover",
-                }}
-              />
-              <span className="collectionBox-likeBtn">
-                {/* <Heart /> */}
-              </span>
+          <Link href={'/'+value.id}>
+            <Box className="collectionBox"
+              style={{ backgroundImage: `url(${value.image})` }}
+            >
+              {/*<span className="collectionBox-likeBtn">
+                <Heart />
+              </span>*/}
+              <Box className="collectionBox-title-floating">
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  className="collectionBox-title"
+                >
+                  {value.name}
+                </Typography>
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  className="collectionBox-subTitle"
+                >
+                  {t('collectionSupply')} {formatToken(value.supply, 0, locale)}
+                </Typography>
+              </Box>
             </Box>
-            <Typography
-              gutterBottom
-              variant="h5"
-              className="collectionBox-title"
-            >
-              {value.name}
-            </Typography>
-            <Typography
-              gutterBottom
-              variant="h5"
-              className="collectionBox-subTitle"
-            >
-              Supply: <b>{value.supply}</b>
-            </Typography>
-          </Box>
+          </Link>
         </SwiperSlide>
-        </Link>
       ))}
     </Swiper>
   );

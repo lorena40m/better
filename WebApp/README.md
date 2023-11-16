@@ -28,11 +28,6 @@ Run end-to-end tests (use Cypress framework):
 npm run test
 ```
 
-Then click on test suites.
-
-Most tests are red, **don't panick!** It's normal, there have to be completed.
-**Look into the console** to observe printed object, as well as validation failures!
-
 ## Before a merge request
 
 1. Squash your commits: `git rebase -i master` (Voir tuto dans Discord)

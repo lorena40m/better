@@ -63,6 +63,8 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
     return () => clearInterval(i)
   }, [])
   const windowWidth = useWindowSize().width;
+  const [collectionCriteria, setCollectionCriteria] = useState('trending')
+  const [tokenCriteria, setTokenCriteria] = useState('byCap')
 
   return (
     <>
@@ -124,7 +126,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                           variant="h5"
                           className="cardBox-title"
                         >
-                          {t("block1")}
+                          {t("stat1")}
                           <b>XTZ</b>
                         </Typography>
                       </Box>
@@ -151,7 +153,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                         variant="h5"
                         className="cardBox-title"
                       >
-                        {t("block2")}
+                        {t("stat2")}
                       </Typography>
                     </Box>
                     <Typography variant="h4" className="cardBox-price">
@@ -170,7 +172,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                         variant="h5"
                         className="cardBox-title"
                       >
-                        {t("block3")}
+                        {t("stat3")}
                       </Typography>
                       {/*<span className="cardBox-status">{homeResponse.stats.lastBlockDate}</span>*/}
                     </Box>
@@ -186,17 +188,25 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
         <Box className="sliderBlock">
           <Container maxWidth="xl">
             <Box className="sectionHead">
-              <Box className="sectionHead-title">Collection NFT</Box>
-              <SelectCustom />
+              <Box className="sectionHead-title">{t('sectionTitleCollections')}</Box>
+              <SelectCustom
+                onChange={setCollectionCriteria}
+                values={['trending', 'top']}
+                labels={[t('criteriaTrending'), t('criteriaTop')]}
+              />
             </Box>
-            <HCarousel trending={homeResponse.collections.trending} />
+            <HCarousel collections={homeResponse.collections[collectionCriteria]} />
           </Container>
         </Box>
         <Box className="listTableBlock">
           <Container maxWidth="xl">
             <Box className="sectionHead">
-              <Box className="sectionHead-title">Jetons</Box>
-              <SelectCustom />
+              <Box className="sectionHead-title">{t('sectionTitleTokens')}</Box>
+              <SelectCustom
+                onChange={setTokenCriteria}
+                values={['byCap', 'byVolume']}
+                labels={[t('criteriaByCap'), t('criteriaByVolume')]}
+              />
             </Box>
             <JetonsTable />
           </Container>

@@ -37,7 +37,7 @@ const floatSeparator = {
 
 const thousandSeparator = {
   en: ',',
-  fr: ' ',
+  fr: ' ',
 }
 
 // TODO for Ethereum: dust notation when significant digit < e-6
@@ -46,11 +46,11 @@ const dustTerm = {
   fr: 'poussière',
 }
 
+// Note: made for maximum 6 digits (TODO)
 export function formatToken(quantity: string, decimals: number, locale: string) {
   quantity = quantity.replace(/^0+/, '');
   const biggerSignificantDigit = quantity.length - decimals;
   let firstThreeDigits = quantity.slice(0, 3);
-  let term;
 
   if (biggerSignificantDigit > 6) {
     const magnitude = Math.floor((biggerSignificantDigit - 1) / 3);
@@ -59,17 +59,23 @@ export function formatToken(quantity: string, decimals: number, locale: string) 
       firstThreeDigits = firstThreeDigits.slice(0, biggerSignificantDigit % 3)
         + floatSeparator[locale] + firstThreeDigits.slice(quantity.length % 3)
     };
-    term = firstThreeDigits + ' ' + magnitudeTerm +
-      (firstThreeDigits[0] == '1' && quantity.length % 3 === 1 ? '' : 's');
-      console.log("supérieur à 6")
-  }
-  else {
-    let termNumber = +quantity / Math.pow(10, 6);
-
-    term = new Intl.NumberFormat(locale).format(termNumber) ;
+    return firstThreeDigits + thousandSeparator[locale] + magnitudeTerm +
+      (firstThreeDigits[0] == '1' && quantity.length % 3 === 1 ? '' : 's')
   }
 
-  return term
+  if (biggerSignificantDigit >= 3) {
+    let number = Math.floor(+quantity / Math.pow(10, decimals))
+    return new Intl.NumberFormat(locale).format(number)
+  }
+
+  const significance = biggerSignificantDigit + Math.min(3 - biggerSignificantDigit, decimals)
+
+  if (biggerSignificantDigit >= 0) {
+    let number = +firstThreeDigits / Math.pow(10, significance - biggerSignificantDigit);
+    return number.toFixed(Math.min(significance - biggerSignificantDigit, decimals)).replace('.', floatSeparator[locale])
+  }
+
+  return (+quantity / Math.pow(10, decimals)).toFixed(decimals).replace('.', floatSeparator[locale])
 }
 
 // test

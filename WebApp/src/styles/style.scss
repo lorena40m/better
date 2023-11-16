@@ -237,7 +237,7 @@ body {
 .sectionHead-title {
   font-style: normal;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 26px;
   line-height: 27px;
   color: #2A3B51;
 }
@@ -249,34 +249,43 @@ body {
 
 .selectBox .MuiSelect-select {
   font-weight: 300;
-  font-size: 14px;
-  line-height: 19px;
+  font-size: 16px;
   color: #2A3B51;
   font-family: 'Open Sans', sans-serif !important;
   padding: 10px 15px;
 }
 
+.collectionBox {
+  position: relative;
+  padding-top: 100%;
+  background-size: cover;
+  background-position: center;
+  border-radius: 20px;
+}
+
+.collectionBox-title-floating {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  color: white !important;
+  font-weight: 700 !important;
+  background-color: rgb(83 83 83 / 90%);
+  padding: 8px 15px;
+  border-radius: 10px;
+}
+
 .collectionBox-title {
   font-weight: 700 !important;
-  font-size: 16px !important;
-  line-height: 22px !important;
-  color: #2A3B51;
+  font-size: 20px !important;
   margin: 0 !important;
 }
 
 .collectionBox-subTitle {
   font-weight: 300 !important;
   font-size: 14px !important;
-  line-height: 19px !important;
-  color: #839BBB;
+  color: #dadada;
   margin: 0 !important;
-}
-
-.collectionBox-img {
-  border-radius: 15px;
-  overflow: hidden;
-  position: relative;
-  margin-bottom: 8px;
 }
 
 .collectionBox-likeBtn {
@@ -1326,9 +1335,6 @@ Project: less intrusive search button
       }
     }
   }
-  .sliderBlock {
-    margin: 30px 0;
-  }
 }
 @media only screen and (max-width: 575px) {
   .cryptoLogo {
@@ -1596,7 +1602,7 @@ Project: less intrusive search button
     }
   }
   .searchBlock {
-    padding: 80px 0 100px;
+    padding: 80px 0 120px;
     p {
       font-size: 28px;
       line-height: normal;

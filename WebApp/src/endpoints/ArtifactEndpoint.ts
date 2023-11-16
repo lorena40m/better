@@ -110,14 +110,14 @@ export default (async ({
 
   const { nativeBalance, operationCount } = await tzstats.getWallet(id)
   const contractObject = {
-    id : id,
-    name : contractData?.alias,
+    id: id,
+    name: contractData?.alias,
     contractName: contractData?.alias,
     creationDate: contractData?.firstActivityTime,
     creator: contractData?.creator.address,
     operationCount: contractData?.numTransactions, // TODO : check why operationCount from tzstats tzstats.getWallet is different from numTransactions of tzkt
     immutable: 0,
-    autonomous : 0,
+    autonomous: 0,
     //averageFee: await tzstats.getAddressAverageFee(id), // TODO
     treasuryValue: nativeBalance, // TODO: compute total value
     auditCount: 0,
@@ -130,9 +130,9 @@ export default (async ({
       artifactType: 'wallet',
       wallet: {
         id: id,
-        name: id, // TODO
+        name: null, // TODO Tezos domains, sinon null=on va afficher "Anonyme" dans le front
         nativeBalance,
-        totalValue: nativeBalance, // TODO: compute total value
+        totalValue: nativeBalance, // TODO: compute sum of data from TzPro
         operationCount,
       },
       tokens: await tzkt.getTokenSortedByValue(id, +(await tzstats.getXtzPrice()) / 100), // sorted by value

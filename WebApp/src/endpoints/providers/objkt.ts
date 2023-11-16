@@ -35,33 +35,28 @@ export async function getTopNftCollection(pageSize, criteria: 'top' | 'trending'
     trending: '{volume_24h: desc_nulls_last}',
   }[criteria]
 
-  return (await fetch(`query test {
-    gallery(order_by: ${orderBy}, limit: ${pageSize}) {
-      active_auctions
-      active_listing
-      description
-      editions
-      floor_price
-      items
-      last_metadata_update
-      logo
-      max_items
-      metadata
-      name
-      owners
-      slug
-      volume_24h
+  return (await fetch(`query collections {
+    fa(order_by: ${orderBy}, limit: ${pageSize}) {
       volume_total
-      gallery_id
+      volume_24h
+      contract
+      name
+      items
+      floor_price
+      logo
+      category
+      short_name
+      path
     }
-  }`))?.gallery?.map((item) => ({
-    id: item.gallery_id,
-    image: ipfsToHttps(item?.logo),
-    name: item.name,
-    supply: item.items ? item.items.toString() : "0",
-    floorPrice: item.floor_price ? item.floor_price.toString(): "0",
-    topSale: "", // TODO : request topSale
-    marketplaceLink:"", // TODO : request marketplaceLink
+  }
+  `))?.fa?.map((collection) => ({
+    id: collection?.contract,
+    image: ipfsToHttps(collection?.logo),
+    name: collection?.short_name || collection?.name,
+    supply: collection?.items?.toString(),
+    floorPrice: collection?.floor_price?.toString(),
+    topSale: null,
+    marketplaceLink: 'https://objkt.com/collection/' + collection?.path, // TODO : request marketplaceLink
   } as Collection)) as Collection[]
 }
 
