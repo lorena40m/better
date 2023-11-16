@@ -154,7 +154,7 @@ export default (async ({
         totalValue: await tzstats.getWalletTotalValue(id), // TODO: compute sum of data from TzPro
         operationCount: operationCount?.toString(),
       },
-      //tokens: await tzkt.getTokenSortedByValue(id, +(await tzstats.getXtzPrice()) / 100), // sorted by value
+      tokens: await tzstats.getTokenSortedByValue(id),
       uncertifiedTokens: [], // paginated, sorted by last transfer date
       nfts: await objkt.getWalletNfts(id), // sorted by value
       history: await listLastOperations(id, NUMBER_OF_TXS), // paginated

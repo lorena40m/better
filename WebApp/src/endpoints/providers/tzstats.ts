@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {getCoinData} from './tzkt'
 
 async function fetch(urn: string) {
   try {
@@ -51,14 +52,47 @@ export async function getWalletTotalValue(address){
   let sum = 0
   try {
     const data = await fetch(`v1/wallets/${address}/balances`)
-    const assets = data?.map(asset => ({
-      value : asset?.value_usd,
-    }))
-    const totalValue = assets.reduce((sum, asset) => sum + Number(asset.value),0) 
-    return totalValue
+    //const data = await response.json()
+  
+
+    // Calculate total value in USD
+    const totalValueUSD = data.reduce((sum, asset) => {
+      const valueUSD = asset?.value_usd || "0"; // Default to "0" if value_usd is not present
+      return sum + Number(valueUSD);
+    }, 0);
+    const totalValueInCents = Math.round(totalValueUSD*100)
+    return totalValueInCents.toString()
+
   } catch (error) {
     console.error('Error:', error);
+    return 0
   }
+}
+
+export async function getTokenSortedByValue(address: string ) {
+  const assets = await fetch(`v1/wallets/${address}/balances`)
+  const tokens = assets.filter(item => item.decimals !== 0);
+  
+  return (await Promise.all(tokens.map(async tokenData => {
+    // Carefull: every NFT here is considered a token of the owner
+    // Carefull 2: The owner can own thousands of tokens
+    // Do we want to make thousands of request?
+    // On the other side we don't want to miss some important tokens...
+    // The answer would be to paginate, but will only be usefull for big wallets...
+    // Or to have an index of course
+    // console.log('tokenData', tokenData)
+    const valueInUSD = Math.round(tokenData?.value_usd*100).toString()
+    return {
+      coin: await getCoinData(
+        tokenData.contract,
+        valueInUSD
+      ),
+      quantity: tokenData.balance,
+      valueInUSD: valueInUSD, 
+      lastTransferDate: "",
+    } as Token
+  })))
+    .sort((a, b) => b.valueInUSD - a.valueInUSD) as Token[]
 }
 
 export async function getLastOperations(address, number) {
