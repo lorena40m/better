@@ -54,9 +54,9 @@ export async function getTopNftCollection(pageSize, criteria: 'top' | 'trending'
     image: ipfsToHttps(collection?.logo),
     name: collection?.short_name || collection?.name,
     supply: collection?.items?.toString(),
-    floorPrice: collection?.floor_price?.toString(),
+    floorPrice: collection?.floor_price?.toString() ?? null,
     topSale: null,
-    marketplaceLink: 'https://objkt.com/collection/' + collection?.path, // TODO : request marketplaceLink
+    marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? collection?.contract),
   } as Collection)) as Collection[]
 }
 

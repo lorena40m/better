@@ -322,20 +322,28 @@ body {
   background: transparent !important;
 }
 
-.listTableBlock table .MuiTableHead-root th {
-  font-weight: 300;
-  font-size: 14px;
-  line-height: 19px;
-  font-family: 'Open Sans', sans-serif !important;
-  color: #839BBB;
-}
+.listTableBlock table {
+  .MuiTableHead-root th, .MuiTableBody-root td {
+    font-weight: 500;
+    font-size: 18px;
+    color: #839BBB;
 
-.listTableBlock table .MuiTableBody-root td {
-  font-weight: 300;
-  font-size: 14px;
-  line-height: 19px;
-  font-family: 'Open Sans', sans-serif !important;
-  color: rgba(44, 49, 49, 0.8);
+    @media (max-width: 900px) {
+      font-size: 16px;
+    }
+  }
+
+  .MuiTableHead-root th {
+    font-weight: bold;
+  }
+
+  .MuiTableBody-root td {
+    color: rgba(44, 49, 49, 0.8);
+  }
+
+  .MuiTableCell-root:first-child {
+    font-weight: bold;
+  }
 }
 
 .MuiTableContainer-root {

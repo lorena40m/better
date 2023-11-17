@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 // import SearchIcon from "@mui/icons-material/Search";
 import SelectCustom from "../components/SelectCustom";
-import JetonsTable from "../components/JetonsTable";
+import TokensTable from "../components/TokensTable";
 import HCarousel from "../components/HCarousel";
 import HeadCrumb from "@/components/Header/HeadCrumb";
 import tezosLogo from "../assets/images/tezos_gradient.svg";
@@ -37,15 +37,15 @@ import { formatPrice, formatToken } from '../utils/format'
 import useWindowSize from '../hooks/useWindowSize'
 
 export async function getServerSideProps({ locale }: any) {
-  const homeResponse = await HomeEndpoint({ pageSize: 10 })
   const miscResponse = await MiscellaneousEndpoint({})
+  const homeResponse = await HomeEndpoint({ pageSize: 100 })
   console.log(homeResponse, miscResponse)
 
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
-      homeResponse,
       miscResponse,
+      homeResponse,
       iniSeconds: Math.floor((+(new Date(homeResponse.stats.lastBlockDate)) - +(new Date())) / 1000),
     },
   };
@@ -208,7 +208,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                 labels={[t('criteriaByCap'), t('criteriaByVolume')]}
               />
             </Box>
-            <JetonsTable />
+            <TokensTable />
           </Container>
         </Box>
       </main>
