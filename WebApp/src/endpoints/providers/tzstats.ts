@@ -61,7 +61,7 @@ export async function getWalletTotalValue(address){
       return sum + Number(valueUSD);
     }, 0);
     const totalValueInCents = Math.round(totalValueUSD*100)
-    return totalValueInCents.toString()
+    return totalValueInCents
 
   } catch (error) {
     console.error('Error:', error);
@@ -116,7 +116,7 @@ export async function getAddressAverageFee(address) {
       totalGasUsed += data[index]?.gas_used;
     }
     const averageFee = totalGasUsed / NUMBER_OF_TXS;
-    return averageFee;
+    return Math.round(averageFee);
   } else {
     // Handle the case where data is not an array (e.g., if there's an issue with the API response)
     console.error("Data is not an array:", data);
