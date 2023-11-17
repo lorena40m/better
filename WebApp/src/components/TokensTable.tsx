@@ -58,18 +58,18 @@ const rows = [
   createData("USDtez", Usd, "USDTZ", 1.0, 300, 78392)
 ];
 
-export default function CustomizedTables() {
+export default function TokensTable() {
   const { t } = useTranslation("common");
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell align="left">Nom</StyledTableCell>
-            <StyledTableCell align="center">{t("jetson2")}</StyledTableCell>
-            <StyledTableCell align="center">{t("jetson3")}</StyledTableCell>
-            <StyledTableCell align="center">{t("jetson4")}</StyledTableCell>
-            <StyledTableCell align="center">{t("jetson5")}</StyledTableCell>
+            <StyledTableCell align="left">{t("token1")}</StyledTableCell>
+            <StyledTableCell align="center">{t("token2")}</StyledTableCell>
+            <StyledTableCell align="center">{t("token3")}</StyledTableCell>
+            <StyledTableCell align="center">{t("token4")}</StyledTableCell>
+            <StyledTableCell align="center">{t("token5")}</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
