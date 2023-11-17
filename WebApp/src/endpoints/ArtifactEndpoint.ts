@@ -170,7 +170,7 @@ export default (async ({
       creationDate: contractData?.firstActivityTime ? (new Date(contractData.firstActivityTime)).toISOString() : null,
       creator: {
         id: contractData?.creator?.address,
-        name: null,
+        name: await objkt.getAddressDomain(contractData?.creator?.address),
       },
       operationCount: contractData?.numTransactions?.toString(), // TODO : check why operationCount from tzstats tzstats.getWallet is different from numTransactions of tzkt
       immutable: null,
@@ -186,11 +186,11 @@ export default (async ({
     const NUMBER_OF_TXS = 5
     return {
       artifactType: 'collection',
-      // collection,
+      collection : await objkt.getCollection(id),
       // items,
       // saleHistory,
       // history: await listLastOperations(id, NUMBER_OF_TXS),
-      contract,
+      contract : contract,
     } as CollectionResponse
   }
 

@@ -70,8 +70,32 @@ export async function getAddressDomain(address: string) {
     expiry
   }
 }`)
-  const domain = queryResult.tzd_domain[0].id 
+  const domain = queryResult?.tzd_domain[0]?.id 
   return domain
+}
+
+export async function getCollection(address: string) { 
+  const queryResult = await fetch(`query collection_by_id {
+  fa(where: {contract: {_eq: ${address}}}) {
+    name
+    logo
+    floor_price
+    items
+    path
+  }
+}
+`)
+  const collection = queryResult.fa[0]
+  const collectionObject = {
+    id : address, 
+    name : collection?.name,
+    image : ipfsToHttps(collection?.logo),
+    supply : collection?.items.toString(), 
+    floorPrice : collection?.floor_price.toString(),
+    topSale : null,
+    marketplaceLink: 'https://objkt.com/collection/' + collection?.path, // TODO : request marketplaceLink
+  }  
+  return collectionObject
 }
 
 export async function getWalletNfts(address: string) {
@@ -119,6 +143,7 @@ export async function getWalletNfts(address: string) {
       id : faData.contract.concat("#", token.token.token_id),
       image : token.token.display_uri,
       name : faData.name,
+      //lastSalePrice : ,
       collection : {
         id : faData.contract,
         image : galleryData?.logo,
@@ -128,6 +153,7 @@ export async function getWalletNfts(address: string) {
         topSale : "0", // TO FILL
         marketplaceLink : "", // TO FILL
       } as Collection,
+      //lastTransferDate : ,
     } as Nft
   }) as Nft[]
 }
