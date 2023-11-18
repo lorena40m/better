@@ -84,7 +84,7 @@ export async function getCoinHolders(contractHash) {
   ?.map(holderData => {
       return {
         id : holderData.account.address,
-        name : "",
+        name : "", // TODO : should we query the name ?
         quantity : holderData.balance,
       }
     }) as Holder[] | null

@@ -51,7 +51,9 @@ async function fetchOperation(id: string) {
     await tzkt.getContractData(receiver),
   ])
   const operationType = discrimateOperationType(receiver, contractData, functionName)
-
+  const senderName = await objkt.getAddressDomain(sender)
+  const receiverName = await objkt.getAddressDomain(receiver)
+ 
   if (operationType === 'transfer') {
     return {
       artifactType: 'transfer',
@@ -61,29 +63,29 @@ async function fetchOperation(id: string) {
         date: timestamp ? (new Date(timestamp)).toISOString() : null,
         from: {
           id: sender,
-          name: null,
+          name: senderName,
         },
         to: {
           id: receiver,
-          name: null,
+          name: receiverName,
         },
         transferedAssets: {
           from: {
             id: sender,
-            name: null,
+            name: senderName,
           },
           to: {
             id: receiver,
-            name: null,
+            name: receiverName,
           },
           asset: assets?.[0],
         }
-      },
+      }, 
     } // as TransferResponse
   }
 
   else {
-    return {
+       return {
       artifactType: 'call',
       operation: {
         id: id,
@@ -91,20 +93,20 @@ async function fetchOperation(id: string) {
         date: timestamp ? (new Date(timestamp)).toISOString() : null,
         from: {
           id: sender,
-          name: null,
+          name: senderName,
           },
         to: {
           id: receiver,
-          name: null,
+          name: receiverName,
         },
         transferedAssets: assets?.map(asset => ({
           from: {
             id: sender,
-            name: null,
+            name: senderName,
           },
           to: {
             id: receiver,
-            name: null,
+            name: receiverName,
           },
           asset,
         })),
@@ -116,12 +118,8 @@ async function fetchOperation(id: string) {
         nativeValue: null,
         burned: null,
       },
-      history: {
-        from: [], // paginated
-        to: [], // paginated
-      },
+      }
     } // as CallResponse
-  }
 }
 
 export async function listLastOperations(address, number) {
@@ -138,7 +136,14 @@ export default (async ({
   const { artifactType, contractData } = await discrimateArtifactType(id)
   const xtzPrice = await tzstats.getXtzPrice()
   if (artifactType === 'operation') {
-    return fetchOperation(id)
+    const operation = await fetchOperation(id)
+    return {
+      ...operation,
+      history : {
+          from : await listLastOperations(operation.operation.from.id,10),
+          to : await listLastOperations(operation.operation.from.id,10)
+      }
+  }
   }
 
   const { nativeBalance, operationCount } = await tzstats.getWallet(id)
