@@ -39,7 +39,7 @@ function discrimateOperationType(receiver, contractData, functionName) {
     ? 'transfer' : 'call'
 }
 
-async function fetchOperation(id: string) {
+async function fetchOperation(id: string, xtzPrice) {
   const [ transaction, status, functionName ] = await Promise.all([
     await tzkt.getTransaction(id),
     await tzkt.getTransactionStatus(id),
@@ -80,7 +80,12 @@ async function fetchOperation(id: string) {
           },
           asset: assets?.[0],
         }
-      }, 
+      },
+      fee: {
+        nativeValue : fee.toString(),
+        totalValue:   Math.round(fee/1000000 * xtzPrice * 100).toString() , 
+        burned : "0", // No burn in TeZos 
+      }
     } // as TransferResponse
   }
 
@@ -124,8 +129,9 @@ async function fetchOperation(id: string) {
 
 export async function listLastOperations(address, number) {
   const data = await tzstats.getLastOperations(address, number)
+  const xtzPrice = await tzstats.getXtzPrice()
   return await Promise.all(data.map(async operation => {
-    return await fetchOperation(operation?.hash)
+    return await fetchOperation(operation?.hash, xtzPrice)
   }))
 }
 
@@ -136,7 +142,7 @@ export default (async ({
   const { artifactType, contractData } = await discrimateArtifactType(id)
   const xtzPrice = await tzstats.getXtzPrice()
   if (artifactType === 'operation') {
-    const operation = await fetchOperation(id)
+    const operation = await fetchOperation(id,xtzPrice)
     return {
       ...operation,
       history : {
