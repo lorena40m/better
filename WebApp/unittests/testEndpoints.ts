@@ -5,6 +5,8 @@ import ArtifactEndpoint from '../src/endpoints/ArtifactEndpoint'
 import * as schemas from './validationSchemas'
 import { ids } from './sampleIds'
 
+// Multi-assets: KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ
+
 const TEST_CASES = [
   {
     testCaseName: 'HomeEndpoint endpoint',
