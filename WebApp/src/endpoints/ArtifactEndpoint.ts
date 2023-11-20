@@ -39,7 +39,7 @@ function discrimateOperationType(receiver, contractData, functionName) {
     ? 'transfer' : 'call'
 }
 
-async function fetchOperation(id: string) {
+async function fetchOperation(id: string, xtzPrice) {
   const [ transaction, status, functionName ] = await Promise.all([
     await tzkt.getTransaction(id),
     await tzkt.getTransactionStatus(id),
@@ -51,7 +51,9 @@ async function fetchOperation(id: string) {
     await tzkt.getContractData(receiver),
   ])
   const operationType = discrimateOperationType(receiver, contractData, functionName)
-
+  const senderName = await objkt.getAddressDomain(sender)
+  const receiverName = await objkt.getAddressDomain(receiver)
+ 
   if (operationType === 'transfer') {
     return {
       artifactType: 'transfer',
@@ -61,29 +63,34 @@ async function fetchOperation(id: string) {
         date: timestamp ? (new Date(timestamp)).toISOString() : null,
         from: {
           id: sender,
-          name: null,
+          name: senderName,
         },
         to: {
           id: receiver,
-          name: null,
+          name: receiverName,
         },
         transferedAssets: {
           from: {
             id: sender,
-            name: null,
+            name: senderName,
           },
           to: {
             id: receiver,
-            name: null,
+            name: receiverName,
           },
           asset: assets?.[0],
         }
       },
+      fee: {
+        nativeValue: fee,
+        totalValue: +fee / 1000000 * xtzPrice,
+        burned : "0", // No burn in TeZos 
+      }
     } // as TransferResponse
   }
 
   else {
-    return {
+       return {
       artifactType: 'call',
       operation: {
         id: id,
@@ -91,20 +98,20 @@ async function fetchOperation(id: string) {
         date: timestamp ? (new Date(timestamp)).toISOString() : null,
         from: {
           id: sender,
-          name: null,
+          name: senderName,
           },
         to: {
           id: receiver,
-          name: null,
+          name: receiverName,
         },
         transferedAssets: assets?.map(asset => ({
           from: {
             id: sender,
-            name: null,
+            name: senderName,
           },
           to: {
             id: receiver,
-            name: null,
+            name: receiverName,
           },
           asset,
         })),
@@ -116,18 +123,15 @@ async function fetchOperation(id: string) {
         nativeValue: null,
         burned: null,
       },
-      history: {
-        from: [], // paginated
-        to: [], // paginated
-      },
+      }
     } // as CallResponse
-  }
 }
 
 export async function listLastOperations(address, number) {
   const data = await tzstats.getLastOperations(address, number)
+  const xtzPrice = await tzstats.getXtzPrice()
   return await Promise.all(data.map(async operation => {
-    return await fetchOperation(operation?.hash)
+    return await fetchOperation(operation?.hash, xtzPrice)
   }))
 }
 
@@ -136,9 +140,16 @@ export default (async ({
   pageSize,
 }) => {
   const { artifactType, contractData } = await discrimateArtifactType(id)
-
+  const xtzPrice = await tzstats.getXtzPrice()
   if (artifactType === 'operation') {
-    return fetchOperation(id)
+    const operation = await fetchOperation(id, xtzPrice)
+    return {
+      ...operation,
+      history : {
+          from : await listLastOperations(operation.operation.from.id,10),
+          to : await listLastOperations(operation.operation.from.id,10)
+      }
+  }
   }
 
   const { nativeBalance, operationCount } = await tzstats.getWallet(id)
@@ -149,12 +160,12 @@ export default (async ({
       artifactType: 'wallet',
       wallet: {
         id: id,
-        name: null, // TODO Tezos domains, sinon null=on va afficher "Anonyme" dans le front
+        name: await objkt.getAddressDomain(id), // TODO Tezos domains, sinon null=on va afficher "Anonyme" dans le front
         nativeBalance,
-        totalValue: nativeBalance, // TODO: compute sum of data from TzPro
-        operationCount,
+        totalValue: (await tzstats.getWalletTotalValue(id)) + +nativeBalance/1000000 * xtzPrice, // TODO: compute sum of data from TzPro
+        operationCount: operationCount?.toString(),
       },
-      tokens: await tzkt.getTokenSortedByValue(id, +(await tzstats.getXtzPrice()) / 100), // sorted by value
+      tokens: await tzstats.getTokenSortedByValue(id),
       uncertifiedTokens: [], // paginated, sorted by last transfer date
       nfts: await objkt.getWalletNfts(id), // sorted by value
       history: await listLastOperations(id, NUMBER_OF_TXS), // paginated
@@ -170,13 +181,13 @@ export default (async ({
       creationDate: contractData?.firstActivityTime ? (new Date(contractData.firstActivityTime)).toISOString() : null,
       creator: {
         id: contractData?.creator?.address,
-        name: null,
+        name: await objkt.getAddressDomain(contractData?.creator?.address),
       },
       operationCount: contractData?.numTransactions?.toString(), // TODO : check why operationCount from tzstats tzstats.getWallet is different from numTransactions of tzkt
       immutable: null,
       autonomous : null,
-      averageFee: (await tzstats.getAddressAverageFee(id))?.toString(), // TODO
-      treasuryValue: nativeBalance?.toString(), // TODO: compute total value
+      averageFee: await tzstats.getAddressAverageFee(id), // TODO : the fee is in gas
+      treasuryValue: (await tzstats.getWalletTotalValue(id)) + +nativeBalance/100000 * xtzPrice,
       auditCount: null,
       officialWebsite: contractData?.metadata?.site,
     }
@@ -186,11 +197,11 @@ export default (async ({
     const NUMBER_OF_TXS = 5
     return {
       artifactType: 'collection',
-      // collection,
+      collection : await objkt.getCollection(id),
       // items,
       // saleHistory,
-      // history: await listLastOperations(id, NUMBER_OF_TXS),
-      contract,
+      history: await listLastOperations(id, NUMBER_OF_TXS),
+      contract : contract,
     } as CollectionResponse
   }
 

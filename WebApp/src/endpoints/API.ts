@@ -7,8 +7,8 @@
 */
 
 export type Integer = string // integers are stored as string to avoid precisions errors
-export type DollarCents = Integer // in $ cents
 export type TokenDecimals = Integer // in decimals
+export type Dollars = number // in $ cents
 export type UrlString = string // url
 export type DateString = string // ISO string
 
@@ -39,7 +39,8 @@ export type ArtifactEndpoint = (params: {
   id: string,
   pageSize: number,
 }) => Promise<TransferResponse | CallResponse | // operations
-  WalletResponse | CoinResponse | CollectionResponse | ContractResponse> // addresses
+  WalletResponse | CoinResponse | CollectionResponse | ContractResponse | // addresses
+  NotFoundResponse>
 
 // Endpoint to load more of history
 // Sorted by date
@@ -76,18 +77,18 @@ export type Collection = {
   name: string,
   image: UrlString, // ?
   supply: Integer, // ?
-  floorPrice: DollarCents, // ?
-  topSale: DollarCents, // ?
+  floorPrice: Dollars, // ?
+  topSale: Dollars, // ?
   marketplaceLink: UrlString, // ?
 }
 
 export type Coin = {
-  id: string,
+  id: string | 'tezos',
   name: string,
   ticker: string,
   decimals: number,
   logo: UrlString, // ?
-  lastPrice: DollarCents, // ?
+  lastPrice: number, // ?
   circulatingSupplyOnChain: TokenDecimals, // ?
   holders: Integer, // ?
 }
@@ -114,7 +115,7 @@ export type Nft = {
   id: string,
   image: UrlString,
   name: string,
-  lastSalePrice: DollarCents,
+  lastSalePrice: Dollars,
   collection: Collection,
   lastTransferDate: DateString,
 }
@@ -127,9 +128,9 @@ export type Asset = Token | Nft
 
 export type MiscellaneousResponse = {
   rates: {
-    "EUR/USD": DollarCents,
+    "EUR/USD": Dollars,
   },
-  xtzPrice: DollarCents,
+  xtzPrice: Dollars,
 }
 
 export type HomeResponse = {
@@ -172,7 +173,7 @@ export type AbstractOperationResponse = {
   artifactType: 'transfer' | 'call',
   operation: Operation,
   fee: {
-    value: DollarCents,
+    value: Dollars,
     nativeValue: TokenDecimals,
     burned: TokenDecimals,
   },
@@ -196,7 +197,7 @@ export type WalletResponse = {
   artifactType: 'wallet',
   wallet: Address & {
     nativeBalance: TokenDecimals,
-    totalValue: DollarCents,
+    totalValue: Dollars,
     operationCount: Integer,
   },
   tokens: Token[], // sorted by value
@@ -224,7 +225,7 @@ export type CollectionResponse = {
   saleHistory: {
     itemId: string,
     date: DateString,
-    price: DollarCents,
+    price: Dollars,
   }[],
   history: Operation[], // paginated
   contract: ContractResponse,
@@ -239,10 +240,12 @@ export type ContractResponse = {
     operationCount: Integer, // since creation
     immutable: boolean,
     autonomous: boolean,
-    averageFee: DollarCents,
-    treasuryValue: DollarCents,
+    averageFee: Dollars,
+    treasuryValue: Dollars,
     auditCount: number,
     officialWebsite: UrlString,
   },
   history: Operation[], // paginated
 }
+
+export type NotFoundResponse = 'not-found'

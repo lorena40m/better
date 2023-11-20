@@ -25,7 +25,7 @@ export async function getTransaction(hash) {
     sender: data?.[0]?.sender?.address as string | null,
     receiver: data?.[1]?.target?.address || data?.[0]?.target?.address as string | null,
     amount: data?.[1]?.amount || data?.[0]?.amount  as string | null,
-    fee: data?.[1]?.bakerFee || data?.[0]?.bakerFee as string | null,
+    fee: (data?.[0]?.bakerFee + data?.[0]?.storageFee + data?.[0]?.allocationFee) as string | null,
     timestamp: data?.[0]?.timestamp as string | null,
   }
 }
@@ -69,13 +69,13 @@ export async function getCoinData(contractHash, lastPrice) {
   const coin = data?.[0]
   return {
     id: contractHash,
-    logo: ipfsToHttps(coin.metadata.thumbnailUri),
-    name: coin.contract.alias,
-    ticker: coin.metadata.symbol,
-    decimals: Number(coin.metadata.decimals),
-    lastPrice: lastPrice,
-    circulatingSupplyOnChain: coin.totalSupply,
-    holders: coin.holdersCount.toString(),
+    logo: ipfsToHttps(coin?.metadata?.thumbnailUri),
+    name: coin?.contract.alias,
+    ticker: coin?.metadata?.symbol,
+    decimals: Number(coin?.metadata?.decimals),
+    lastPrice,
+    circulatingSupplyOnChain: coin?.totalSupply,
+    holders: coin?.holdersCount.toString(),
   } as Coin
 }
 
@@ -84,7 +84,7 @@ export async function getCoinHolders(contractHash) {
   ?.map(holderData => {
       return {
         id : holderData.account.address,
-        name : "",
+        name : "", // TODO : should we query the name ?
         quantity : holderData.balance,
       }
     }) as Holder[] | null
@@ -112,30 +112,6 @@ export async function getCoinYearlyTransfersAndVolume(contractHash) {
   } catch (error) {
     console.error('Error:', error);
   }
-}
-
-export async function getTokenSortedByValue(ownerAddress: string, xtzPrice: number) {
-  const tokens = await fetch(`v1/tokens/balances/?account.eq=${ownerAddress}`)
-
-  return (await Promise.all(tokens.map(async tokenData => {
-    // Carefull: every NFT here is considered a token of the owner
-    // Carefull 2: The owner can own thousands of tokens
-    // Do we want to make thousands of request?
-    // On the other side we don't want to miss some important tokens...
-    // The answer would be to paginate, but will only be usefull for big wallets...
-    // Or to have an index of course
-    // console.log('tokenData', tokenData)
-    return {
-      coin: await getCoinData(
-        tokenData.token.contract.address,
-        Math.floor(tokenData.balanceValue / tokenData.balance * xtzPrice * 100).toString()
-      ),
-      quantity: tokenData.balance,
-      valueInXtz: tokenData.balanceValue,
-      lastTransferDate: "",
-    } as Token
-  })))
-    .sort((a, b) => a.valueInXtz - b.valueInXtz) as Token[]
 }
 
 export async function getContractData(contractHash) {

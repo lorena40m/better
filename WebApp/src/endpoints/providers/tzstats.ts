@@ -1,4 +1,6 @@
 import axios from 'axios'
+import {getCoinData} from './tzkt'
+import { Token } from '../API'
 
 async function fetch(urn: string) {
   try {
@@ -36,7 +38,7 @@ export async function getBlockDate() {
 export async function getXtzPrice() {
   const data = await fetch('markets/tickers')
   const binancePrice = data.filter(feed => feed.pair === 'XTZ_USDT' && feed.exchange === 'binance')[0]
-  return Math.round(binancePrice.last * 100).toString()
+  return binancePrice.last
 }
 
 export async function getWallet(address) {
@@ -45,6 +47,50 @@ export async function getWallet(address) {
     nativeBalance: data?.spendable_balance as string | null,
     operationCount: data?.n_tx_success as string | null,
   }
+}
+
+export async function getWalletTotalValue(address){
+  let sum = 0
+  try {
+    const data = await fetch(`v1/wallets/${address}/balances`)
+    //const data = await response.json()
+  
+
+    // Calculate total value in USD
+    return data.reduce((sum, asset) => {
+      const valueUSD = asset?.value_usd || "0"; // Default to "0" if value_usd is not present
+      return sum + Number(valueUSD);
+    }, 0);
+  } catch (error) {
+    console.error('Error:', error);
+    return 0
+  }
+}
+
+export async function getTokenSortedByValue(address: string ) {
+  const assets = await fetch(`v1/wallets/${address}/balances`)
+  const tokens = assets.filter(item => item.decimals !== 0);
+  
+  return (await Promise.all(tokens.map(async tokenData => {
+    // Carefull: every NFT here is considered a token of the owner
+    // Carefull 2: The owner can own thousands of tokens
+    // Do we want to make thousands of request?
+    // On the other side we don't want to miss some important tokens...
+    // The answer would be to paginate, but will only be usefull for big wallets...
+    // Or to have an index of course
+    // console.log('tokenData', tokenData)
+    const valueInUSD = tokenData?.value_usd
+    return {
+      coin: await getCoinData(
+        tokenData.contract,
+        valueInUSD
+      ),
+      quantity: tokenData.balance,
+      valueInUSD,
+      lastTransferDate: "",
+    } as Token
+  })))
+    .sort((a, b) => b.valueInUSD - a.valueInUSD) as Token[]
 }
 
 export async function getLastOperations(address, number) {
@@ -68,7 +114,7 @@ export async function getAddressAverageFee(address) {
       totalGasUsed += data[index]?.gas_used;
     }
     const averageFee = totalGasUsed / NUMBER_OF_TXS;
-    return averageFee;
+    return Math.round(averageFee);
   } else {
     // Handle the case where data is not an array (e.g., if there's an issue with the API response)
     console.error("Data is not an array:", data);

@@ -1,8 +1,3 @@
-export function formatPrice(price: string, locale: string, rates: object) {
-  return new Intl.NumberFormat(locale, { style: 'currency', currency: locale === 'en' ? 'USD' : 'EUR' })
-    .format(locale === 'en' ? +price / 100 : +price * (rates['EUR/USD'] / 100) / 100)
-}
-
 const magnitudes = {
   en: [
     'million',
@@ -46,21 +41,20 @@ const dustTerm = {
   fr: 'poussière',
 }
 
-// Note: made for maximum 6 digits (TODO)
-export function formatToken(quantity: string, decimals: number, locale: string) {
-  quantity = quantity.replace(/^0+/, '');
-  const biggerSignificantDigit = quantity.length - decimals;
-  let firstThreeDigits = quantity.slice(0, 3);
+function formatNumber(quantity: string, decimals: number, significantDigits = 3, locale: string) {
+  quantity = quantity.replace(/^0+/, '')
+  const biggerSignificantDigit = quantity.length - decimals
+  let firstDigits = quantity.slice(0, significantDigits)
 
   if (biggerSignificantDigit > 6) {
-    const magnitude = Math.floor((biggerSignificantDigit - 1) / 3);
-    const magnitudeTerm = magnitude - 2 < magnitudes[locale].length ? magnitudes[locale][magnitude - 2] : magnitudes[magnitudes[locale].length - 1];
-    if (quantity.length % 3 > 0) {
-      firstThreeDigits = firstThreeDigits.slice(0, biggerSignificantDigit % 3)
-        + floatSeparator[locale] + firstThreeDigits.slice(quantity.length % 3)
+    const magnitude = Math.floor((biggerSignificantDigit - 1) / 3)
+    const magnitudeTerm = magnitude - 2 < magnitudes[locale].length ? magnitudes[locale][magnitude - 2] : magnitudes[magnitudes[locale].length - 1]
+    if (biggerSignificantDigit % 3 > 0) {
+      firstDigits = firstDigits.slice(0, biggerSignificantDigit % 3)
+        + floatSeparator[locale] + firstDigits.slice(quantity.length % 3)
     };
-    return firstThreeDigits + thousandSeparator[locale] + magnitudeTerm +
-      (firstThreeDigits[0] == '1' && quantity.length % 3 === 1 ? '' : 's')
+    return firstDigits + thousandSeparator[locale] + magnitudeTerm +
+      (firstDigits[0] == '1' && quantity.length % 3 === 1 ? '' : 's')
   }
 
   if (biggerSignificantDigit >= 3) {
@@ -68,15 +62,38 @@ export function formatToken(quantity: string, decimals: number, locale: string) 
     return new Intl.NumberFormat(locale).format(number)
   }
 
-  const significance = biggerSignificantDigit + Math.min(3 - biggerSignificantDigit, decimals)
+  const significance = biggerSignificantDigit + Math.min(significantDigits - biggerSignificantDigit, decimals)
 
   if (biggerSignificantDigit >= 0) {
-    let number = +firstThreeDigits / Math.pow(10, significance - biggerSignificantDigit);
+    let number = +firstDigits / Math.pow(10, significance - biggerSignificantDigit)
     return number.toFixed(Math.min(significance - biggerSignificantDigit, decimals)).replace('.', floatSeparator[locale])
   }
 
   return (+quantity / Math.pow(10, decimals)).toFixed(decimals).replace('.', floatSeparator[locale])
 }
 
-// test
-// console.log(formatToken("12345", 6, "fr"))
+// Note: made for maximum 6 digits (TODO for 18)
+export function formatToken(quantity: string, decimals: number, locale: string) {
+  return formatNumber(quantity, decimals, 3, locale)
+}
+
+export function formatPrice(price: number, locale: string, rates: object) {
+  price = locale === 'en' ? price : price * rates['EUR/USD']
+
+  let number
+  if (price < 1e-18) {
+    number = '0'
+  } else if (price < 0.01) {
+    const priceWithDust = BigInt(Math.round(price * 1e18)).toString().replace(/^0+/, '')
+    const biggerSignificantDigit = 18 - priceWithDust.length
+    const firstDigits = priceWithDust.slice(0, 2)
+    number = formatNumber(firstDigits, biggerSignificantDigit + 2, 2, locale)
+  } else if (price < 100) {
+    const biggerSignificantDigit = BigInt(Math.round(price)).toString().length
+    number = formatNumber(BigInt(Math.round(price * 100)).toString(), 2, biggerSignificantDigit + 2, locale)
+  } else {
+    number = formatNumber(BigInt(Math.round(price)).toString(), 0, 3, locale)
+  }
+
+  return locale === 'en' ? `$${number}` : `${number} €`
+}
