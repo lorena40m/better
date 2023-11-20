@@ -7,7 +7,7 @@ import React from "react";
 import Image from "next/image";
 import { appWithTranslation, useTranslation } from "next-i18next";
 
-const Operations = () => {
+const Operation = () => {
   const { t } = useTranslation("common");
 
   return (
@@ -357,4 +357,4 @@ const Operations = () => {
   );
 };
 
-export default Operations;
+export default Operation;

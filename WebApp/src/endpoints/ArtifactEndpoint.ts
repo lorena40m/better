@@ -61,9 +61,10 @@ async function fetchOperation(id: string, xtzPrice) {
         id: id,
         status: status?.toString(),
         date: timestamp ? (new Date(timestamp)).toISOString() : null,
+        nativeQuantity: amount ?? null,
         from: {
           id: sender,
-          name: senderName,
+          name: senderName ?? null,
         },
         to: {
           id: receiver,
@@ -155,14 +156,14 @@ export default (async ({
   const { nativeBalance, operationCount } = await tzstats.getWallet(id)
 
   if (artifactType === 'wallet') {
-    const NUMBER_OF_TXS = 5
+    const NUMBER_OF_TXS = pageSize;
     return {
       artifactType: 'wallet',
       wallet: {
         id: id,
         name: await objkt.getAddressDomain(id), // TODO Tezos domains, sinon null=on va afficher "Anonyme" dans le front
-        nativeBalance,
-        totalValue: (await tzstats.getWalletTotalValue(id)) + +nativeBalance/1000000 * xtzPrice, // TODO: compute sum of data from TzPro
+        nativeBalance: nativeBalance + '000000',
+        totalValue: (await tzstats.getWalletTotalValue(id)) + +nativeBalance * xtzPrice, // TODO: compute sum of data from TzPro
         operationCount: operationCount?.toString(),
       },
       tokens: await tzstats.getTokenSortedByValue(id),

@@ -11,22 +11,6 @@ import GeneralInfo from "@/components/token/GeneralInfos";
 import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
 import TempleIcon from "../../assets/images/temple-logo.png";
 import { appWithTranslation, useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { HomeResponse } from '../../endpoints/API';
-import HomeEndpoint from '../../endpoints/HomeEndpoint';
-
-
-export async function getServerSideProps({ locale }: any) {
-  const homeResponse = await HomeEndpoint({ pageSize: 10 })
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-      homeResponse,
-    },
-  };
-}
 
 const Token = ({homeResponse}) => {
     const { t } = useTranslation("common");

@@ -57,5 +57,11 @@
   "burnt": "Brûlé",
   "fee": "Frais",
   "Tokens on": "Jetons sur",
-  "Add to Metamask": "Voir sur Temple"
+  "Add to Metamask": "Voir sur Temple",
+  "Balance": "Solde",
+  "Operations": "Opérations",
+  "Totalvalue": "Valeur totale",
+  "Transfer successful": "Succès du transfert",
+  "From": "De",
+  "To": "A"
 }

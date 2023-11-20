@@ -13,63 +13,6 @@ import "swiper/css/bundle";
 import Heart from "@/assets/iconSvg/Heart.svg";
 import Link from 'next/link'
 
-const carouselData = [
-  {
-    id: 1,
-    image: "/monkey_ape.jpg",
-    title: "Monkey Ape",
-    description: "19 XTZ",
-  },
-  {
-    id: 2,
-    image: "/assets/svg-icons/NFTpic1.svg",
-    title: "Moonfall",
-    description: "46 XTZ",
-  },
-  {
-    id: 3,
-    image: "/assets/svg-icons/NFTpic2.svg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-  {
-    id: 4,
-    image: "/assets/svg-icons/NFTpic3.svg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-  {
-    id: 5,
-    image: "/assets/svg-icons/NFTpic4.svg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-  {
-    id: 6,
-    image: "/assets/svg-icons/NFTpic5.svg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-  {
-    id: 7,
-    image: "/assets/svg-icons/NFTpic6.svg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-  {
-    id: 8,
-    image: "/monkey_ape.jpg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-  {
-    id: 9,
-    image: "/assets/svg-icons/NFTpic2.svg",
-    title: "Monkey Sun",
-    description: "67 XTZ",
-  },
-];
-
 export default function SpacingGrid(props) {
 
   function ipfsToLink(stringIpfs) {
@@ -78,26 +21,15 @@ export default function SpacingGrid(props) {
     return (baseUrl + ipfsId);
   }
 
-  const trendingData = props.trending;
+  const nfts = props.nfts;
   return (
-    // <Box
-    //   sx={{
-    //     display: "flex",
-    //     flexDirection: "row",
-    //     gap: 4,
-    //     overflowX: "auto",
-    //     overflowY: "hidden",
-    //     "&::-webkit-scrollbar": { height: 8 },
-    //   }}
-    // >
-    // </Box>
     <Swiper
       spaceBetween={40}
-      slidesPerView={5.5}
+      slidesPerView={3}
       centeredSlides={false}
       loop={true}
       autoplay={{
-        delay: 1000,
+        delay: 3000,
         disableOnInteraction: false,
       }}
       pagination={{
@@ -105,15 +37,15 @@ export default function SpacingGrid(props) {
       }}
       breakpoints={{
         100 : {
-          slidesPerView : 2,
+          slidesPerView : 1,
           spaceBetween : 15
         },
         640: {
-          slidesPerView: 4,
+          slidesPerView: 2,
           spaceBetween: 15,
         },
         900: {
-          slidesPerView: 6,
+          slidesPerView: 3,
           spaceBetween: 15,
         }
       }}
@@ -121,43 +53,49 @@ export default function SpacingGrid(props) {
       modules={[Autoplay, Navigation]}
       className="mySlider"
     >
-      {trendingData.map((value) => (
-        <Link href={'/nft?id='+value.id} key={value.id}>
-        <SwiperSlide key={value.id}>
-          <Box className="collectionBox">
-            <Box className="collectionBox-img">
-              <Image
-                src={ipfsToLink(value.image)}
-                alt="crypto"
-                width={240}
-                height={140}
-                style={{
-                  height: "240px",
-                  objectFit: "cover",
-                }}
-              />
-              <span className="collectionBox-likeBtn">
-                {/* <Heart /> */}
-              </span>
-            </Box>
-            <Typography
-              gutterBottom
-              variant="h5"
-              className="collectionBox-title"
-            >
-              {value.name}
-            </Typography>
-            <Typography
-              gutterBottom
-              variant="h5"
-              className="collectionBox-subTitle"
-            >
-              Supply: <b>{value.supply}</b>
-            </Typography>
-          </Box>
-        </SwiperSlide>
-        </Link>
-      ))}
+      {nfts.map((nft) => {
+        if (nft.name && nft.image) {
+           return (
+            <Link href={nft.id} key={nft.id}>
+              <SwiperSlide>
+                <Box className="collectionBox" style={{ margin: "20px 0 0 0" }}>
+                  <Box className="collectionBox-img">
+                    <Image
+                      src={ipfsToLink(nft.image)}
+                      alt="crypto"
+                      layout="fill"
+                      style={{
+                        objectFit: "cover",
+                        borderRadius: "10px"
+                      }}
+                    />
+                    {/* <span className="collectionBox-likeBtn">
+                      <Heart />
+                    </span> */}
+                  </Box>
+                  <Typography
+                    gutterBottom
+                    variant="h5"
+                    className="collectionBox-title"
+                    style={{ backgroundColor: "rgba(83, 83, 83, 0.9)", color: "white", borderRadius: "5px", padding: "5px 10px", position: "absolute", width: "calc(100% - 10px)", left: "5px", bottom: "5px" }}
+                  >
+                    {nft.name}
+                  </Typography>
+                  {/* <Typography
+                    gutterBottom
+                    variant="h5"
+                    className="collectionBox-subTitle"
+                  >
+                    Supply: null
+                  </Typography> */}
+                </Box>
+              </SwiperSlide>
+            </Link>
+          )
+        } else {
+          return null;
+        }
+      })}
     </Swiper>
   );
 }

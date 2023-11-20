@@ -1,9 +1,7 @@
-import '@/styles/globals.css'
+import '@/styles/globals.css';
 import "@/styles/style.scss";
-import { ClerkProvider, RedirectToSignIn, SignedIn, SignedOut } from '@clerk/nextjs'
-import type { AppProps } from 'next/app'
+import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
-
 import {appWithTranslation} from "next-i18next";
 
 const publicPages = [
@@ -11,12 +9,6 @@ const publicPages = [
   "/sign-up/[[...index]]",
   "/_error",
   "/",
-  "/wallet",
-  "/operation",
-  "/token",
-  "/nft",
-  "/smart-contract",
-  "/call",
 ];
 
 function App({ Component, pageProps }: AppProps) {
@@ -25,23 +17,18 @@ function App({ Component, pageProps }: AppProps) {
   // console.log(a, 'THIS IS IMPORT FROM I18')
   // Check if the current route matches a public page
   const isPublicPage = publicPages.includes(pathname);
-
+  
   return (
-    <ClerkProvider {...pageProps} >
+    <>
       {
-        isPublicPage ? 
+        isPublicPage ?
         <Component {...pageProps} />
         :
         <>
-          <SignedIn>
             <Component {...pageProps} />
-          </SignedIn>
-          <SignedOut>
-            <RedirectToSignIn />
-          </SignedOut>
         </>
       }
-    </ClerkProvider>
+    </>
   )
 }
 

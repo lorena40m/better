@@ -60,7 +60,7 @@ export async function isCollection(hash) {
 export async function getTransactionFunctionName(hash) {
   const internalTransactionList = await fetch(`v1/operations/transactions/${hash}`)
   const masterTransaction = internalTransactionList?.[0]
-  return masterTransaction?.parameter?.entrypoint as string | null
+  return (masterTransaction?.parameter?.entrypoint as string) ?? null
 }
 
 export async function getCoinData(contractHash, lastPrice) {
