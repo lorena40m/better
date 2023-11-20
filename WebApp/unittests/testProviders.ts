@@ -39,7 +39,6 @@ TestScript(async function () {
     await testProviderFunction('getCoinData', () => tzkt.getCoinData(ids.coin, '1'))
     await testProviderFunction('getCoinHolders', () => tzkt.getCoinHolders(ids.coin))
     await testProviderFunction('getCoinYearlyTransfersAndVolume', () => tzkt.getCoinYearlyTransfersAndVolume(ids.coin))
-    await testProviderFunction('getTokenSortedByValue', () => tzkt.getTokenSortedByValue(ids.wallet, 0.65))
     await testProviderFunction('getContractData', () => tzkt.getContractData(ids.contract))
   })
 
@@ -49,5 +48,6 @@ TestScript(async function () {
     await testProviderFunction('getWallet', () => tzstats.getWallet(ids.wallet))
     await testProviderFunction('getLastOperations', () => tzstats.getLastOperations(ids.wallet, 100))
     await testProviderFunction('getAddressAverageFee', () => tzstats.getAddressAverageFee(ids.wallet))
+    await testProviderFunction('getTokenSortedByValue', () => tzstats.getTokenSortedByValue(ids.wallet))
   })
 })

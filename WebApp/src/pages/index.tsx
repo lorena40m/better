@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 // import SearchIcon from "@mui/icons-material/Search";
 import SelectCustom from "../components/SelectCustom";
-import TokensTable from "../components/TokensTable";
+import TokenRanking from "../components/Home/TokenRanking";
 import HCarousel from "../components/HCarousel";
 import HeadCrumb from "@/components/Header/HeadCrumb";
 import tezosLogo from "../assets/images/tezos_gradient.svg";
@@ -157,7 +157,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                       </Typography>
                     </Box>
                     <Typography variant="h4" className="cardBox-price">
-                      <span className="gradientText">{formatPrice(((+homeResponse.stats.normalFee / 1_000_000) * +miscResponse.xtzPrice).toString(), locale, miscResponse.rates)}</span>
+                      <span className="gradientText">{formatPrice((+homeResponse.stats.normalFee / 1_000_000) * +miscResponse.xtzPrice, locale, miscResponse.rates)}</span>
                       <span className="cardBox-status">({formatToken(homeResponse.stats.normalFee, 6, locale)} XTZ)</span>
                     </Typography>
                   </Box>
@@ -202,13 +202,13 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
           <Container maxWidth="xl">
             <Box className="sectionHead">
               <Box className="sectionHead-title">{t('sectionTitleTokens')}</Box>
-              <SelectCustom
+              {/*<SelectCustom
                 onChange={setTokenCriteria}
                 values={['byCap', 'byVolume']}
                 labels={[t('criteriaByCap'), t('criteriaByVolume')]}
-              />
+              />*/}
             </Box>
-            <TokensTable />
+            <TokenRanking coins={homeResponse.coins.byCap} rates={miscResponse.rates} />
           </Container>
         </Box>
       </main>

@@ -73,7 +73,7 @@ export async function getCoinData(contractHash, lastPrice) {
     name: coin?.contract.alias,
     ticker: coin?.metadata?.symbol,
     decimals: Number(coin?.metadata?.decimals),
-    lastPrice: lastPrice,
+    lastPrice,
     circulatingSupplyOnChain: coin?.totalSupply,
     holders: coin?.holdersCount.toString(),
   } as Coin

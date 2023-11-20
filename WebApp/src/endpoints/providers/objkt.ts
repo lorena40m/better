@@ -54,7 +54,7 @@ export async function getTopNftCollection(pageSize, criteria: 'top' | 'trending'
     image: ipfsToHttps(collection?.logo),
     name: collection?.short_name || collection?.name,
     supply: collection?.items?.toString(),
-    floorPrice: collection?.floor_price?.toString() ?? null,
+    floorPrice: collection?.floor_price ?? null,
     topSale: null,
     marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? collection?.contract),
   } as Collection)) as Collection[]
@@ -87,12 +87,12 @@ export async function getCollection(address: string) {
 `)
   const collection = queryResult.fa[0]
   const collectionObject = {
-    id : address, 
-    name : collection?.name,
-    image : ipfsToHttps(collection?.logo),
-    supply : collection?.items.toString(), 
-    floorPrice : collection?.floor_price.toString(),
-    topSale : null,
+    id: address,
+    name: collection?.name,
+    image: ipfsToHttps(collection?.logo),
+    supply: collection?.items.toString(),
+    floorPrice: collection?.floor_price,
+    topSale: null,
     marketplaceLink: 'https://objkt.com/collection/' + collection?.path, // TODO : request marketplaceLink
   }  
   return collectionObject
@@ -144,14 +144,14 @@ export async function getWalletNfts(address: string) {
       image : token.token.display_uri,
       name : faData.name,
       //lastSalePrice : ,
-      collection : {
-        id : faData.contract,
-        image : galleryData?.logo,
-        name : galleryData?.name,
-        supply : galleryData?.max_items,
-        floorPrice : galleryData?.floor_price,
-        topSale : "0", // TO FILL
-        marketplaceLink : "", // TO FILL
+      collection: {
+        id: faData.contract,
+        image: galleryData?.logo,
+        name: galleryData?.name,
+        supply: galleryData?.max_items,
+        floorPrice: galleryData?.floor_price,
+        topSale: null, // TO FILL
+        marketplaceLink: null, // TO FILL
       } as Collection,
       //lastTransferDate : ,
     } as Nft
