@@ -11,7 +11,7 @@ import Image from "next/image";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { formatPrice, formatToken } from '../../utils/format';
+import { formatPrice, formatToken, formatInteger } from '../../utils/format';
 
 interface ProfileProps {
   profileName: any;
@@ -24,7 +24,6 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = (props) => {
   const { t } = useTranslation("common");
-
   const { locale } = useRouter();
 
   return (
@@ -45,6 +44,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
                     className="InputField"
                     type={"text"}
                     value={`${props.walletId.slice(0, 8)}...`}
+                    title={`${props.walletId}`}
                     size="small"
                     endAdornment={<ContentCopyIcon />}
                     onClick={() => navigator.clipboard.writeText(props.walletId)}
@@ -77,7 +77,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
                   </Typography>
                   <Typography variant="h6" className="cardBox-price">
                     <span className="gradientText">
-                      {formatToken(props.nativeBalance, 6, locale)}XTZ
+                      {formatToken(props.nativeBalance, 6, locale)} XTZ
                     </span>
                   </Typography>
                 </Box>
@@ -109,7 +109,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
                   </Typography>
                   <Typography variant="h6" className="cardBox-price">
                     <span className="gradientText">
-                      {props.operationCount}
+                      {formatInteger(props.operationCount, locale)}
                     </span>
                   </Typography>
                 </Box>

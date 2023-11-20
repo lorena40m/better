@@ -137,6 +137,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                     <Image
                       priority
                       src={tezosLogo}
+                      height={80}
                       width={100}
                       alt=""
                       className="cryptoLogo"

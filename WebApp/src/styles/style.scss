@@ -984,6 +984,7 @@ Project: less intrusive search button
           font-size: 14.7px;
           line-height: 20px;
           color: #2a3b51;
+          cursor: pointer;
         }
         input.Mui-disabled {
           -webkit-text-fill-color: #2a3b51;
@@ -1059,7 +1060,7 @@ Project: less intrusive search button
       }
     }
     &__status {
-      max-width: 100px;
+      max-width: 130px;
       width: 100%;
       gap: 0 px;
     }

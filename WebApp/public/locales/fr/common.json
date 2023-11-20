@@ -38,7 +38,7 @@
   "opr_top": "Opération sur",
   "opr_box1": "Transfert réussi",
   "opr_box2": "Dernières opérations",
-  "portfolioOn": "Portfeuille sur",
+  "WalletPage.Title": "Portefeuille sur",
   "notCertified": "Non certifié",
   "Certified": "Certifié",
   "totalValue": "valeur totale",
@@ -60,8 +60,8 @@
   "Add to Metamask": "Voir sur Temple",
   "Balance": "Solde",
   "Operations": "Opérations",
-  "Totalvalue": "Valeur totale",
-  "Transfer successful": "Succès du transfert",
+  "Totalvalue": "Valeur Totale",
+  "Transfer successful": "Transfert réussi",
   "From": "De",
-  "To": "A"
+  "To": "À"
 }

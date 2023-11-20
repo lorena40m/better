@@ -162,7 +162,7 @@ export default (async ({
       wallet: {
         id: id,
         name: await objkt.getAddressDomain(id), // TODO Tezos domains, sinon null=on va afficher "Anonyme" dans le front
-        nativeBalance: nativeBalance + '000000',
+        nativeBalance: BigInt(Math.round(+nativeBalance * 1_000_000)).toString(),
         totalValue: (await tzstats.getWalletTotalValue(id)) + +nativeBalance * xtzPrice, // TODO: compute sum of data from TzPro
         operationCount: operationCount?.toString(),
       },
