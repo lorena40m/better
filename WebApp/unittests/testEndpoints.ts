@@ -6,6 +6,9 @@ import * as schemas from './validationSchemas'
 import { ids } from './sampleIds'
 
 // Multi-assets: KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ
+// Tezos Domain: tz1QiNtZx3b6EeATAJ5PgHp2X6y7jwZNXp3G
+// Baking Adress: tz3gtoUxdudfBRcNY7iVdKPHCYYX6xdPpoRS
+// kUSD logo is not here in wallet : tz1YQqEDkFQCTHz5pRLLsKt9532ELtc8FcpX
 
 const TEST_CASES = [
   {

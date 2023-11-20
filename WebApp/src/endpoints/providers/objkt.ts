@@ -146,10 +146,10 @@ export async function getWalletNfts(address: string) {
       //lastSalePrice : ,
       collection : {
         id : faData.contract,
-        image : galleryData?.logo,
-        name : galleryData?.name,
-        supply : galleryData?.max_items,
-        floorPrice : galleryData?.floor_price,
+        image : galleryData?.logo ?? null,
+        name : galleryData?.name ?? null,
+        supply : galleryData?.max_items ?? null,
+        floorPrice : galleryData?.floor_price ?? null,
         topSale : "0", // TO FILL
         marketplaceLink : "", // TO FILL
       } as Collection,
