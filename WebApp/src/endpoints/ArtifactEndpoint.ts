@@ -61,6 +61,7 @@ async function fetchOperation(id: string, xtzPrice) {
         id: id,
         status: status?.toString(),
         date: timestamp ? (new Date(timestamp)).toISOString() : null,
+        nativeQuantity: amount ?? null,
         from: {
           id: sender,
           name: senderName ?? null,
@@ -155,7 +156,7 @@ export default (async ({
   const { nativeBalance, operationCount } = await tzstats.getWallet(id)
 
   if (artifactType === 'wallet') {
-    const NUMBER_OF_TXS = 5
+    const NUMBER_OF_TXS = pageSize;
     return {
       artifactType: 'wallet',
       wallet: {

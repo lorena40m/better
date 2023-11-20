@@ -45,7 +45,7 @@ const CryptoMonnaise = (props) => {
                   </div>
                 </TableCell>
                 <TableCell align="right">
-                  <div className="tablerighttext">{formatPrice((token.valueInUSD / 10**6).toString(), locale, props.miscResponse.rates) }</div>
+                  <div className="tablerighttext">{formatPrice((token.valueInUSD).toString(), locale, props.miscResponse.rates) }</div>
                 </TableCell>
               </TableRow>
             ))}
