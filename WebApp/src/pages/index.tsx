@@ -19,11 +19,7 @@ import {
 } from "@mui/material";
 // import SearchIcon from "@mui/icons-material/Search";
 import SelectCustom from "../components/SelectCustom";
-<<<<<<< HEAD
-import TokensTable from "../components/TokensTable";
-=======
 import TokenRanking from "../components/Home/TokenRanking";
->>>>>>> issue6-implement-new-endpoints
 import HCarousel from "../components/HCarousel";
 import HeadCrumb from "@/components/Header/HeadCrumb";
 import tezosLogo from "../assets/images/tezos_gradient.svg";
