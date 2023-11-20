@@ -7,8 +7,9 @@ import React from "react";
 import Image from "next/image";
 import { appWithTranslation, useTranslation } from "next-i18next";
 
-const Operations = () => {
+const Operations = (props) => {
   const { t } = useTranslation("common");
+  console.log(props.operations);
 
   return (
     <>
@@ -16,342 +17,64 @@ const Operations = () => {
         <Typography variant="h5" className="operationCard__title">
           {t("latestTransaction")}
         </Typography>
-        <Box className="TransmitterCard">
-          <Box className="TransmitterCard__head">
-            <Typography variant="h4" className="TransmitterCard__title">
-              <TransferIcon />
-              {t("Pendingtransfer")}
-            </Typography>
-            <Box className="TransmitterCard__head-text">il y a 20 min</Box>
-          </Box>
-          <Box className="TransmitterCard__body">
-            <Box>
-              <Grid container spacing={3}>
-                <Grid item xs={5}>
-                  <Box>
+        {props.operations.map((operation) => (
+          <Box className="TransmitterCard success">
+            <Box className="TransmitterCard__head">
+              <Typography variant="h4" className="TransmitterCard__title">
+                <TransferIcon />
+                {t("Transfer successful")}
+              </Typography>
+              <Box className="TransmitterCard__head-text">{operation.operation.date}</Box>
+            </Box>
+            <Box className="TransmitterCard__body">
+              <Box>
+                <Grid container spacing={3}>
+                  <Grid item xs={5}>
+                    <Box>
+                      <Input
+                        disabled
+                        type={"text"}
+                        value={`${operation.operation.from.id.slice(0, 8)}...`}
+                        size="small"
+                        startAdornment={<Box sx={{ display: "flex" }}>{t("From")}</Box>}
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={2}
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <RightArrow />
+                  </Grid>
+                  <Grid item xs={5}>
                     <Input
                       disabled
                       type={"text"}
-                      value={"0xdjlkf....jlsdkskdjl"}
+                      value={`${operation.operation.to.id.slice(0, 8)}...`}
                       size="small"
-                      startAdornment={<Box sx={{ display: "flex" }}>DE </Box>}
+                      startAdornment={<Box sx={{ display: "flex" }}>{t("To")}</Box>}
                     />
-                  </Box>
+                  </Grid>
                 </Grid>
-                <Grid
-                  item
-                  xs={2}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <RightArrow />
-                </Grid>
-                <Grid item xs={5}>
-                  <Input
-                    disabled
-                    type={"text"}
-                    value={"0xdjlkf....jlsdkskdjl"}
-                    size="small"
-                    startAdornment={<Box sx={{ display: "flex" }}>A </Box>}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-            <Box className="TransmitterCard__status">
-              <Image
-                priority
-                src={Tezos}
-                height={22} 
-                width={22}
-                alt="Tezos"
-              />
-              1,22 XTZ
+              </Box>
+              <Box className="TransmitterCard__status">
+                <Image
+                  priority
+                  src={Tezos}
+                  height={22} 
+                  width={22}
+                  alt="Tezos"
+                />
+                1,22 XTZ
+              </Box>
             </Box>
           </Box>
-        </Box>
-        <Box className="TransmitterCard success">
-          <Box className="TransmitterCard__head">
-            <Typography variant="h4" className="TransmitterCard__title">
-              <TransferIcon />
-              {t("Pendingtransfer")}
-            </Typography>
-            <Box className="TransmitterCard__head-text">il y a 20 min</Box>
-          </Box>
-          <Box className="TransmitterCard__body">
-            <Box>
-              <Grid container spacing={3}>
-                <Grid item xs={5}>
-                  <Box>
-                    <Input
-                      disabled
-                      type={"text"}
-                      value={"0xdjlkf....jlsdkskdjl"}
-                      size="small"
-                      startAdornment={<Box sx={{ display: "flex" }}>DE </Box>}
-                    />
-                  </Box>
-                </Grid>
-                <Grid
-                  item
-                  xs={2}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <RightArrow />
-                </Grid>
-                <Grid item xs={5}>
-                  <Input
-                    disabled
-                    type={"text"}
-                    value={"0xdjlkf....jlsdkskdjl"}
-                    size="small"
-                    startAdornment={<Box sx={{ display: "flex" }}>A </Box>}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-            <Box className="TransmitterCard__status">
-              <Image
-                priority
-                src={Tezos}
-                height={22} 
-                width={22}
-                alt="Tezos"
-              />
-              1,22 XTZ
-            </Box>
-          </Box>
-        </Box>
-        <Box className="TransmitterCard danger">
-          <Box className="TransmitterCard__head">
-            <Typography variant="h4" className="TransmitterCard__title">
-              <TransferIcon />
-              {t("Pendingtransfer")}
-            </Typography>
-            <Box className="TransmitterCard__head-text">il y a 20 min</Box>
-          </Box>
-          <Box className="TransmitterCard__body">
-            <Box>
-              <Grid container spacing={3}>
-                <Grid item xs={5}>
-                  <Box>
-                    <Input
-                      disabled
-                      type={"text"}
-                      value={"0xdjlkf....jlsdkskdjl"}
-                      size="small"
-                      startAdornment={<Box sx={{ display: "flex" }}>DE </Box>}
-                    />
-                  </Box>
-                </Grid>
-                <Grid
-                  item
-                  xs={2}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <RightArrow />
-                </Grid>
-                <Grid item xs={5}>
-                  <Input
-                    disabled
-                    type={"text"}
-                    value={"0xdjlkf....jlsdkskdjl"}
-                    size="small"
-                    startAdornment={<Box sx={{ display: "flex" }}>A </Box>}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-            <Box className="TransmitterCard__status">
-              <Image
-                priority
-                src={Tezos}
-                height={22} 
-                width={22}
-                alt="Tezos"
-              />
-              1,22 XTZ
-            </Box>
-          </Box>
-        </Box>
-        <Box className="TransmitterCard">
-          <Box className="TransmitterCard__head">
-            <Typography variant="h4" className="TransmitterCard__title">
-              <TransferIcon />
-              {t("Pendingtransfer")}
-            </Typography>
-            <Box className="TransmitterCard__head-text">il y a 20 min</Box>
-          </Box>
-          <Box className="TransmitterCard__body">
-            <Box>
-              <Grid container spacing={3}>
-                <Grid item xs={5}>
-                  <Box>
-                    <Input
-                      disabled
-                      type={"text"}
-                      value={"0xdjlkf....jlsdkskdjl"}
-                      size="small"
-                      startAdornment={<Box sx={{ display: "flex" }}>DE </Box>}
-                    />
-                  </Box>
-                </Grid>
-                <Grid
-                  item
-                  xs={2}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <RightArrow />
-                </Grid>
-                <Grid item xs={5}>
-                  <Input
-                    disabled
-                    type={"text"}
-                    value={"0xdjlkf....jlsdkskdjl"}
-                    size="small"
-                    startAdornment={<Box sx={{ display: "flex" }}>A </Box>}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-            <Box className="TransmitterCard__status">
-              <Image
-                priority
-                src={Tezos}
-                height={22} 
-                width={22}
-                alt="Tezos"
-              />
-              1,22 XTZ
-            </Box>
-          </Box>
-        </Box>
-        <Box className="TransmitterCard">
-          <Box className="TransmitterCard__head">
-            <Typography variant="h4" className="TransmitterCard__title">
-              <TransferIcon />
-              {t("Pendingtransfer")}
-            </Typography>
-            <Box className="TransmitterCard__head-text">il y a 20 min</Box>
-          </Box>
-          <Box className="TransmitterCard__body">
-            <Box>
-              <Grid container spacing={3}>
-                <Grid item xs={5}>
-                  <Box>
-                    <Input
-                      disabled
-                      type={"text"}
-                      value={"0xdjlkf....jlsdkskdjl"}
-                      size="small"
-                      startAdornment={<Box sx={{ display: "flex" }}>DE </Box>}
-                    />
-                  </Box>
-                </Grid>
-                <Grid
-                  item
-                  xs={2}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <RightArrow />
-                </Grid>
-                <Grid item xs={5}>
-                  <Input
-                    disabled
-                    type={"text"}
-                    value={"0xdjlkf....jlsdkskdjl"}
-                    size="small"
-                    startAdornment={<Box sx={{ display: "flex" }}>A </Box>}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-            <Box className="TransmitterCard__status">
-              <Image
-                priority
-                src={Tezos}
-                height={22} 
-                width={22}
-                alt="Tezos"
-              />
-              1,22 XTZ
-            </Box>
-          </Box>
-        </Box>
-        <Box className="TransmitterCard">
-          <Box className="TransmitterCard__head">
-            <Typography variant="h4" className="TransmitterCard__title">
-              <TransferIcon />
-              {t("Pendingtransfer")}
-            </Typography>
-            <Box className="TransmitterCard__head-text">il y a 20 min</Box>
-          </Box>
-          <Box className="TransmitterCard__body">
-            <Box>
-              <Grid container spacing={3}>
-                <Grid item xs={5}>
-                  <Box>
-                    <Input
-                      disabled
-                      type={"text"}
-                      value={"0xdjlkf....jlsdkskdjl"}
-                      size="small"
-                      startAdornment={<Box sx={{ display: "flex" }}>DE </Box>}
-                    />
-                  </Box>
-                </Grid>
-                <Grid
-                  item
-                  xs={2}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <RightArrow />
-                </Grid>
-                <Grid item xs={5}>
-                  <Input
-                    disabled
-                    type={"text"}
-                    value={"0xdjlkf....jlsdkskdjl"}
-                    size="small"
-                    startAdornment={<Box sx={{ display: "flex" }}>A </Box>}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-            <Box className="TransmitterCard__status">
-              <Image
-                priority
-                src={Tezos}
-                height={22} 
-                width={22}
-                alt="Tezos"
-              />
-              1,22 XTZ
-            </Box>
-          </Box>
-        </Box>
+        ))}
       </Box>
     </>
   );

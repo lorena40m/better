@@ -9,6 +9,7 @@ import { ids } from './sampleIds'
 // Tezos Domain: tz1QiNtZx3b6EeATAJ5PgHp2X6y7jwZNXp3G
 // Baking Adress: tz3gtoUxdudfBRcNY7iVdKPHCYYX6xdPpoRS
 // kUSD logo is not here in wallet : tz1YQqEDkFQCTHz5pRLLsKt9532ELtc8FcpX
+// coin value is not good, get 0.01 instead of 5400$ in wallet : tz1UAAMxy3kcFfg2ZPo8q5racMqgaqFuRZv3
 
 const TEST_CASES = [
   {

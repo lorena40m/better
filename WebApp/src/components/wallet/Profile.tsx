@@ -73,7 +73,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
                     className="cardBox-price"
                     borderBottom={1}
                   >
-                    Solde
+                    {t("Balance")}
                   </Typography>
                   <Typography variant="h6" className="cardBox-price">
                     <span className="gradientText">
@@ -89,7 +89,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
                     className="cardBox-price"
                     borderBottom={1}
                   >
-                    Valeur totale
+                    {t("Totalvalue")}
                   </Typography>
                   <Typography variant="h6" className="cardBox-price">
                     <span className="gradientText">
@@ -105,7 +105,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
                     className="cardBox-price"
                     borderBottom={1}
                   >
-                    operations
+                    {t("Operations")}
                   </Typography>
                   <Typography variant="h6" className="cardBox-price">
                     <span className="gradientText">

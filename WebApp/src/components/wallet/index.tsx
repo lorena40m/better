@@ -43,7 +43,7 @@ const Wallet = ({ ArtifactResponse, miscResponse }) => {
               <CryptoMonnaise tokens={ArtifactResponse.tokens} miscResponse={miscResponse} />
             </Grid>
             <Grid md={6} paddingLeft={"15px"}>
-              <Operations />
+              <Operations operations={ArtifactResponse.history} />
             </Grid>
           </Grid>
         </Container>

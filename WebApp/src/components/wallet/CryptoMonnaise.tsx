@@ -24,7 +24,7 @@ const CryptoMonnaise = (props) => {
   const label = { inputProps: { "aria-label": "Color switch demo" } };
   const { locale } = useRouter();
   return (
-    <Card className="ElevationBox">
+    <Card className="ElevationBox" style={{ margin: "20px 0 0 0" }}>
      
 
       <TableContainer className="MonnaiseTable" component={Paper}>

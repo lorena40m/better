@@ -58,7 +58,7 @@ export default function SpacingGrid(props) {
            return (
             <Link href={nft.id} key={nft.id}>
               <SwiperSlide>
-                <Box className="collectionBox" style={{ margin: "20px 0" }}>
+                <Box className="collectionBox" style={{ margin: "20px 0 0 0" }}>
                   <Box className="collectionBox-img">
                     <Image
                       src={ipfsToLink(nft.image)}
