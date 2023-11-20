@@ -16,7 +16,6 @@ import Operations from "../../components/operation/Operations";
 import Tezos from "../../assets/images/tezos.svg";
 import PlayCircle from "../../assets/images/PlayCircle.svg";
 import { appWithTranslation, useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 import Image from "next/image";
 
@@ -77,12 +76,3 @@ const Operation = () => {
 };
 
 export default Operation;
-
-export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-      // Will be passed to the page component as props
-    },
-  };
-}

@@ -38,7 +38,7 @@
   "opr_top": "Operation on",
   "opr_box1": "Successful transfer",
   "opr_box2": "Latest transactions",
-  "portfolioOn": "Portfolio On",
+  "WalletPage.Title": "Wallet on",
   "notCertified": "Not certified",
   "Certified": "Certified",
   "totalValue": "Value Total",
@@ -57,5 +57,11 @@
   "burnt": "burnt",
   "fee": "Fees",
   "Tokens on": "Tokens on",
-  "Add to Metamask": "See on Temple"
+  "Add to Metamask": "See on Temple",
+  "Balance": "Balance",
+  "Operations": "Operations",
+  "Totalvalue": "Total Value",
+  "Transfer successful": "Transfer successful",
+  "From": "From",
+  "To": "To"
 }

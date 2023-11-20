@@ -10,24 +10,8 @@ import TezosIcon from "../../assets/images/tezos.svg";
 import Image from "next/image";
 import Operations from "@/components/wallet/Operations";
 import { appWithTranslation, useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { HomeResponse } from '../../endpoints/API';
-import HomeEndpoint from '../../endpoints/HomeEndpoint';
-
-
-export async function getServerSideProps({ locale }: any) {
-  const homeResponse = await HomeEndpoint({ pageSize: 10 })
-
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-      homeResponse,
-    },
-  };
-}
-
-const Wallet = ({ homeResponse }) => {
+const Wallet = ({ ArtifactResponse, miscResponse }) => {
   const { t } = useTranslation("common");
 
   const [open, setOpen] = useState<Boolean>(false);
@@ -38,7 +22,7 @@ const Wallet = ({ homeResponse }) => {
         <Container maxWidth="xl">
           <div className="pageTemplate__head">
             <Typography variant="h4" className="pageTemplate__title">
-              {t("portfolioOn")}
+              {t("WalletPage.Title")}
               <span className="pageTemplate__status">
                 <Image src={TezosIcon} alt="" height={40} width={40} />
                   Tezos
@@ -47,12 +31,19 @@ const Wallet = ({ homeResponse }) => {
           </div>
           <Grid className="walletProfile" container>
             <Grid md={6} paddingRight={"15px"}>
-              <Profile />
-              <NftView trending={homeResponse.collections.trending} />
-              <CryptoMonnaise />
+              <Profile
+                miscResponse={miscResponse}
+                profileName={ArtifactResponse.wallet.name}
+                walletId={ArtifactResponse.wallet.id}
+                totalValue={ArtifactResponse.wallet.totalValue}
+                operationCount={ArtifactResponse.wallet.operationCount}
+                nativeBalance={ArtifactResponse.wallet.nativeBalance}
+              />
+              <NftView nfts={ArtifactResponse.nfts} />
+              <CryptoMonnaise tokens={ArtifactResponse.tokens} miscResponse={miscResponse} />
             </Grid>
             <Grid md={6} paddingLeft={"15px"}>
-              <Operations />
+              <Operations operations={ArtifactResponse.history} />
             </Grid>
           </Grid>
         </Container>
