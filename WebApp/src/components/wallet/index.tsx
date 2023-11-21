@@ -22,7 +22,7 @@ const Wallet = ({ ArtifactResponse, miscResponse }) => {
         <Container maxWidth="xl">
           <div className="pageTemplate__head">
             <Typography variant="h4" className="pageTemplate__title">
-              {t("portfolioOn")}
+              {t("WalletPage.Title")}
               <span className="pageTemplate__status">
                 <Image src={TezosIcon} alt="" height={40} width={40} />
                   Tezos

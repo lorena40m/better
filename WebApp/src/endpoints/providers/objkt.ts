@@ -54,13 +54,13 @@ export async function getTopNftCollection(pageSize, criteria: 'top' | 'trending'
     image: ipfsToHttps(collection?.logo),
     name: collection?.short_name || collection?.name,
     supply: collection?.items?.toString(),
-    floorPrice: collection?.floor_price?.toString() ?? null,
+    floorPrice: collection?.floor_price ?? null,
     topSale: null,
     marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? collection?.contract),
   } as Collection)) as Collection[]
 }
 
-export async function getAddressDomain(address: string) { 
+export async function getAddressDomain(address: string) {
   const queryResult = await fetch(`query MyQuery {
      tzd_domain( where: {owner: {_eq: ${address}}}
       order_by: {expiry: desc}
@@ -70,11 +70,11 @@ export async function getAddressDomain(address: string) {
     expiry
   }
 }`)
-  const domain = queryResult?.tzd_domain[0]?.id 
+  const domain = queryResult?.tzd_domain[0]?.id
   return domain
 }
 
-export async function getCollection(address: string) { 
+export async function getCollection(address: string) {
   const queryResult = await fetch(`query collection_by_id {
   fa(where: {contract: {_eq: ${address}}}) {
     name
@@ -87,14 +87,14 @@ export async function getCollection(address: string) {
 `)
   const collection = queryResult.fa[0]
   const collectionObject = {
-    id : address, 
-    name : collection?.name,
-    image : ipfsToHttps(collection?.logo),
-    supply : collection?.items.toString(), 
-    floorPrice : collection?.floor_price.toString(),
-    topSale : null,
+    id: address,
+    name: collection?.name,
+    image: ipfsToHttps(collection?.logo),
+    supply: collection?.items.toString(),
+    floorPrice: collection?.floor_price,
+    topSale: null,
     marketplaceLink: 'https://objkt.com/collection/' + collection?.path, // TODO : request marketplaceLink
-  }  
+  }
   return collectionObject
 }
 
@@ -144,14 +144,14 @@ export async function getWalletNfts(address: string) {
       image : token.token.display_uri,
       name : faData.name,
       //lastSalePrice : ,
-      collection : {
-        id : faData.contract,
-        image : galleryData?.logo ?? null,
-        name : galleryData?.name ?? null,
-        supply : galleryData?.max_items ?? null,
-        floorPrice : galleryData?.floor_price ?? null,
-        topSale : "0", // TO FILL
-        marketplaceLink : "", // TO FILL
+      collection: {
+        id: faData.contract,
+        image: galleryData?.logo ?? null,
+        name: galleryData?.name ?? null,
+        supply: galleryData?.max_items ?? null,
+        floorPrice: galleryData?.floor_price ?? null,
+        topSale: null, // TO FILL
+        marketplaceLink: null, // TO FILL
       } as Collection,
       //lastTransferDate : ,
     } as Nft

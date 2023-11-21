@@ -28,6 +28,7 @@ export async function getServerSideProps({ params, locale }: any) {
       },
     };
   } catch {
+    // TODO: direct to _error page
     return {
       props: {
         ...(await serverSideTranslations(locale, ["common"])),

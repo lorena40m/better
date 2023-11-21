@@ -984,6 +984,7 @@ Project: less intrusive search button
           font-size: 14.7px;
           line-height: 20px;
           color: #2a3b51;
+          cursor: pointer;
         }
         input.Mui-disabled {
           -webkit-text-fill-color: #2a3b51;
@@ -1059,7 +1060,7 @@ Project: less intrusive search button
       }
     }
     &__status {
-      max-width: 100px;
+      max-width: 130px;
       width: 100%;
       gap: 0 px;
     }
@@ -1634,4 +1635,87 @@ Project: less intrusive search button
 // However it's not a big deal if this rule is not applied ;p
 div.MuiPaper-root:has(> [aria-labelledby="languageSelect"]) {
   transform: scale(1.2) !important;
+}
+
+.TokenRanking {
+  padding: 20px;
+  font-size: 14px;
+
+  &-container {
+    justify-content: center;
+  }
+
+  &-TokenBox {
+    display: block;
+    border: 1px solid rgba(179, 193, 213, 0.8);
+    margin: 20px;
+    padding: 10px;
+    // display: flex;
+    border-radius: 20px;
+    color: grey;
+    text-decoration: none;
+
+    &:hover {
+      border-color: transparent;
+      box-shadow: 0 1px 6px rgba(32,33,36,.28);
+    }
+  }
+
+  @media (min-width: 1500px) {
+    .smallOnly {
+      display: none;
+    }
+  }
+  @media (max-width: 1499px) {
+    .bigOnly {
+      display: none;
+    }
+  }
+
+  &-col {
+    margin: 0;
+    padding: 5px 15px;
+  }
+
+  &-col:nth-child(2) {
+    // flex: 1;
+    align-items: center;
+  }
+
+  &-col:nth-child(3) {
+    text-align: right;
+    flex: 1;
+  }
+
+  &-names {
+    display: flex;
+    align-items: end;
+    line-height: 30px;
+    padding: 5px;
+  }
+
+  &-name {
+    font-size: 24px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    display: inline-block;
+    color: black;
+  }
+
+  &-ticker {
+    color: grey;
+    font-size: 16px;
+    padding-left: 10px;
+    line-height: 26px;
+  }
+
+  &-price {
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 40px;
+    color: black;
+  }
 }

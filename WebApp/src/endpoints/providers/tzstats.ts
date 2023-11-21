@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {getCoinData} from './tzkt'
+import { Token } from '../API'
 
 async function fetch(urn: string) {
   try {
@@ -37,7 +38,7 @@ export async function getBlockDate() {
 export async function getXtzPrice() {
   const data = await fetch('markets/tickers')
   const binancePrice = data.filter(feed => feed.pair === 'XTZ_USDT' && feed.exchange === 'binance')[0]
-  return Math.round(binancePrice.last * 100).toString()
+  return binancePrice.last
 }
 
 export async function getWallet(address) {
@@ -56,13 +57,10 @@ export async function getWalletTotalValue(address){
   
 
     // Calculate total value in USD
-    const totalValueUSD = data.reduce((sum, asset) => {
+    return data.reduce((sum, asset) => {
       const valueUSD = asset?.value_usd || "0"; // Default to "0" if value_usd is not present
       return sum + Number(valueUSD);
     }, 0);
-    const totalValueInCents = Math.round(totalValueUSD*100)
-    return totalValueInCents
-
   } catch (error) {
     console.error('Error:', error);
     return 0
@@ -81,14 +79,14 @@ export async function getTokenSortedByValue(address: string ) {
     // The answer would be to paginate, but will only be usefull for big wallets...
     // Or to have an index of course
     // console.log('tokenData', tokenData)
-    const valueInUSD = Math.round(tokenData?.value_usd*100).toString()
+    const valueInUSD = tokenData?.value_usd
     return {
       coin: await getCoinData(
         tokenData.contract,
         valueInUSD
       ),
       quantity: tokenData.balance,
-      valueInUSD: valueInUSD, 
+      valueInUSD,
       lastTransferDate: "",
     } as Token
   })))

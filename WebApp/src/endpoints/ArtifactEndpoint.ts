@@ -83,8 +83,8 @@ async function fetchOperation(id: string, xtzPrice) {
         }
       },
       fee: {
-        nativeValue : fee.toString(),
-        totalValue:   Math.round(fee/1000000 * xtzPrice * 100).toString() , 
+        nativeValue: fee,
+        totalValue: +fee / 1000000 * xtzPrice,
         burned : "0", // No burn in TeZos 
       }
     } // as TransferResponse
@@ -143,7 +143,7 @@ export default (async ({
   const { artifactType, contractData } = await discrimateArtifactType(id)
   const xtzPrice = await tzstats.getXtzPrice()
   if (artifactType === 'operation') {
-    const operation = await fetchOperation(id,xtzPrice)
+    const operation = await fetchOperation(id, xtzPrice)
     return {
       ...operation,
       history : {
@@ -161,9 +161,9 @@ export default (async ({
       artifactType: 'wallet',
       wallet: {
         id: id,
-        name: (await objkt.getAddressDomain(id)) ?? null, // TODO Tezos domains, sinon null=on va afficher "Anonyme" dans le front
-        nativeBalance: (nativeBalance*1000000).toString(),
-        totalValue: (await tzstats.getWalletTotalValue(id) + Math.round(nativeBalance * xtzPrice)).toString() , // TODO: compute sum of data from TzPro
+        name: await objkt.getAddressDomain(id), // TODO Tezos domains, sinon null=on va afficher "Anonyme" dans le front
+        nativeBalance: BigInt(Math.round(+nativeBalance * 1_000_000)).toString(),
+        totalValue: (await tzstats.getWalletTotalValue(id)) + +nativeBalance * xtzPrice, // TODO: compute sum of data from TzPro
         operationCount: operationCount?.toString(),
       },
       tokens: await tzstats.getTokenSortedByValue(id),
@@ -187,8 +187,8 @@ export default (async ({
       operationCount: contractData?.numTransactions?.toString(), // TODO : check why operationCount from tzstats tzstats.getWallet is different from numTransactions of tzkt
       immutable: null,
       autonomous : null,
-      averageFee: (await tzstats.getAddressAverageFee(id))?.toString(), // TODO : the fee is in gas
-      treasuryValue: (await tzstats.getWalletTotalValue(id) + Math.round(nativeBalance * xtzPrice)).toString() , // TODO: compute sum of data from TzPro
+      averageFee: await tzstats.getAddressAverageFee(id), // TODO : the fee is in gas
+      treasuryValue: (await tzstats.getWalletTotalValue(id)) + +nativeBalance/100000 * xtzPrice,
       auditCount: null,
       officialWebsite: contractData?.metadata?.site,
     }

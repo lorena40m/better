@@ -24,7 +24,7 @@ export async function getTop50Cryptos(pageSize, criteria: 'market_cap' | 'volume
         name: crypto.name,
         ticker: crypto.symbol,
         decimals: Math.floor(0), // TO FILL
-        lastPrice: Math.floor(crypto.quote.USD.price*100).toString(),
+        lastPrice: crypto.quote.USD.price,
         circulatingSupplyOnChain: crypto.circulating_supply,
         holders: Math.floor(0).toString(), // TO FILL
       } as Coin)) as Coin[];
