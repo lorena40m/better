@@ -12,6 +12,7 @@ import "swiper/css/navigation";
 import "swiper/css/bundle";
 import Heart from "@/assets/iconSvg/Heart.svg";
 import Link from 'next/link'
+import IpfsMedia from "@/components/wallet/IpfsMedia";
 
 export default function SpacingGrid(props) {
 
@@ -60,18 +61,7 @@ export default function SpacingGrid(props) {
               <SwiperSlide>
                 <Box className="collectionBox" style={{ margin: "20px 0 0 0" }}>
                   <Box className="collectionBox-img">
-                    <Image
-                      src={ipfsToLink(nft.image)}
-                      alt="crypto"
-                      layout="fill"
-                      style={{
-                        objectFit: "cover",
-                        borderRadius: "10px"
-                      }}
-                    />
-                    {/* <span className="collectionBox-likeBtn">
-                      <Heart />
-                    </span> */}
+                    <IpfsMedia src={ipfsToLink(nft.image)} />
                   </Box>
                   <Typography
                     gutterBottom
