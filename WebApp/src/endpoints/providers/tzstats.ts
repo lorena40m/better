@@ -66,6 +66,11 @@ export async function getWalletTotalValue(address){
     return 0
   }
 }
+export async function getTokenLastPrice(address:string){
+  const assets = await fetch(`v1/wallets/${address}/balances`)
+  const tokens = assets.filter(item => item.decimals !== 0);
+  return Math.round(tokens[0]?.value_usd * 100) 
+}
 
 export async function getTokenSortedByValue(address: string ) {
   const assets = await fetch(`v1/wallets/${address}/balances`)

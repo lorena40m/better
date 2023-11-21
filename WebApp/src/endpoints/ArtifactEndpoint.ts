@@ -59,7 +59,7 @@ async function fetchOperation(id: string, xtzPrice) {
       artifactType: 'transfer',
       operation: {
         id: id,
-        status: status?.toString(),
+        status: "success", 
         date: timestamp ? (new Date(timestamp)).toISOString() : null,
         nativeQuantity: amount ?? null,
         from: {
@@ -79,7 +79,7 @@ async function fetchOperation(id: string, xtzPrice) {
             id: receiver,
             name: receiverName,
           },
-          asset: assets?.[0],
+          asset: assets,
         }
       },
       fee: {
@@ -95,7 +95,7 @@ async function fetchOperation(id: string, xtzPrice) {
       artifactType: 'call',
       operation: {
         id: id,
-        status: status?.toString(),
+        status: "success", 
         date: timestamp ? (new Date(timestamp)).toISOString() : null,
         from: {
           id: sender,
@@ -148,7 +148,7 @@ export default (async ({
       ...operation,
       history : {
           from : await listLastOperations(operation.operation.from.id,10),
-          to : await listLastOperations(operation.operation.from.id,10)
+          to : await listLastOperations(operation.operation.to.id,10)
       }
   }
   }
@@ -187,8 +187,8 @@ export default (async ({
       operationCount: contractData?.numTransactions?.toString(), // TODO : check why operationCount from tzstats tzstats.getWallet is different from numTransactions of tzkt
       immutable: null,
       autonomous : null,
-      averageFee: await tzstats.getAddressAverageFee(id), // TODO : the fee is in gas
-      treasuryValue: (await tzstats.getWalletTotalValue(id)) + +nativeBalance/100000 * xtzPrice,
+      averageFee: (await tzstats.getAddressAverageFee(id))?.toString(), // TODO : the fee is in gas
+      treasuryValue: (await tzstats.getWalletTotalValue(id) + Math.round(nativeBalance * xtzPrice)).toString(), // TODO: compute sum of data from TzPro
       auditCount: null,
       officialWebsite: contractData?.metadata?.site,
     }
@@ -209,7 +209,7 @@ export default (async ({
   if (artifactType === 'coin') {
     // const coin = await tzkt.getCoinData(contractHash, lastPrice)
     const NUMBER_OF_TXS = 5
-    const lastPrice = null // TODO
+    const lastPrice = await tzstats.getTokenLastPrice(id)  // TODO
     const coin = await tzkt.getCoinData(id, lastPrice)
     const holders = await tzkt.getCoinHolders(id)
     const coinYearlyData = await tzkt.getCoinYearlyTransfersAndVolume(id)
