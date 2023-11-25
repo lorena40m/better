@@ -187,11 +187,12 @@ export default (async ({
       operationCount: contractData?.numTransactions?.toString(), // TODO : check why operationCount from tzstats tzstats.getWallet is different from numTransactions of tzkt
       immutable: null,
       autonomous : null,
-      averageFee: (await tzstats.getAddressAverageFee(id))?.toString(), // TODO : the fee is in gas
-      treasuryValue: (await tzstats.getWalletTotalValue(id) + Math.round(nativeBalance * xtzPrice)).toString(), // TODO: compute sum of data from TzPro
+      averageFee: await tzstats.getAddressAverageFee(id), // TODO : the fee is in gas
+      treasuryValue: (await tzstats.getWalletTotalValue(id) + Math.round(+nativeBalance * xtzPrice)).toString(), // TODO: compute sum of data from TzPro
       auditCount: null,
       officialWebsite: contractData?.metadata?.site,
-    }
+    },
+    history: null,
   } as ContractResponse
 
   if (artifactType === 'collection') {
