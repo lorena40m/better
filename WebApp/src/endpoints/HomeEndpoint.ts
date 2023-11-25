@@ -1492,7 +1492,7 @@ export default (async ({ pageSize }) => {
         circulatingSupplyOnChain: BigInt(Math.round(token["total supply"])).toString(),
         holders: BigInt(Math.round(token["holdersCount"])).toString(),
         capitalizationOnChain: token.mcap,
-      })),
+      })).sort((a, b) => +b.holders - +a.holders),
       byVolume: [],// await coinmarketcap.getTop50Cryptos('volume_24h'), // paginated
     },
   }

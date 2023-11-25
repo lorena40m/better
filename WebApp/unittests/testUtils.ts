@@ -48,6 +48,7 @@ const formatToken_CASES = [
   { quantity: '10', decimals: 1, locale: 'fr', expect: '1,0', },
   { quantity: '1', decimals: 1, locale: 'fr', expect: '0,1', },
   { quantity: '585515', decimals: 0, locale: 'fr', expect: '585 515', },
+  { quantity: '1010987', decimals: 0, locale: 'en', expect: '1.01 million', },
 ]
 
 TestScript(async function () {

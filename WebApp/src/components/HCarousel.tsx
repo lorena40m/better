@@ -21,6 +21,7 @@ export default function SpacingGrid({ collections }) {
   const {locale} = useRouter();
   const swiperRef = useRef(null);
 
+  // Reset slides when sorting changes
   useEffect(() => {
     swiperRef.current.slideTo(0)
   }, [collections])
@@ -40,8 +41,8 @@ export default function SpacingGrid({ collections }) {
       }}
       breakpoints={{
         100 : {
-          slidesPerView : 1,
-          spaceBetween : 15
+          slidesPerView: 1,
+          spaceBetween: 15
         },
         640: {
           slidesPerView: 2,
@@ -61,7 +62,7 @@ export default function SpacingGrid({ collections }) {
       className="mySlider"
     >
       {collections.map((value) => (
-        <SwiperSlide key={value.id}>
+        <SwiperSlide key={value.id} className="collectionBox-slide">
           <Link href={'/'+value.id}>
             <Box className="collectionBox"
               style={{ backgroundImage: `url(${value.image})` }}
@@ -82,7 +83,7 @@ export default function SpacingGrid({ collections }) {
                   variant="h5"
                   className="collectionBox-subTitle"
                 >
-                  {t('collectionSupply')} {formatToken(value.supply, 0, locale)}
+                  {t('collectionSupply', { supply: formatToken(value.supply, 0, locale) })}
                 </Typography>
               </Box>
             </Box>

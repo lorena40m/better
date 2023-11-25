@@ -53,7 +53,7 @@ function _formatNumber(quantity: string, decimals: number, significantDigits = 3
       firstDigits = firstDigits.slice(0, biggerSignificantDigit % 3)
         + floatSeparator[locale] + firstDigits.slice(quantity.length % 3)
     };
-    return firstDigits + thousandSeparator[locale] + magnitudeTerm +
+    return firstDigits + ' ' + magnitudeTerm +
       (firstDigits[0] == '1' && quantity.length % 3 === 1 ? '' : 's')
   }
 

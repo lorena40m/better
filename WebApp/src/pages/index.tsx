@@ -22,7 +22,6 @@ import SelectCustom from "../components/SelectCustom";
 import TokenRanking from "../components/Home/TokenRanking";
 import HCarousel from "../components/HCarousel";
 import HeadCrumb from "@/components/Header/HeadCrumb";
-import tezosLogo from "../assets/images/tezos_gradient.svg";
 import searchIcon from "../assets/iconSvg/searchIcon.svg";
 import TypingEffect from "../components/others/typingEffect";
 import Background from "../components/others/background";
@@ -35,6 +34,7 @@ import HomeEndpoint from '../endpoints/HomeEndpoint';
 import MiscellaneousEndpoint from '../endpoints/MiscellaneousEndpoint';
 import { formatPrice, formatToken } from '../utils/format'
 import useWindowSize from '../hooks/useWindowSize'
+import ChainStats from '@/components/Home/ChainStats'
 
 export async function getServerSideProps({ locale }: any) {
   const miscResponse = await MiscellaneousEndpoint({})
@@ -55,13 +55,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
   { homeResponse: HomeResponse, miscResponse: MiscellaneousResponse, iniSeconds: number, _nextI18Next: any }
 ) {
   const { t } = useTranslation("common");
-  const router = useRouter();
-  const {locale} = router
-  const [seconds, setSeconds] = useState(iniSeconds)
-  useEffect(() => {
-    let i = setInterval(() => setSeconds(seconds => seconds - 1), 1000)
-    return () => clearInterval(i)
-  }, [])
+  const { locale } = useRouter();
   const windowWidth = useWindowSize().width;
   const [collectionCriteria, setCollectionCriteria] = useState('trending')
   const [tokenCriteria, setTokenCriteria] = useState('byCap')
@@ -94,7 +88,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                 hiddenLabel
                 id="filled-hidden-label-small"
                 defaultValue=""
-                placeholder={t("inputPlaceholder") + (windowWidth > 500 ? t("inputPlaceholderIfLarge") : '')}
+                placeholder={t("inputPlaceholder")}
                 fullWidth
                 sx={{ ml: 0 }}
               ></TextField>
@@ -107,85 +101,10 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                 <Image src={searchIcon} width={40} alt="Research icon" style={{zIndex: "1"}} />
               </Button>
             </form>
+            <ChainStats homeResponse={homeResponse} miscResponse={miscResponse} iniSeconds={iniSeconds} />
           </Container>
         </Box>
-        <Box className="cardsModule">
-          <Container maxWidth="xl">
-            <Grid
-              container
-              rowSpacing={2}
-              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            >
-              <Grid item xs={12} sm={12} md={4}>
-                <Box className="cardBox cardBox--info">
-                  <Box className="cardBox-inner">
-                    <Box className="cardBox-data">
-                      <Box className="cardBox-head">
-                        <Typography
-                          gutterBottom
-                          variant="h5"
-                          className="cardBox-title"
-                        >
-                          {t("stat1")}
-                          <b>XTZ</b>
-                        </Typography>
-                      </Box>
-                      <Typography variant="h4" className="cardBox-price">
-                        <span className="gradientText">{ formatPrice(miscResponse.xtzPrice, locale, miscResponse.rates) }</span>
-                      </Typography>
-                    </Box>
-                    <Image
-                      priority
-                      src={tezosLogo}
-                      height={80}
-                      width={100}
-                      alt=""
-                      className="cryptoLogo"
-                    />
-                  </Box>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={12} md={4}>
-                <Box className="cardBox">
-                  <Box className="cardBox-inner">
-                    <Box className="cardBox-head">
-                      <Typography
-                        gutterBottom
-                        variant="h5"
-                        className="cardBox-title"
-                      >
-                        {t("stat2")}
-                      </Typography>
-                    </Box>
-                    <Typography variant="h4" className="cardBox-price">
-                      <span className="gradientText">{formatPrice((+homeResponse.stats.normalFee / 1_000_000) * +miscResponse.xtzPrice, locale, miscResponse.rates)}</span>
-                      <span className="cardBox-status">({formatToken(homeResponse.stats.normalFee, 6, locale)} XTZ)</span>
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={12} md={4}>
-                <Box className="cardBox">
-                  <Box className="cardBox-inner">
-                    <Box className="cardBox-head">
-                      <Typography
-                        gutterBottom
-                        variant="h5"
-                        className="cardBox-title"
-                      >
-                        {t("stat3")}
-                      </Typography>
-                      {/*<span className="cardBox-status">{homeResponse.stats.lastBlockDate}</span>*/}
-                    </Box>
-                    <Typography variant="h4" className="cardBox-price">
-                      <span className="gradientText">{t('inXSeconds', {seconds: 15 + seconds % 15})}</span>
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
-            </Grid>
-          </Container>
-        </Box>
+
         <Box className="sliderBlock">
           <Container maxWidth="xl">
             <Box className="sectionHead">
