@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Token, Coin, Holder } from '../API'
+import { Holding, Coin, Holder } from '../API'
 import { ipfsToHttps } from './utils'
 
 async function fetch(urn: string) {
@@ -38,7 +38,7 @@ export async function getTransactionAssets(tzktId) {
   return (await fetch(`v1/tokens/transfers/?transactionId=${tzktId}`))
     ?.map(tokenData => {
       return {
-        coin: {
+        asset: {
           id: tokenData.token.contract.address,
           logo: ipfsToHttps(tokenData.token.metadata.thumbnailUri),
           name: tokenData.token.metadata.name,
@@ -50,7 +50,7 @@ export async function getTransactionAssets(tzktId) {
         },
         quantity: tokenData.amount,
       }
-    }) as Token[] | null
+    }) as Holding[] | null
 }
 export async function isCollection(hash) {
   return (await fetch(`v1/tokens/transfers/?token.contract=${hash}`))

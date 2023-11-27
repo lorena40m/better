@@ -12,7 +12,7 @@ import {
 } from '../src/endpoints/API'
 
 const integerStringSchema = () => string().required().matches(/^\d+$/)
-const dateStringSchema = () => string().required().matches(/^\d\d\d\d-\d\d-\d\dT\d\d-\d\d-\d\d/)
+const dateStringSchema = () => string().required().matches(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
 const addressSchema = () => object({
   id: string().required().matches(/^(tz)|(KT).{34}$/),
   name: string().required(),

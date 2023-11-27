@@ -83,8 +83,8 @@ async function fetchOperation(id: string, xtzPrice) {
         }
       },
       fee: {
-        nativeValue: fee,
-        totalValue: +fee / 1000000 * xtzPrice,
+        nativeValue: fee.toString(),
+        value: Math.round(+fee / 1000000 * xtzPrice).toString(), // value in USD
         burned : "0", // No burn in TeZos 
       }
     } // as TransferResponse
@@ -120,9 +120,9 @@ async function fetchOperation(id: string, xtzPrice) {
         functionName,
       },
       fee: {
-        value: null,
-        nativeValue: null,
-        burned: null,
+        value: Math.round(+fee / 1000000 * xtzPrice).toString(),
+        nativeValue: fee.toString(),
+        burned: "0", // no burn in teZos
       },
       }
     } // as CallResponse

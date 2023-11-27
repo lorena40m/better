@@ -160,7 +160,7 @@ export type Transfer = {
     to: Address,
     asset: Asset,
     quantity: TokenDecimals,
-  },
+  }[],
 }
 
 export type Call = Transfer & {

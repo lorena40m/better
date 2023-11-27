@@ -71,7 +71,7 @@ export async function getAddressDomain(address: string) {
   }
 }`)
   const domain = queryResult?.tzd_domain[0]?.id
-  return domain
+  return domain ?? null
 }
 
 export async function getCollection(address: string) {

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {getCoinData} from './tzkt'
-import { Token } from '../API'
+import { Holding} from '../API'
 
 async function fetch(urn: string) {
   try {
@@ -86,16 +86,16 @@ export async function getTokenSortedByValue(address: string ) {
     // console.log('tokenData', tokenData)
     const valueInUSD = tokenData?.value_usd
     return {
-      coin: await getCoinData(
+      asset: await getCoinData(
         tokenData.contract,
         valueInUSD
       ),
       quantity: tokenData.balance,
       valueInUSD,
       lastTransferDate: "",
-    } as Token
+    } as Holding
   })))
-    .sort((a, b) => b.valueInUSD - a.valueInUSD) as Token[]
+    .sort((a, b) => b.valueInUSD - a.valueInUSD) as Holding[]
 }
 
 export async function getLastOperations(address, number) {
