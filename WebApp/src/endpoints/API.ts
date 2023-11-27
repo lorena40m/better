@@ -50,11 +50,11 @@ export type LoadMoreHistoryEndpoint = (params: {
   pageSize: number,
 }) => Promise<Operation[]>
 
-export type LoadMoreWalletNonCertifiedTokens = (params: {
+export type LoadMoreWalletTokens = (params: {
   id: string,
   page: number,
   pageSize: number,
-}) => Promise<Token[]>
+}) => Promise<Holding[]>
 
 export type LoadMoreCoinHolders = (params: {
   id: string,
@@ -75,11 +75,11 @@ export type LoadMoreCollectionItems = (params: {
 export type Collection = {
   id: string,
   name: string,
-  image: UrlString, // ?
-  supply: Integer, // ?
-  floorPrice: Dollars, // ?
-  topSale: Dollars, // ?
-  marketplaceLink: UrlString, // ?
+  image: UrlString,
+  supply: Integer,
+  floorPrice: Dollars,
+  topSale: Dollars,
+  marketplaceLink: UrlString,
 }
 
 export type Coin = {
@@ -87,28 +87,10 @@ export type Coin = {
   name: string,
   ticker: string,
   decimals: number,
-  logo: UrlString, // ?
-  lastPrice: number, // ?
-  circulatingSupplyOnChain: TokenDecimals, // ?
-  holders: Integer, // ?
-}
-
-export type Address = {
-  id: string,
-  // name is the best description of an address that we can have
-  // it can be a domain name, social pseudo,
-  // app or contract name, or by default the entire address
-  name: string,
-}
-
-export type Holder = Address & {
-  quantity: TokenDecimals,
-}
-
-export type Token = {
-  coin: Coin,
-  quantity: TokenDecimals,
-  lastTransferDate: DateString,
+  logo: UrlString,
+  lastPrice: number,
+  circulatingSupplyOnChain: TokenDecimals,
+  holders: Integer,
 }
 
 export type Nft = {
@@ -120,7 +102,25 @@ export type Nft = {
   lastTransferDate: DateString,
 }
 
-export type Asset = Token | Nft
+export type Address = {
+  id: string,
+  // name is the best description of an address that we can have
+  // it can be a domain name, social pseudo,
+  // app or contract name, or by default the entire address
+  name: string,
+}
+
+export type Asset = Coin | Nft
+
+export type Holder = Address & {
+  quantity: TokenDecimals,
+}
+
+export type Holding = {
+  asset: Asset,
+  quantity: TokenDecimals,
+  lastTransferDate: DateString,
+}
 
 /*****************************************/
 /********** ENDPOINTS RESPONSES **********/
@@ -135,9 +135,9 @@ export type MiscellaneousResponse = {
 
 export type HomeResponse = {
   stats: {
-    normalFee: TokenDecimals, // ?
-    lastBlockNumber: Integer, // ?
-    lastBlockDate: DateString, // ?
+    normalFee: TokenDecimals,
+    lastBlockNumber: Integer,
+    lastBlockDate: DateString,
   },
   collections: {
     trending: Collection[], // paginated
@@ -159,6 +159,7 @@ export type Transfer = {
     from: Address,
     to: Address,
     asset: Asset,
+    quantity: TokenDecimals,
   },
 }
 
@@ -200,8 +201,7 @@ export type WalletResponse = {
     totalValue: Dollars,
     operationCount: Integer,
   },
-  tokens: Token[], // sorted by value
-  uncertifiedTokens: Token[], // paginated, sorted by last transfer date
+  tokens: Holding[], // sorted by value
   nfts: Nft[], // sorted by value
   history: Operation[], // paginated
 }
