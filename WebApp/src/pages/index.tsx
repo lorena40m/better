@@ -56,9 +56,16 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
 ) {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
+  const router = useRouter();
   const windowWidth = useWindowSize().width;
-  const [collectionCriteria, setCollectionCriteria] = useState('trending')
-  const [tokenCriteria, setTokenCriteria] = useState('byCap')
+  const [collectionCriteria, setCollectionCriteria] = useState('trending');
+  const [tokenCriteria, setTokenCriteria] = useState('byCap');
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const searchValue = event.target.querySelector('input').value;
+    router.push(`/${encodeURIComponent(searchValue)}`);
+  };
 
   return (
     <>
@@ -83,10 +90,10 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
               <TypingEffect strings={_nextI18Next.initialI18nStore[locale].common.anim} /> <br />
               {t("animTitle2")}
             </Typography>
-            <form onSubmit={() => {alert('Search!')}} className="searchBlock-form">
+            <form onSubmit={handleSearchSubmit} className="searchBlock-form">
               <TextField
                 hiddenLabel
-                id="filled-hidden-label-small"
+                id="filled-hidden-label-small mainSearchField"
                 defaultValue=""
                 placeholder={t("inputPlaceholder")}
                 fullWidth
