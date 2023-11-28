@@ -34,12 +34,31 @@ export async function getTransactionStatus(hash) {
   return (await fetch(`v1/operations/${hash}/status`)) as string | null
 }
 
-export async function getTransactionAssets(tzktId) {
-  return (await fetch(`v1/tokens/transfers/?transactionId=${tzktId}`))
-    ?.map(tokenData => {
+export async function getTransactionIds(hash) { 
+  const data = await fetch(`v1/operations/${hash}`)
+  return data.map(tx => tx.id)
+}
+
+export async function getTransactionAssets(tzktIds) {
+  const idsArray = Array.isArray(tzktIds) ? tzktIds : [tzktIds];
+  const transactionsData = await Promise.all(
+    idsArray.map(async (tzktId) => {
+      const response = await fetch(`v1/tokens/transfers/?transactionId=${tzktId}`);
+      return response;
+    })
+  );
+  return transactionsData.map((tokenData) => {
       return {
+        from : {
+          id : tokenData?.from.address ,
+          name : " ",
+        },
+        to : { 
+          id: tokenData?.to.address,
+          name: tokenData.to.alias,
+        },
         asset: {
-          id: tokenData.token.contract.address,
+          id: tokenData?.token.contract.address,
           logo: ipfsToHttps(tokenData.token.metadata.thumbnailUri),
           name: tokenData.token.metadata.name,
           ticker: tokenData.token.metadata.symbol,
@@ -50,7 +69,7 @@ export async function getTransactionAssets(tzktId) {
         },
         quantity: tokenData.amount,
       }
-    }) as Holding[] | null
+    })
 }
 export async function isCollection(hash) {
   return (await fetch(`v1/tokens/transfers/?token.contract=${hash}`))

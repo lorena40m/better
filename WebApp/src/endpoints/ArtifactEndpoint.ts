@@ -40,14 +40,15 @@ function discrimateOperationType(receiver, contractData, functionName) {
 }
 
 async function fetchOperation(id: string, xtzPrice) {
-  const [ transaction, status, functionName ] = await Promise.all([
+  const [ transaction, status, functionName, transactionIds ] = await Promise.all([
     await tzkt.getTransaction(id),
     await tzkt.getTransactionStatus(id),
     await tzkt.getTransactionFunctionName(id),
+    await tzkt.getTransactionIds(id),
   ])
   const { tzktId, sender, receiver, amount, fee, timestamp } = transaction
   const [ assets, contractData ] = await Promise.all([
-    await tzkt.getTransactionAssets(tzktId),
+    await tzkt.getTransactionAssets(transactionIds),
     await tzkt.getContractData(receiver),
   ])
   const operationType = discrimateOperationType(receiver, contractData, functionName)
@@ -64,7 +65,7 @@ async function fetchOperation(id: string, xtzPrice) {
         nativeQuantity: amount ?? null,
         from: {
           id: sender,
-          name: senderName ?? null,
+          name: senderName,
         },
         to: {
           id: receiver,
