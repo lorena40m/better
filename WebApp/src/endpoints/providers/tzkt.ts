@@ -41,35 +41,41 @@ export async function getTransactionIds(hash) {
 
 export async function getTransactionAssets(tzktIds) {
   const idsArray = Array.isArray(tzktIds) ? tzktIds : [tzktIds];
+  console.log(idsArray)
   const transactionsData = await Promise.all(
     idsArray.map(async (tzktId) => {
       const response = await fetch(`v1/tokens/transfers/?transactionId=${tzktId}`);
       return response;
     })
   );
-  return transactionsData.map((tokenData) => {
+  const nonEmptyTransactionsData = transactionsData.filter((tokenData) => tokenData && tokenData.length > 0);
+
+  console.log(nonEmptyTransactionsData)
+  return nonEmptyTransactionsData.map((tokenData) => {
       return {
         from : {
-          id : tokenData?.from.address ,
+          id : tokenData[0]?.from.address ,
           name : " ",
         },
         to : { 
-          id: tokenData?.to.address,
-          name: tokenData.to.alias,
+          id: tokenData[0]?.to.address,
+          name: tokenData[0]?.to.alias,
         },
         asset: {
-          id: tokenData?.token.contract.address,
-          logo: ipfsToHttps(tokenData.token.metadata.thumbnailUri),
-          name: tokenData.token.metadata.name,
-          ticker: tokenData.token.metadata.symbol,
-          decimals: tokenData.token.metadata.decimals,
+          id: tokenData[0]?.token.contract.address,
+          logo: ipfsToHttps(tokenData[0]?.token.metadata.thumbnailUri),
+          name: tokenData[0]?.token.metadata.name,
+          ticker: tokenData[0]?.token.metadata.symbol,
+          decimals: tokenData[0]?.token.metadata.decimals,
           lastPrice: null, // TO CHECK: don't need
-          circulatingSupplyOnChain: tokenData.token.totalSupply,
+          circulatingSupplyOnChain: tokenData[0]?.token.totalSupply,
           holders: null, // TO CHECK: don't need
         },
-        quantity: tokenData.amount,
+        quantity: tokenData[0]?.amount,
       }
     })
+
+
 }
 export async function isCollection(hash) {
   return (await fetch(`v1/tokens/transfers/?token.contract=${hash}`))
