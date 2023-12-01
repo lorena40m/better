@@ -36,47 +36,52 @@ export async function getTransactionStatus(hash) {
 
 export async function getTransactionIds(hash) { 
   const data = await fetch(`v1/operations/${hash}`)
-  return data.map(tx => tx.id)
+  const nonEmptyData = data || [];
+
+  // Filter the data
+  const transactionsId = nonEmptyData
+    .filter((transaction) => transaction && transaction.id)
+    .map(tx => tx.id);
+  return transactionsId
 }
 
 export async function getTransactionAssets(tzktIds) {
   const idsArray = Array.isArray(tzktIds) ? tzktIds : [tzktIds];
-  console.log(idsArray)
   const transactionsData = await Promise.all(
     idsArray.map(async (tzktId) => {
       const response = await fetch(`v1/tokens/transfers/?transactionId=${tzktId}`);
       return response;
     })
   );
-  const nonEmptyTransactionsData = transactionsData.filter((tokenData) => tokenData && tokenData.length > 0);
+  const nonEmptyTransactionsData = transactionsData.filter((tokenData) => tokenData && tokenData.length > 0).map((innerArray) => innerArray[0]);
 
-  console.log(nonEmptyTransactionsData)
-  return nonEmptyTransactionsData.map((tokenData) => {
+  const transferredAssets = nonEmptyTransactionsData.map((tokenData) => {
       return {
         from : {
-          id : tokenData[0]?.from.address ,
+          id : tokenData?.from.address ,
           name : " ",
         },
         to : { 
-          id: tokenData[0]?.to.address,
-          name: tokenData[0]?.to.alias,
+          id: tokenData?.to.address,
+          name: tokenData?.to.alias,
         },
         asset: {
-          id: tokenData[0]?.token.contract.address,
-          logo: ipfsToHttps(tokenData[0]?.token.metadata.thumbnailUri),
-          name: tokenData[0]?.token.metadata.name,
-          ticker: tokenData[0]?.token.metadata.symbol,
-          decimals: tokenData[0]?.token.metadata.decimals,
+          id: tokenData?.token.contract.address,
+          logo: ipfsToHttps(tokenData?.token.metadata.thumbnailUri),
+          name: tokenData?.token.metadata.name,
+          ticker: tokenData?.token.metadata.symbol,
+          decimals: tokenData?.token.metadata.decimals.toString(),
           lastPrice: null, // TO CHECK: don't need
-          circulatingSupplyOnChain: tokenData[0]?.token.totalSupply,
+          circulatingSupplyOnChain: tokenData?.token.totalSupply,
           holders: null, // TO CHECK: don't need
         },
-        quantity: tokenData[0]?.amount,
+        quantity: tokenData?.amount,
       }
     })
 
-
+  return transferredAssets
 }
+
 export async function isCollection(hash) {
   return (await fetch(`v1/tokens/transfers/?token.contract=${hash}`))
     ?.[0]?.token?.metadata?.decimals == 0

@@ -58,11 +58,13 @@ const transferSchema = () => object({
   date: dateStringSchema(),
   from: addressSchema(),
   to: addressSchema(),
-  transferedAssets: object({
-    from: addressSchema(),
-    to: addressSchema(),
-    asset: array().required().min(1).of(coinSchema()),
-  }).required(),
+  transferedAssets: array().required().of(
+    object({
+      from: addressSchema(),
+      to: addressSchema(),
+      asset: coinSchema(),
+    })
+  ).required().min(1),
 }).required()
 const callSchema = () => transferSchema().concat(object({
   contractName: string().required(),

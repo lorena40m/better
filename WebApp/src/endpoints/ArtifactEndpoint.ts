@@ -71,24 +71,14 @@ async function fetchOperation(id: string, xtzPrice) {
           id: receiver,
           name: receiverName,
         },
-        transferedAssets: {
-          from: {
-            id: sender,
-            name: senderName,
-          },
-          to: {
-            id: receiver,
-            name: receiverName,
-          },
-          asset: assets,
-        }
-      },
+        transferedAssets: assets,
       fee: {
         nativeValue: fee.toString(),
         value: Math.round(+fee / 1000000 * xtzPrice).toString(), // value in USD
         burned : "0", // No burn in TeZos 
       }
     } // as TransferResponse
+  }
   }
 
   else {
@@ -106,17 +96,7 @@ async function fetchOperation(id: string, xtzPrice) {
           id: receiver,
           name: receiverName,
         },
-        transferedAssets: assets?.map(asset => ({
-          from: {
-            id: sender,
-            name: senderName,
-          },
-          to: {
-            id: receiver,
-            name: receiverName,
-          },
-          asset,
-        })),
+        transferedAssets: assets,
         contractName: contractData?.alias,
         functionName,
       },
