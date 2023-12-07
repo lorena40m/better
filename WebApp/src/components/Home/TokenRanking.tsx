@@ -37,7 +37,7 @@ export default function TokenRanking({ coins, rates }) {
               <SwiperSlide key={i}>
                 <div className="TokenRanking-group">
                   {coins.slice(i, i + 4).map((coin, j) => (
-                    <Link key={coin.id + coin.token_id} href={'/' + coin.id}
+                    <Link key={coin.id} href={'/' + coin.contractId}
                       className={"TokenRanking-TokenBox"}
                     >
                       <div className="TokenRanking-line">

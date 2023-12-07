@@ -32,15 +32,15 @@ const CryptoMonnaise = (props) => {
           <TableBody>
             {props.tokens.map((token: any) => (
               <TableRow
-                key={token.coin.id}
+                key={token.asset.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell scope="row">
                   <div className="profilePart">
-                    <Image src={token.coin.logo} alt="" height={44} width={44} />
+                    <Image src={token.asset.logo} alt="" height={44} width={44} />
                     <div className="profilePart__text">
-                      <span>{(token.quantity / 10**token.coin.decimals).toFixed(6)}</span>
-                      <span>{token.coin.ticker}</span>
+                      <span>{(token.quantity / 10**token.asset.decimals).toFixed(6)}</span>
+                      <span>{token.asset.ticker}</span>
                     </div>
                   </div>
                 </TableCell>

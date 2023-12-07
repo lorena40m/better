@@ -1,10 +1,8 @@
 import {TezosToolkit} from '@taquito/taquito'
 
-const rpcEndpoint = 'https://tezosrpc.midl.dev/ak-lpuoz6fm0tjlm1';
-
 export async function getBlockNumber() {
   try {
-    const tezos = new TezosToolkit(rpcEndpoint);
+    const tezos = new TezosToolkit(process.env.RPC_ENDPOINT);
 
     const block = await tezos.rpc.getBlock();
 

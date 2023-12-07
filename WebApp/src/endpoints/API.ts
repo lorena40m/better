@@ -8,7 +8,7 @@
 
 export type Integer = string // integers are stored as string to avoid precisions errors
 export type TokenDecimals = Integer // in decimals
-export type Dollars = number // in $ cents
+export type Dollars = number // in $
 export type UrlString = string // url
 export type DateString = string // ISO string
 
@@ -186,7 +186,6 @@ export type AbstractOperationResponse = {
   fee: {
     value: Dollars,
     nativeValue: TokenDecimals,
-    burned: TokenDecimals,
   },
   history: {
     from: Operation[], // paginated

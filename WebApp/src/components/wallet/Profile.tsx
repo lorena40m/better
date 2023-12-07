@@ -66,7 +66,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
               spacing={{ xs: 2, md: 3 }}
               columns={{ xs: 4, sm: 8, md: 12 }}
             >
-              <Grid xs={2} sm={4} md={4}>
+              <Grid item xs={2} sm={4} md={4}>
                 <Box textAlign={"center"}>
                   <Typography
                     variant="h6"
@@ -82,7 +82,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid xs={2} sm={4} md={4}>
+              <Grid item xs={2} sm={4} md={4}>
                 <Box textAlign={"center"}>
                   <Typography
                     variant="h6"
@@ -98,7 +98,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
                   </Typography>
                 </Box>
               </Grid>
-              <Grid xs={2} sm={4} md={4}>
+              <Grid item xs={2} sm={4} md={4}>
                 <Box textAlign={"center"}>
                   <Typography
                     variant="h6"

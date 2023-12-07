@@ -40,15 +40,14 @@ function discrimateOperationType(receiver, contractData, functionName) {
 }
 
 async function fetchOperation(id: string, xtzPrice) {
-  const [ transaction, status, functionName, transactionIds ] = await Promise.all([
-    await tzkt.getTransaction(id),
+  const [ transaction, status, functionName ] = await Promise.all([
+    await tzkt.getOperationGroup(id),
     await tzkt.getTransactionStatus(id),
     await tzkt.getTransactionFunctionName(id),
-    await tzkt.getTransactionIds(id),
   ])
-  const { tzktId, sender, receiver, amount, fee, timestamp } = transaction
+  const { tzktTransactionIds, sender, receiver, amount, fee, timestamp } = transaction
   const [ assets, contractData ] = await Promise.all([
-    await tzkt.getTransactionAssets(transactionIds),
+    await tzkt.getTransactionAssets(tzktTransactionIds),
     await tzkt.getContractData(receiver),
   ])
   const operationType = discrimateOperationType(receiver, contractData, functionName)
@@ -72,17 +71,16 @@ async function fetchOperation(id: string, xtzPrice) {
           name: receiverName,
         },
         transferedAssets: assets,
-      fee: {
-        nativeValue: fee.toString(),
-        value: Math.round(+fee / 1000000 * xtzPrice).toString(), // value in USD
-        burned : "0", // No burn in TeZos 
-      }
-    } // as TransferResponse
+        fee: {
+          nativeValue: fee.toString(),
+          value: +fee / 1000000 * xtzPrice, // value in USD
+        },
+      } // as TransferResponse
+    }
   }
-}
 
   else {
-       return {
+    return {
       artifactType: 'call',
       operation: {
         id: id,
@@ -101,12 +99,11 @@ async function fetchOperation(id: string, xtzPrice) {
         functionName,
       },
       fee: {
-        value: Math.round(+fee / 1000000 * xtzPrice).toString(),
         nativeValue: fee.toString(),
-        burned: "0", // no burn in teZos
+        value: +fee / 1000000 * xtzPrice,
       },
-      }
     } // as CallResponse
+  }
 }
 
 export async function listLastOperations(address, number) {
@@ -142,6 +139,7 @@ export default (async ({
 }) => {
   const { artifactType, contractData } = await discrimateArtifactType(id)
   const xtzPrice = await tzstats.getXtzPrice()
+
   if (artifactType === 'operation') {
     const operation = await fetchOperation(id, xtzPrice)
     return {
@@ -150,7 +148,7 @@ export default (async ({
           from : await listLastOperations(operation.operation.from.id,10),
           to : await listLastOperations(operation.operation.to.id,10)
       }
-  }
+    }
   }
 
   const { nativeBalance, operationCount } = await tzstats.getWallet(id)

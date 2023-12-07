@@ -1483,7 +1483,8 @@ export default (async ({ pageSize }) => {
     // TODO: should fetch **tokens on the blockchain**, not coins
     coins: {
       byCap: topTokens.map(token => ({
-        id: token["contract address__1"],
+        contractId: token["contract address__1"],
+        id: token["contract address__1"] + (token["token id"] ? '_' + token["token id"] : ''),
         name: token["Full name"] || token["Alias"],
         ticker: token["ModalCell_joinRow__sUQiU"],
         decimals: token["decimals"], // NB: decimals from the scrapping are not reliable
