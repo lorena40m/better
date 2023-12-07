@@ -61,7 +61,15 @@ export default function SpacingGrid(props) {
               <SwiperSlide>
                 <Box className="collectionBox" style={{ margin: "20px 0 0 0" }}>
                   <Box className="collectionBox-img">
-                    <IpfsMedia src={ipfsToLink(nft.image)} />
+                    <Image
+                      src={ipfsToLink(nft.image)}
+                      alt="crypto"
+                      style={{
+                        objectFit: "cover",
+                        borderRadius: "10px"
+                      }}
+                    />
+                    {/*<IpfsMedia src={ipfsToLink(nft.image)} />*/}
                   </Box>
                   <Typography
                     gutterBottom

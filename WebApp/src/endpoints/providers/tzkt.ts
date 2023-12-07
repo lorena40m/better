@@ -18,31 +18,24 @@ async function fetch(urn: string) {
   return null
 }
 
-export async function getTransaction(hash) {
-  const data = await fetch(`v1/operations/${hash}`)
-  return {
-    tzktId: data?.[0]?.id as string | null,
-    sender: data?.[0]?.sender?.address as string | null,
-    receiver: data?.[1]?.target?.address || data?.[0]?.target?.address as string | null,
-    amount: data?.[1]?.amount || data?.[0]?.amount  as string | null,
-    fee: (data?.[0]?.bakerFee + data?.[0]?.storageFee + data?.[0]?.allocationFee) as string | null,
-    timestamp: data?.[0]?.timestamp as string | null,
-  }
-}
-
 export async function getTransactionStatus(hash) {
   return (await fetch(`v1/operations/${hash}/status`)) as string | null
 }
 
-export async function getTransactionIds(hash) { 
-  const data = await fetch(`v1/operations/${hash}`)
-  const nonEmptyData = data || [];
+export async function getOperationGroup(hash) {
+  const data = await fetch(`v1/operations/${hash}`) || []
 
-  // Filter the data
-  const transactionsId = nonEmptyData
-    .filter((transaction) => transaction && transaction.id)
-    .map(tx => tx.id);
-  return transactionsId
+  // Remove internal transactions ?
+  const tzktTransactionIds = data.filter(tx => tx?.id).map(tx => tx.id)
+
+  return {
+    tzktTransactionIds,
+    sender: data?.[0]?.sender?.address as string | null,
+    receiver: data?.[0]?.target?.address as string | null,
+    amount: data?.[0]?.amount as string | null,
+    fee: (data?.[0]?.bakerFee + data?.[0]?.storageFee + data?.[0]?.allocationFee) as string | null,
+    timestamp: data?.[0]?.timestamp as string | null,
+  }
 }
 
 export async function getTransactionAssets(tzktIds) {

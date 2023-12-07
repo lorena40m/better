@@ -30,7 +30,7 @@ const Wallet = ({ ArtifactResponse, miscResponse }) => {
             </Typography>
           </div>
           <Grid className="walletProfile" container>
-            <Grid md={6} paddingRight={"15px"}>
+            <Grid item md={6} paddingRight={"15px"}>
               <Profile
                 miscResponse={miscResponse}
                 profileName={ArtifactResponse.wallet.name}
@@ -42,7 +42,7 @@ const Wallet = ({ ArtifactResponse, miscResponse }) => {
               <NftView nfts={ArtifactResponse.nfts} />
               <CryptoMonnaise tokens={ArtifactResponse.tokens} miscResponse={miscResponse} />
             </Grid>
-            <Grid md={6} paddingLeft={"15px"}>
+            <Grid item md={6} paddingLeft={"15px"}>
               <Operations operations={ArtifactResponse.history} />
             </Grid>
           </Grid>

@@ -30,7 +30,6 @@ function IpfsMedia({ src }) {
         <Image
           src={src}
           alt="crypto"
-          layout="fill"
           style={{
             objectFit: "cover",
             borderRadius: "10px"
