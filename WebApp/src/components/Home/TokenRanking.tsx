@@ -38,7 +38,7 @@ export default function TokenRanking({ coins, rates }) {
                 <div className="TokenRanking-group">
                   {coins.slice(i, i + 4).map((coin, j) => (
                     <Link key={coin.id + coin.token_id} href={'/' + coin.id}
-                    className={"TokenRanking-TokenBox"}
+                      className={"TokenRanking-TokenBox"}
                     >
                       <div className="TokenRanking-line">
                         <div className="TokenRanking-col">

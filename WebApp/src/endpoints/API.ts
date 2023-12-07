@@ -107,7 +107,7 @@ export type Address = {
   // name is the best description of an address that we can have
   // it can be a domain name, social pseudo,
   // app or contract name, or by default the entire address
-  name: string,
+  name: string | null,
 }
 
 export type Asset = Coin | Nft
@@ -163,12 +163,22 @@ export type Transfer = {
   }[],
 }
 
+export type MinimalTransfer = {
+  id: string,
+  status: 'waiting' | 'success' | 'failure',
+  date: DateString,
+  from: Address,
+  to: Address,
+  quantity: TokenDecimals,
+}
+
 export type Call = Transfer & {
   contractName: string,
   functionName: string,
 }
 
 export type Operation = Transfer | Call
+
 
 export type AbstractOperationResponse = {
   artifactType: 'transfer' | 'call',
@@ -238,14 +248,11 @@ export type ContractResponse = {
     creationDate: DateString,
     creator: Address,
     operationCount: Integer, // since creation
-    immutable: boolean,
-    autonomous: boolean,
     averageFee: Dollars,
     treasuryValue: Dollars,
-    auditCount: number,
     officialWebsite: UrlString,
   },
-  history: Operation[], // paginated
+  history: MinimalTransfer[], // paginated
 }
 
 export type NotFoundResponse = 'not-found'

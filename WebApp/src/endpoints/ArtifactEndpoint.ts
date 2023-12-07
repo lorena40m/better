@@ -79,7 +79,7 @@ async function fetchOperation(id: string, xtzPrice) {
       }
     } // as TransferResponse
   }
-  }
+}
 
   else {
        return {
@@ -116,6 +116,25 @@ export async function listLastOperations(address, number) {
     return await fetchOperation(operation?.hash, xtzPrice)
   }))
 }
+
+export async function listLastOperationsMinimalInfos(address, number) {
+  const data = await tzstats.getLastOperations(address, number);
+  const operationsMinimalInfos = await Promise.all(data.map(async transaction => ({
+    id: transaction.hash,
+    from: {
+      id: transaction.sender,
+      name: await objkt.getAddressDomain(transaction.sender) ?? null
+    },
+    to: {
+      id: transaction.receiver,
+      name: await objkt.getAddressDomain(transaction.sender) ?? null
+    },
+    date: transaction.time,
+    quantity: transaction.volume?.toString() ?? '0',
+    status: (transaction.status === 'applied' ? 'success' : '')
+  })));
+  return (operationsMinimalInfos);
+} 
 
 export default (async ({
   id,
@@ -163,17 +182,14 @@ export default (async ({
       creationDate: contractData?.firstActivityTime ? (new Date(contractData.firstActivityTime)).toISOString() : null,
       creator: {
         id: contractData?.creator?.address,
-        name: await objkt.getAddressDomain(contractData?.creator?.address),
+        name: contractData?.creator?.alias ?? null,
       },
       operationCount: contractData?.numTransactions?.toString(), // TODO : check why operationCount from tzstats tzstats.getWallet is different from numTransactions of tzkt
-      immutable: null,
-      autonomous : null,
       averageFee: await tzstats.getAddressAverageFee(id), // TODO : the fee is in gas
-      treasuryValue: (await tzstats.getWalletTotalValue(id) + Math.round(+nativeBalance * xtzPrice)).toString(), // TODO: compute sum of data from TzPro
-      auditCount: null,
+      treasuryValue: ((await tzstats.getWalletTotalValue(id)) + +nativeBalance * xtzPrice), // TODO: compute sum of data from TzPro
       officialWebsite: contractData?.metadata?.site,
     },
-    history: null,
+    history: await listLastOperationsMinimalInfos(id, 10),
   } as ContractResponse
 
   if (artifactType === 'collection') {
@@ -209,7 +225,6 @@ export default (async ({
   }
 
   if (artifactType === 'contract') {
-    const NUMBER_OF_TXS = 5
     return contract
   }
 

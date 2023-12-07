@@ -12,10 +12,10 @@ import {
 } from '../src/endpoints/API'
 
 const integerStringSchema = () => string().required().matches(/^\d+$/)
-const dateStringSchema = () => string().required().matches(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+const dateStringSchema = () => string().required().matches(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
 const addressSchema = () => object({
   id: string().required().matches(/^(tz)|(KT).{34}$/),
-  name: string().required(),
+  name: string().nullable(),
 }).required()
 const collectionSchema = () => object({
   id: string().required(),
@@ -108,6 +108,17 @@ const abstractOperationSchema = (params: { id: string, pageSize: number, }) => o
 
 const historySchema = (params: { pageSize: number }) => array().required().length(params.pageSize).of(transferSchema())
 
+const transferMinimalSchema = () => object({
+  id: string().required(),
+  status: string().required().matches(/(waiting)|(success)|(failure)/),
+  date: dateStringSchema(),
+  from: addressSchema(),
+  to: addressSchema(),
+  quantity: integerStringSchema(),
+}).required()
+
+const historyMinimalSchema = (params: { pageSize: number }) => array().required().length(params.pageSize).of(transferMinimalSchema())
+
 export let transferResponseSchema = (params: { id: string, pageSize: number, }) =>
   abstractOperationSchema(params).concat(object({
     artifactType: string().required().matches(/^transfer$/),
@@ -155,14 +166,11 @@ export let contractResponseSchema = (params: { id: string, pageSize: number, }) 
     creationDate: dateStringSchema(),
     creator: addressSchema(),
     operationCount: integerStringSchema(), // since creation
-    immutable: boolean().required(),
-    autonomous: boolean().required(),
-    averageFee: integerStringSchema(),
-    treasuryValue: integerStringSchema(),
-    auditCount: number().required(),
+    averageFee: number().required(),
+    treasuryValue: number().required(),
     officialWebsite: string().required().url(),
   }).required()),
-  history: historySchema(params), // paginated
+  history: historyMinimalSchema(params), // paginated
 })
 
 export let coinResponseSchema = (params: { id: string, pageSize: number, }) => object({
