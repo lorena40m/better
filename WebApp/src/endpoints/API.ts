@@ -54,7 +54,7 @@ export type LoadMoreWalletTokens = (params: {
   id: string,
   page: number,
   pageSize: number,
-}) => Promise<Holding[]>
+}) => Promise<Holding<Coin>[]>
 
 export type LoadMoreCoinHolders = (params: {
   id: string,
