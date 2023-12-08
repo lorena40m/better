@@ -23,7 +23,7 @@ TestScript(async function () {
 
   await TestCase('ObjKT provider', async function () {
     await testProviderFunction('getTopNftCollection', () => objkt.getTopNftCollection(100, 'trending'))
-    await testProviderFunction('getWalletNfts', () => objkt.getWalletNfts(ids.wallet1))
+    await testProviderFunction('getWalletNfts', () => objkt.getWalletNfts(ids.wallet1, 0.9))
   })
 
   await TestCase('RPC provider', async function () {

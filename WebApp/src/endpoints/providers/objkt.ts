@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Collection, Nft } from '../API'
+import { ExtendedCollection, Collection, Nft, Holding } from '../API'
 import { ipfsToHttps } from './utils'
 
 // function getISODateForLast24Hours() {
@@ -57,7 +57,7 @@ export async function getTopNftCollection(pageSize, criteria: 'top' | 'trending'
     floorPrice: collection?.floor_price ?? null,
     topSale: null,
     marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? collection?.contract),
-  } as Collection)) as Collection[]
+  } as ExtendedCollection)) as ExtendedCollection[]
 }
 
 export async function getAddressDomain(address: string) {
@@ -98,23 +98,23 @@ export async function getCollection(address: string) {
   return collectionObject
 }
 
+// NB: Could be extended to get tokens also!
 export async function getWalletNfts(address: string, xtzPrice: number) {
   const queryResult = await fetch(`query test {
-    holder(where: {address: {_in: [tz1YQqEDkFQCTHz5pRLLsKt9532ELtc8FcpX]}}) {
+    holder(where: {address: {_eq: "${address}"}}) {
+      tzdomain
       held_tokens(where: {quantity: {_gt: "0"}, token: {decimals: {_eq: 0}}}) {
+        quantity
+        last_incremented_at
         token {
-          display_uri
+          artifact_uri
           token_id
-          fa_contract
           fa {
             floor_price
+            short_name
             name
             contract
-            volume_total
             logo
-            items
-            path
-            short_name
           }
           events(
             limit: 1
@@ -124,37 +124,36 @@ export async function getWalletNfts(address: string, xtzPrice: number) {
             timestamp
             price_xtz
             amount
-            marketplace_event_type
-            event_type
           }
         }
-        quantity
-        last_incremented_at
       }
     }
+  }`)
+
+  return {
+    tzDomain: queryResult.holder[0]?.tzdomain as string,
+    nfts: (queryResult.holder[0].held_tokens.map(token => {
+      const collection = token?.token?.fa
+      const lastSalePrice = (+token?.token?.events?.[0]?.price_xtz || 0) * xtzPrice / 10**6 / (token?.token?.events?.[0]?.amount ?? 1)
+
+      return {
+        quantity: token?.quantity?.toString(),
+        lastTransferDate: token?.last_incremented_at,
+        value: lastSalePrice,
+        asset: {
+          id: collection?.contract + '_' + token?.token?.token_id,
+          image: ipfsToHttps(token?.token?.artifact_uri),
+          name: collection?.name,
+          lastSalePrice,
+          collection: ({
+            id: collection?.contract,
+            image: ipfsToHttps(collection?.logo),
+            name: collection?.short_name || collection?.name,
+            floorPrice: collection?.floor_price ?? null,
+          } as Collection),
+        } as Nft
+      } as Holding<Nft>
+    }) as Holding<Nft>[])
+      .sort((nft1, nft2) => nft2.value - nft1.value)
   }
-  `)
-
-  const heldTokens = queryResult.holder[0].held_tokens
-
-  return heldTokens.map(token => {
-    const collection = token?.token?.fa
-
-    return {
-      id: collection?.contract + '_' + token?.token?.token_id,
-      image: token?.token?.display_uri,
-      name: collection?.name,
-      lastSalePrice: token?.token?.events?.price_xtz * xtzPrice / 10**6 / token?.token?.events?.amount,
-      lastTransferDate: token.last_incremented_at,
-      collection: ({
-        id: collection?.contract,
-        image: ipfsToHttps(collection?.logo),
-        name: collection?.short_name || collection?.name,
-        supply: collection?.items,
-        floorPrice: collection?.floor_price ?? null,
-        topSale: null,
-        marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? collection?.contract),
-      } as Collection),
-    } as Nft
-  }) as Nft[]
 }

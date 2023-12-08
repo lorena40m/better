@@ -137,8 +137,11 @@ export default (async ({
   id,
   pageSize,
 }) => {
-  const { artifactType, contractData } = await discrimateArtifactType(id)
-  const xtzPrice = await tzstats.getXtzPrice()
+  const [ xtzPrice, _discrimateArtifactTypeReturn ] = await Promise.all([
+    await tzstats.getXtzPrice(),
+    await discrimateArtifactType(id),
+  ])
+  const { artifactType, contractData } = _discrimateArtifactTypeReturn
 
   if (artifactType === 'operation') {
     const operation = await fetchOperation(id, xtzPrice)
@@ -154,18 +157,26 @@ export default (async ({
   const { nativeBalance, operationCount } = await tzstats.getWallet(id)
 
   if (artifactType === 'wallet') {
+    const [ holdings, tokens, history, walletTotalValue ] = await Promise.all([
+      await objkt.getWalletNfts(id, xtzPrice),
+      await tzstats.getTokenSortedByValue(id),
+      await listLastOperationsMinimalInfos(id, pageSize),
+      await tzstats.getWalletTotalValue(id),
+    ])
+    const { tzDomain, nfts } = holdings
+
     return {
       artifactType: 'wallet',
       wallet: {
         id: id,
-        name: await objkt.getAddressDomain(id), // TODO Tezos domains, sinon null=on va afficher "Anonyme" dans le front
+        name: tzDomain ?? null,
         nativeBalance: BigInt(Math.round(+nativeBalance * 1_000_000)).toString(),
-        totalValue: (await tzstats.getWalletTotalValue(id)) + +nativeBalance * xtzPrice, // TODO: compute sum of data from TzPro
+        totalValue: walletTotalValue + +nativeBalance * xtzPrice,
         operationCount: operationCount?.toString(),
       },
-      tokens: await tzstats.getTokenSortedByValue(id),
-      nfts: await objkt.getWalletNfts(id), // sorted by value
-      history: await listLastOperations(id, pageSize), // paginated
+      tokens,
+      nfts, // sorted by value
+      history, // paginated
     } as WalletResponse
   }
 

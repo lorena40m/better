@@ -97,9 +97,9 @@ export async function getTokenSortedByValue(address: string ) {
       quantity: token.balance,
       value: +token?.value_usd,
       lastTransferDate: await tzkt.getBlockTimestamp(token.last_block),
-    } as Holding
+    } as Holding<Coin>
   })))
-    .sort((a, b) => b.value - a.value) as Holding[]
+    .sort((a, b) => b.value - a.value) as Holding<Coin>[]
 }
 
 export async function getLastOperations(address, number) {
