@@ -23,7 +23,7 @@ TestScript(async function () {
 
   await TestCase('ObjKT provider', async function () {
     await testProviderFunction('getTopNftCollection', () => objkt.getTopNftCollection(100, 'trending'))
-    await testProviderFunction('getWalletNfts', () => objkt.getWalletNfts(ids.wallet))
+    await testProviderFunction('getWalletNfts', () => objkt.getWalletNfts(ids.wallet1, 0.9))
   })
 
   await TestCase('RPC provider', async function () {
@@ -31,12 +31,12 @@ TestScript(async function () {
   })
 
   await TestCase('TzKT provider', async function () {
-    await testProviderFunction('getTransaction', () => tzkt.getTransaction(ids.transfer))
+    await testProviderFunction('getOperationGroup', () => tzkt.getOperationGroup(ids.transfer))
     await testProviderFunction('getTransactionStatus', () => tzkt.getTransactionStatus(ids.transfer))
     await testProviderFunction('getTransactionAssets', () => tzkt.getTransactionAssets('792209768054784'))
     await testProviderFunction('isCollection', () => tzkt.isCollection(ids.collection))
     await testProviderFunction('getTransactionFunctionName', () => tzkt.getTransactionFunctionName(ids.call))
-    await testProviderFunction('getCoinData', () => tzkt.getCoinData(ids.coin, '1'))
+    await testProviderFunction('getCoin', () => tzkt.getCoin(ids.coin, 0, '1'))
     await testProviderFunction('getCoinHolders', () => tzkt.getCoinHolders(ids.coin))
     await testProviderFunction('getCoinYearlyTransfersAndVolume', () => tzkt.getCoinYearlyTransfersAndVolume(ids.coin))
     await testProviderFunction('getContractData', () => tzkt.getContractData(ids.contract))
@@ -45,9 +45,9 @@ TestScript(async function () {
   await TestCase('TzStats provider', async function () {
     await testProviderFunction('getBlockDate', () => tzstats.getBlockDate())
     await testProviderFunction('getXtzPrice', () => tzstats.getXtzPrice())
-    await testProviderFunction('getWallet', () => tzstats.getWallet(ids.wallet))
-    await testProviderFunction('getLastOperations', () => tzstats.getLastOperations(ids.wallet, 100))
-    await testProviderFunction('getAddressAverageFee', () => tzstats.getAddressAverageFee(ids.wallet))
-    await testProviderFunction('getTokenSortedByValue', () => tzstats.getTokenSortedByValue(ids.wallet))
+    await testProviderFunction('getWallet', () => tzstats.getWallet(ids.wallet1))
+    await testProviderFunction('getLastOperations', () => tzstats.getLastOperations(ids.wallet1, 100))
+    await testProviderFunction('getAddressAverageFee', () => tzstats.getAddressAverageFee(ids.wallet1))
+    await testProviderFunction('getTokenSortedByValue', () => tzstats.getTokenSortedByValue(ids.wallet1))
   })
 })

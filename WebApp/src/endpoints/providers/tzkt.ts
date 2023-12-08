@@ -86,31 +86,33 @@ export async function getTransactionFunctionName(hash) {
   return (masterTransaction?.parameter?.entrypoint as string) ?? null
 }
 
-export async function getCoinData(contractHash, lastPrice) {
+export async function getCoin(contractHash, tokenId, lastPrice) {
   // Note: this fetch could also be used for NFTs!
   const data = await fetch(`v1/tokens/?contract=${contractHash}`)
-  const coin = data?.[0]
+  const coin = data.find(c => c.tokenId === tokenId)
   return {
     id: contractHash,
     logo: ipfsToHttps(coin?.metadata?.thumbnailUri),
     name: coin?.contract.alias,
     ticker: coin?.metadata?.symbol,
     decimals: Number(coin?.metadata?.decimals),
-    lastPrice : lastPrice,
+    lastPrice,
     circulatingSupplyOnChain: coin?.totalSupply,
     holders: coin?.holdersCount.toString(),
   } as Coin
 }
 
 export async function getCoinHolders(contractHash) {
-  return( await fetch(`v1/tokens/balances?token.contract=${contractHash}`))
-  ?.map(holderData => {
+  const holderData = await fetch(`v1/tokens/balances?token.contract=${contractHash}`)
+  const holders = holderData?.map(holderData => {
       return {
         id : holderData.account.address,
         name : "", // TODO : should we query the name ?
         quantity : holderData.balance,
       }
     }) as Holder[] | null
+  const sortedHolders = holders.sort((a, b) => Number(b.quantity) - Number(a.quantity));
+  return sortedHolders
 }
 
 export async function getCoinYearlyTransfersAndVolume(contractHash) {
@@ -139,4 +141,8 @@ export async function getCoinYearlyTransfersAndVolume(contractHash) {
 
 export async function getContractData(contractHash) {
   return await fetch(`v1/contracts/${contractHash}`)
+}
+
+export async function getBlockTimestamp(blockLevel) {
+  return await fetch(`v1/blocks/${blockLevel}/timestamp`)
 }

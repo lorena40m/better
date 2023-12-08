@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Collection, Nft } from '../API'
+import { ExtendedCollection, Collection, Nft, Holding } from '../API'
 import { ipfsToHttps } from './utils'
 
 // function getISODateForLast24Hours() {
@@ -57,7 +57,7 @@ export async function getTopNftCollection(pageSize, criteria: 'top' | 'trending'
     floorPrice: collection?.floor_price ?? null,
     topSale: null,
     marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? collection?.contract),
-  } as Collection)) as Collection[]
+  } as ExtendedCollection)) as ExtendedCollection[]
 }
 
 export async function getAddressDomain(address: string) {
@@ -98,62 +98,62 @@ export async function getCollection(address: string) {
   return collectionObject
 }
 
-export async function getWalletNfts(address: string) {
+// NB: Could be extended to get tokens also!
+export async function getWalletNfts(address: string, xtzPrice: number) {
   const queryResult = await fetch(`query test {
-    holder(where: {address: {_in: [${address}]}}) {
-      held_tokens {
+    holder(where: {address: {_eq: "${address}"}}) {
+      tzdomain
+      held_tokens(where: {quantity: {_gt: "0"}, token: {decimals: {_eq: 0}}}) {
+        quantity
+        last_incremented_at
         token {
+          artifact_uri
+          token_id
           fa {
-            creator_address
-            metadata
             floor_price
+            short_name
             name
             contract
-            token_link
-            index_contract_metadata
-            website
-            collection_id
-            collection_type
+            logo
           }
-          display_uri
-          token_id
-          galleries {
-            gallery {
-              floor_price
-              items
-              max_items
-              logo
-            }
-            fa_contract
+          events(
+            limit: 1
+            order_by: {timestamp: desc_nulls_last}
+            where: {marketplace_event_type: {_in: ["list_buy","english_auction_settle","dutch_auction_buy","offer_accept","offer_floor_accept"]}}
+          ) {
+            timestamp
+            price_xtz
+            amount
           }
         }
       }
     }
+  }`)
+
+  return {
+    tzDomain: queryResult.holder[0]?.tzdomain as string,
+    nfts: (queryResult.holder[0].held_tokens.map(token => {
+      const collection = token?.token?.fa
+      const lastSalePrice = (+token?.token?.events?.[0]?.price_xtz || 0) * xtzPrice / 10**6 / (token?.token?.events?.[0]?.amount ?? 1)
+
+      return {
+        quantity: token?.quantity?.toString(),
+        lastTransferDate: token?.last_incremented_at,
+        value: lastSalePrice,
+        asset: {
+          id: collection?.contract + '_' + token?.token?.token_id,
+          image: ipfsToHttps(token?.token?.artifact_uri),
+          name: collection?.name,
+          lastSalePrice,
+          collection: ({
+            id: collection?.contract,
+            image: ipfsToHttps(collection?.logo),
+            name: collection?.short_name || collection?.name,
+            floorPrice: collection?.floor_price ?? null,
+          } as Collection),
+        } as Nft
+      } as Holding<Nft>
+    }) as Holding<Nft>[])
+      .sort((nft1, nft2) => nft2.value - nft1.value)
   }
-  `)
-
-  const heldTokens = queryResult.holder[0].held_tokens
-
-  return heldTokens.map((token) => {
-    const faData = token.token.fa
-    const galleryData = token.token.galleries?.[0]?.gallery
-    // const creatorAddress = faData.creator_address
-
-    return {
-      id : faData.contract.concat("#", token.token.token_id),
-      image : token.token.display_uri,
-      name : faData.name,
-      //lastSalePrice : ,
-      collection: {
-        id: faData.contract,
-        image: galleryData?.logo ?? null,
-        name: galleryData?.name ?? null,
-        supply: galleryData?.max_items ?? null,
-        floorPrice: galleryData?.floor_price ?? null,
-        topSale: null, // TO FILL
-        marketplaceLink: null, // TO FILL
-      } as Collection,
-      //lastTransferDate : ,
-    } as Nft
-  }) as Nft[]
 }

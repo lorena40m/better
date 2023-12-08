@@ -50,6 +50,8 @@ export function expect(testName: string, cond: boolean, severity: 'failure' | 'w
 }
 
 export async function TestCase(testCaseName: string, fc: Function) {
+  if (process.env.TEST_CASE && !testCaseName.startsWith(process.env.TEST_CASE)) return
+
   const header = `Case #${testCaseCount++}: ${testCaseName}`
   writeLog(`\n\n${header}\n`)
   console.log(`\n\n${header}`)

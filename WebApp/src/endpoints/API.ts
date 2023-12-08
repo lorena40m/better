@@ -30,7 +30,7 @@ export type LoadMoreHomeEndpoint = (params: {
   criteria: 'trending' | 'top' | 'byCap' | 'byVolume',
   page: number,
   pageSize: number,
-}) => Promise<Collection[] | Coin[]>
+}) => Promise<ExtendedCollection[] | ExtendedCoin[]>
 
 // Endpoint used to load a page from an id
 // Can be an operation (transfer or call),
@@ -76,10 +76,13 @@ export type Collection = {
   id: string,
   name: string,
   image: UrlString,
-  supply: Integer,
   floorPrice: Dollars,
+}
+
+export type ExtendedCollection = Collection & {
   topSale: Dollars,
   marketplaceLink: UrlString,
+  supply: Integer,
 }
 
 export type Coin = {
@@ -89,6 +92,9 @@ export type Coin = {
   decimals: number,
   logo: UrlString,
   lastPrice: number,
+}
+
+export type ExtendedCoin = Coin & {
   circulatingSupplyOnChain: TokenDecimals,
   holders: Integer,
 }
@@ -99,7 +105,6 @@ export type Nft = {
   name: string,
   lastSalePrice: Dollars,
   collection: Collection,
-  lastTransferDate: DateString,
 }
 
 export type Address = {
@@ -116,9 +121,10 @@ export type Holder = Address & {
   quantity: TokenDecimals,
 }
 
-export type Holding = {
-  asset: Asset,
+export type Holding<A extends Asset> = {
+  asset: A,
   quantity: TokenDecimals,
+  value: Dollars,
   lastTransferDate: DateString,
 }
 
@@ -140,12 +146,12 @@ export type HomeResponse = {
     lastBlockDate: DateString,
   },
   collections: {
-    trending: Collection[], // paginated
-    top: Collection[], // paginated
+    trending: ExtendedCollection[], // paginated
+    top: ExtendedCollection[], // paginated
   },
   coins: {
-    byCap: Coin[], // paginated
-    byVolume: Coin[], // paginated
+    byCap: ExtendedCoin[], // paginated
+    byVolume: ExtendedCoin[], // paginated
   },
 }
 
@@ -210,14 +216,14 @@ export type WalletResponse = {
     totalValue: Dollars,
     operationCount: Integer,
   },
-  tokens: Holding[], // sorted by value
-  nfts: Nft[], // sorted by value
+  tokens: Holding<Coin>[], // sorted by value
+  nfts: Holding<Nft>[], // sorted by value
   history: Operation[], // paginated
 }
 
 export type CoinResponse = {
   artifactType: 'coin',
-  coin: Coin & {
+  coin: ExtendedCoin & {
     yearlyTransfers: Integer, // number of transfers on chain
     yearlyVolume: Integer, // on chain, in decimals
   },
@@ -228,8 +234,7 @@ export type CoinResponse = {
 
 export type CollectionResponse = {
   artifactType: 'collection',
-  collection: Collection & {
-  },
+  collection: ExtendedCollection,
   items: Nft[], // paginated, sorted by last transaction
   saleHistory: {
     itemId: string,

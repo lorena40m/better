@@ -137,16 +137,19 @@ export default (async ({
   id,
   pageSize,
 }) => {
-  const { artifactType, contractData } = await discrimateArtifactType(id)
-  const xtzPrice = await tzstats.getXtzPrice()
+  const [ xtzPrice, _discrimateArtifactTypeReturn ] = await Promise.all([
+    await tzstats.getXtzPrice(),
+    await discrimateArtifactType(id),
+  ])
+  const { artifactType, contractData } = _discrimateArtifactTypeReturn
 
   if (artifactType === 'operation') {
     const operation = await fetchOperation(id, xtzPrice)
     return {
       ...operation,
       history : {
-          from : await listLastOperations(operation.operation.from.id,10),
-          to : await listLastOperations(operation.operation.to.id,10)
+        from : await listLastOperations(operation.operation.from.id, 10),
+        to : await listLastOperations(operation.operation.to.id, 10)
       }
     }
   }
@@ -154,20 +157,26 @@ export default (async ({
   const { nativeBalance, operationCount } = await tzstats.getWallet(id)
 
   if (artifactType === 'wallet') {
-    const NUMBER_OF_TXS = pageSize;
+    const [ holdings, tokens, history, walletTotalValue ] = await Promise.all([
+      await objkt.getWalletNfts(id, xtzPrice),
+      await tzstats.getTokenSortedByValue(id),
+      await listLastOperationsMinimalInfos(id, pageSize),
+      await tzstats.getWalletTotalValue(id),
+    ])
+    const { tzDomain, nfts } = holdings
+
     return {
       artifactType: 'wallet',
       wallet: {
         id: id,
-        name: await objkt.getAddressDomain(id), // TODO Tezos domains, sinon null=on va afficher "Anonyme" dans le front
+        name: tzDomain ?? null,
         nativeBalance: BigInt(Math.round(+nativeBalance * 1_000_000)).toString(),
-        totalValue: (await tzstats.getWalletTotalValue(id)) + +nativeBalance * xtzPrice, // TODO: compute sum of data from TzPro
+        totalValue: walletTotalValue + +nativeBalance * xtzPrice,
         operationCount: operationCount?.toString(),
       },
-      tokens: await tzstats.getTokenSortedByValue(id),
-      uncertifiedTokens: [], // paginated, sorted by last transfer date
-      nfts: await objkt.getWalletNfts(id), // sorted by value
-      history: await listLastOperations(id, NUMBER_OF_TXS), // paginated
+      tokens,
+      nfts, // sorted by value
+      history, // paginated
     } as WalletResponse
   }
 
@@ -203,10 +212,9 @@ export default (async ({
   }
 
   if (artifactType === 'coin') {
-    // const coin = await tzkt.getCoinData(contractHash, lastPrice)
     const NUMBER_OF_TXS = 5
     const lastPrice = await tzstats.getTokenLastPrice(id)  // TODO
-    const coin = await tzkt.getCoinData(id, lastPrice)
+    const coin = await tzkt.getCoin(id, 0, lastPrice)
     const holders = await tzkt.getCoinHolders(id)
     const coinYearlyData = await tzkt.getCoinYearlyTransfersAndVolume(id)
     return {
@@ -217,7 +225,7 @@ export default (async ({
         yearlyVolume: coinYearlyData?.sum?.toString(),
       },
       holders: holders,
-      // history: await listLastOperations(id,NUMBER_OF_TXS),
+      history: await listLastOperationsMinimalInfos(id,NUMBER_OF_TXS),
       contract,
     } as CoinResponse
   }
