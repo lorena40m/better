@@ -103,14 +103,16 @@ export async function getCoin(contractHash, tokenId, lastPrice) {
 }
 
 export async function getCoinHolders(contractHash) {
-  return( await fetch(`v1/tokens/balances?token.contract=${contractHash}`))
-  ?.map(holderData => {
+  const holderData = await fetch(`v1/tokens/balances?token.contract=${contractHash}`)
+  const holders = holderData?.map(holderData => {
       return {
         id : holderData.account.address,
         name : "", // TODO : should we query the name ?
         quantity : holderData.balance,
       }
     }) as Holder[] | null
+  const sortedHolders = holders.sort((a, b) => Number(b.quantity) - Number(a.quantity));
+  return sortedHolders
 }
 
 export async function getCoinYearlyTransfersAndVolume(contractHash) {

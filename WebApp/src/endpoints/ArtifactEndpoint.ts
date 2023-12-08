@@ -225,7 +225,7 @@ export default (async ({
         yearlyVolume: coinYearlyData?.sum?.toString(),
       },
       holders: holders,
-      // history: await listLastOperations(id,NUMBER_OF_TXS),
+      history: await listLastOperationsMinimalInfos(id,NUMBER_OF_TXS),
       contract,
     } as CoinResponse
   }
