@@ -94,7 +94,7 @@ const Operations = (props) => {
             <Image src={AnonymousIcon} alt="Tezos logo" />
             <div>
               <p className="operationsBox__operation__start__name">{operation.from.id === props.contractAddress ? (operation.to?.name ?? "Anonymous") : (operation.from?.name ?? "Anonymous")}</p>
-              <p className="operationsBox__operation__start__date">{operation.date}</p>
+              <p className="operationsBox__operation__start__date">{formatDate(operation.date, locale)}</p>
             </div>
           </div>
           <div className="operationsBox__operation__end">

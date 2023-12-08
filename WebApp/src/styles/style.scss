@@ -1448,7 +1448,7 @@ Project: less intrusive search button
     background-color: #ffffff;
     border: 1px solid #21BC27;
     border-radius: 5px;
-    padding: 10px 20px;
+    padding: 20px 20px;
     margin-bottom: 15px;
     display: flex;
     cursor: pointer;
@@ -1462,6 +1462,7 @@ Project: less intrusive search button
         font-size: 18px;
         font-weight: 700;
         color: #2a3b51;
+        margin-bottom: 5px;
       }
       &__date {
         font-size: 16px;
@@ -1477,7 +1478,7 @@ Project: less intrusive search button
     &__end {
       display: flex;
       align-items: center;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
       color: #2a3b51;
     }
@@ -1492,7 +1493,7 @@ Project: less intrusive search button
   font-size: 22px;
   font-weight: 700;
   color: #2a3b51;
-  margin-bottom: 5px;
+  margin-bottom: 20px;
 }
 
 @media (min-width: 900px) and (max-width: 999px) {
