@@ -127,7 +127,7 @@ export async function listLastOperationsMinimalInfos(address, number) {
       name: await objkt.getAddressDomain(transaction.sender) ?? null
     },
     date: transaction.time,
-    quantity: transaction.volume?.toString() ?? '0',
+    quantity: ((transaction.volume ?? 0) * 10**6)?.toString(),
     status: (transaction.status === 'applied' ? 'success' : '')
   })));
   return (operationsMinimalInfos);
@@ -183,7 +183,7 @@ export default (async ({
         name: contractData?.creator?.alias ?? null,
       },
       operationCount: contractData?.numTransactions?.toString(), // TODO : check why operationCount from tzstats tzstats.getWallet is different from numTransactions of tzkt
-      averageFee: await tzstats.getAddressAverageFee(id), // TODO : the fee is in gas
+      averageFee: (await tzstats.getAddressAverageFee(id)) * xtzPrice,
       treasuryValue: ((await tzstats.getWalletTotalValue(id)) + +nativeBalance * xtzPrice), // TODO: compute sum of data from TzPro
       officialWebsite: contractData?.metadata?.site,
     },

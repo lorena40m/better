@@ -9,11 +9,14 @@ import ConfirmModal from "@/components/wallet/ConfirmModal";
 import TezosIcon from "../../assets/images/tezos.svg";
 
 import Image from "next/image";
-import Operations from "@/components/wallet/Operations";
+import Operations from "@/components/smart-contract/Operations";
 import { appWithTranslation, useTranslation } from "next-i18next";
+import { formatPrice, formatNumber, formatToken, formatDate } from "@/utils/format";
+import { useRouter } from "next/router";
 
-const 	Contract = () => {
+const 	Contract = ({ ArtifactResponse, miscResponse }) => {
   const { t } = useTranslation("common");
+  const { locale } = useRouter();
 
   const [open, setOpen] = useState<Boolean>(false);
   return (
@@ -32,17 +35,26 @@ const 	Contract = () => {
 			</div>
 			<Grid className="walletProfile" container>
 				<Grid sm={12} md={6} paddingLeft={"10px"} paddingRight={"10px"}>
-					<GeneralInfos />
-					<OtherInfos />
+					<GeneralInfos
+						title={ArtifactResponse.contract.name}
+						address={ArtifactResponse.contract.id}
+						var1="Usages"
+						value1={formatNumber(ArtifactResponse.contract.operationCount, locale)}
+						var2="Average fee"
+						value2={formatPrice(ArtifactResponse.contract.averageFee, locale, miscResponse.rates)}
+						var3="Treasury"
+						value3={formatPrice(ArtifactResponse.contract.treasuryValue, locale, miscResponse.rates)}
+					/>
+					<OtherInfos
+						creator={ArtifactResponse.contract.creator?.name ?? (ArtifactResponse.contract.creator.id.slice(0, 8) + "...")}
+						date={formatDate(ArtifactResponse.contract.creationDate, locale)}
+						link={ArtifactResponse.contract.officialWebsite}
+					/>
 				</Grid>
 				<Grid sm={12} md={6} paddingLeft={"10px"} paddingRight={"10px"}>
-					<Operations />
+					<Operations operations={ArtifactResponse.history} contractAddress={ArtifactResponse.contract.id} />
 				</Grid>
 			</Grid>
-			<Box className="treasuryBox">
-				<Typography variant="h4" className="treasuryBox__title">Treasury</Typography>
-				<Typography variant="h4" className="treasuryBox__gradient gradientText">300 Million of $</Typography>
-			</Box>
         </Container>
       </Box>
     </main>
