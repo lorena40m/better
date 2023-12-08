@@ -22,6 +22,10 @@ Run unit tests (use a custom script):
 npm run unittest
 ```
 
+How to run a specific test case:
+`TEST_CASE="ArtifactEndpoint endpoint: wallet artifact" npm run unittest`
+will run only test cases that starts with "ArtifactEndpoint endpoint: wallet".
+
 Run end-to-end tests (use Cypress framework):
 
 ```bash

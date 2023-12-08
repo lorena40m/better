@@ -42,6 +42,8 @@ const dustTerm = {
 }
 
 function _formatNumber(quantity: string, decimals: number, significantDigits = 3, locale: string) {
+  if (/^0*$/.test(quantity)) return '0'
+
   quantity = quantity.replace(/^0+/, '')
   const biggerSignificantDigit = quantity.length - decimals
   let firstDigits = quantity.slice(0, significantDigits)

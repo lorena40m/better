@@ -145,8 +145,8 @@ export default (async ({
     return {
       ...operation,
       history : {
-          from : await listLastOperations(operation.operation.from.id,10),
-          to : await listLastOperations(operation.operation.to.id,10)
+        from : await listLastOperations(operation.operation.from.id, 10),
+        to : await listLastOperations(operation.operation.to.id, 10)
       }
     }
   }
@@ -154,7 +154,6 @@ export default (async ({
   const { nativeBalance, operationCount } = await tzstats.getWallet(id)
 
   if (artifactType === 'wallet') {
-    const NUMBER_OF_TXS = pageSize;
     return {
       artifactType: 'wallet',
       wallet: {
@@ -165,9 +164,8 @@ export default (async ({
         operationCount: operationCount?.toString(),
       },
       tokens: await tzstats.getTokenSortedByValue(id),
-      uncertifiedTokens: [], // paginated, sorted by last transfer date
       nfts: await objkt.getWalletNfts(id), // sorted by value
-      history: await listLastOperations(id, NUMBER_OF_TXS), // paginated
+      history: await listLastOperations(id, pageSize), // paginated
     } as WalletResponse
   }
 
@@ -203,10 +201,9 @@ export default (async ({
   }
 
   if (artifactType === 'coin') {
-    // const coin = await tzkt.getCoinData(contractHash, lastPrice)
     const NUMBER_OF_TXS = 5
     const lastPrice = await tzstats.getTokenLastPrice(id)  // TODO
-    const coin = await tzkt.getCoinData(id, lastPrice)
+    const coin = await tzkt.getCoin(id, 0, lastPrice)
     const holders = await tzkt.getCoinHolders(id)
     const coinYearlyData = await tzkt.getCoinYearlyTransfersAndVolume(id)
     return {

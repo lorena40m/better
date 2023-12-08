@@ -30,7 +30,7 @@ export type LoadMoreHomeEndpoint = (params: {
   criteria: 'trending' | 'top' | 'byCap' | 'byVolume',
   page: number,
   pageSize: number,
-}) => Promise<Collection[] | Coin[]>
+}) => Promise<Collection[] | ExtendedCoin[]>
 
 // Endpoint used to load a page from an id
 // Can be an operation (transfer or call),
@@ -89,6 +89,9 @@ export type Coin = {
   decimals: number,
   logo: UrlString,
   lastPrice: number,
+}
+
+export type ExtendedCoin = Coin & {
   circulatingSupplyOnChain: TokenDecimals,
   holders: Integer,
 }
@@ -119,6 +122,7 @@ export type Holder = Address & {
 export type Holding = {
   asset: Asset,
   quantity: TokenDecimals,
+  value: Dollars,
   lastTransferDate: DateString,
 }
 
@@ -144,8 +148,8 @@ export type HomeResponse = {
     top: Collection[], // paginated
   },
   coins: {
-    byCap: Coin[], // paginated
-    byVolume: Coin[], // paginated
+    byCap: ExtendedCoin[], // paginated
+    byVolume: ExtendedCoin[], // paginated
   },
 }
 
@@ -217,7 +221,7 @@ export type WalletResponse = {
 
 export type CoinResponse = {
   artifactType: 'coin',
-  coin: Coin & {
+  coin: ExtendedCoin & {
     yearlyTransfers: Integer, // number of transfers on chain
     yearlyVolume: Integer, // on chain, in decimals
   },

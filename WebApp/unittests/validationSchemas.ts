@@ -12,41 +12,50 @@ import {
 } from '../src/endpoints/API'
 
 const integerStringSchema = () => string().required().matches(/^\d+$/)
-const dateStringSchema = () => string().required().matches(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
+const dateStringSchema = () => string().required().matches(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
+const urlSchema = () => string().required().url().matches(/^https:\/\//)
 const addressSchema = () => object({
   id: string().required().matches(/^(tz)|(KT).{34}$/),
   name: string().nullable(),
 }).required()
 const collectionSchema = () => object({
   id: string().required(),
-  image: string().required().url(),
+  image: urlSchema(),
   name: string().required(),
   supply: integerStringSchema(),
   floorPrice: integerStringSchema(),
   topSale: integerStringSchema(),
-  marketplaceLink: string().required().url(),
+  marketplaceLink: urlSchema(),
 }).required()
 const coinSchema = () => object({
   id: string().required(),
-  logo: string().required().url(),
+  logo: urlSchema(),
   name: string().required(),
   ticker: string().required(),
   decimals: number().required(),
-  lastPrice: integerStringSchema(),
+  lastPrice: number().required(),
+}).required()
+const extendedCoinSchema = () => coinSchema().concat(object({
   circulatingSupplyOnChain: integerStringSchema(),
   holders: integerStringSchema(),
-}).required()
+}).required())
 const holderSchema = () => addressSchema().concat(object({
   quantity: integerStringSchema(),
 }).required())
 const tokenSchema = () => object({
-  coin: coinSchema(),
+  asset: coinSchema(),
   quantity: integerStringSchema(),
+  value: number().required(),
   lastTransferDate: dateStringSchema(),
 }).required()
+  .test('value is correct', 'Token value is incorrect',
+    (token: any) => Math.abs((
+      token.value - +token.quantity * +token.asset.lastPrice / 10**token.asset.decimals
+    ) / token.value) < 0.05
+  )
 const nftSchema = () => object({
   id: string().required().matches(/^KT.{34}#\d+$/),
-  image: string().required().url(),
+  image: urlSchema(),
   name: string().required(),
   lastSalePrice: integerStringSchema(),
   collection: collectionSchema(),
@@ -82,8 +91,8 @@ export let homeResponseSchema = (params: { pageSize: number }) => object({
     top: array().required().length(params.pageSize).of(collectionSchema()),
   }).required(),
   coins: object({
-    byCap: array().required().length(params.pageSize).of(coinSchema()),
-    byVolume: array().required().length(params.pageSize).of(coinSchema()),
+    byCap: array().required().length(params.pageSize).of(extendedCoinSchema()),
+    byVolume: array().required().length(params.pageSize).of(extendedCoinSchema()),
   }).required(),
 }).required()
 
@@ -134,28 +143,27 @@ export let walletResponseSchema = (params: { id: string, pageSize: number, }) =>
   artifactType: string().required().matches(/^wallet$/),
   wallet: addressSchema().concat(object({
     nativeBalance: integerStringSchema(),
-    totalValue: integerStringSchema(),
+    totalValue: number().required(),
     operationCount: integerStringSchema(),
   }).required()),
   tokens: array().required().of(tokenSchema())
     .test('sorted by value', 'Tokens should be sorted by value',
       (tokens: any) => tokens.reduce((acc: any, token: any, index: any) =>
         acc && (index === tokens.length - 1 || (
-          +token.quantity * +token.coin.lastPrice > +tokens[index + 1].quantity * +tokens[index + 1].coin.lastPrice
+          +token.value > +tokens[index + 1].value
         )),
         true
       )
     ),
-  uncertifiedTokens: array().required().length(params.pageSize).of(tokenSchema())
-    .test('sorted by last transfer date', 'Tokens should be sorted by last transfer date',
+  nfts: array().required().of(nftSchema())
+    .test('sorted by value', 'Nfts should be sorted by value',
       (tokens: any) => tokens.reduce((acc: any, token: any, index: any) =>
         acc && (index === tokens.length - 1 || (
-          +token.lastTransferDate >= +tokens[index + 1].lastTransferDate
+          +token.lastSalePrice > +tokens[index + 1].lastSalePrice
         )),
         true
       )
-    ), // paginated, sorted by last transfer date
-  nfts: array().required().of(nftSchema()), // sorted by value
+    ),
   history: historySchema(params), // paginated
 })
 
@@ -168,14 +176,14 @@ export let contractResponseSchema = (params: { id: string, pageSize: number, }) 
     operationCount: integerStringSchema(), // since creation
     averageFee: number().required(),
     treasuryValue: number().required(),
-    officialWebsite: string().required().url(),
+    officialWebsite: urlSchema(),
   }).required()),
   history: historyMinimalSchema(params), // paginated
 })
 
 export let coinResponseSchema = (params: { id: string, pageSize: number, }) => object({
   artifactType: string().required().matches(/^coin$/),
-  coin: coinSchema().concat(object({
+  coin: extendedCoinSchema().concat(object({
     yearlyTransfers: integerStringSchema(),
     yearlyVolume: integerStringSchema(),
   }).required()),

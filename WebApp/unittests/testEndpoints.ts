@@ -40,24 +40,31 @@ const TEST_CASES = [
     schema: schemas.collectionResponseSchema,
   },
   {
-    testCaseName: 'ArtifactEndpoint endpoint: wallet artifact',
+    testCaseName: 'ArtifactEndpoint endpoint: wallet artifact #1',
     endpoint: ArtifactEndpoint,
     artifactType: 'wallet',
-    params: {id: ids.wallet, pageSize: 100},
+    params: {id: ids.wallet1, pageSize: 5},
+    schema: schemas.walletResponseSchema,
+  },
+  {
+    testCaseName: 'ArtifactEndpoint endpoint: wallet artifact #2',
+    endpoint: ArtifactEndpoint,
+    artifactType: 'wallet',
+    params: {id: ids.wallet2, pageSize: 5},
     schema: schemas.walletResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: contract artifact',
     endpoint: ArtifactEndpoint,
     artifactType: 'contract',
-    params: {id: ids.contract, pageSize: 100},
+    params: {id: ids.contract, pageSize: 10},
     schema: schemas.contractResponseSchema,
   },
   {
-    testCaseName: 'ArtifactEndpoint endpoint: transfer artifact',
+    testCaseName: 'ArtifactEndpoint endpoint: transfer artifact #1',
     endpoint: ArtifactEndpoint,
     artifactType: 'transfer',
-    params: {id: ids.transfer, pageSize: 100},
+    params: {id: ids.transfer, pageSize: 10},
     schema: schemas.transferResponseSchema,
   },
   {
@@ -91,8 +98,8 @@ TestScript(async function () {
       const time = +t2 - +t1
       logResult(`${testCaseName} in ${time}ms`, response)
 
-      // Wait for a second
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Wait to reset API limits
+      await new Promise(resolve => setTimeout(resolve, 2000))
 
       if (artifactType) {
         expect(`return the correct ${artifactType} artifactType, got: ${response.artifactType}`, response.artifactType === artifactType)
@@ -105,8 +112,10 @@ TestScript(async function () {
         expect(`response is validated by schema`, true)
       } catch (validationError: any) {
         console.error(validationError.toString())
-        for (const error of validationError.errors) {
-          console.error(error.toString())
+        if (validationError.errors) {
+          for (const error of validationError.errors) {
+            console.error(error.toString())
+          }
         }
         expect(`${validationError} -> see error file for detail`, false)
       }

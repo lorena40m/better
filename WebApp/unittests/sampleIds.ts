@@ -5,5 +5,6 @@ export const ids: any = {
   call: 'onmTvDE13EZ1NAC3GSbxp7yEhXRk7tNaEFDyX4hg1AXvrnwye57',
   coin: 'KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb',
   collection: 'KT1Q71TpT9Y6UGLx4EnKoLe4duTLzmoePQCA',
-  wallet: 'tz1YQqEDkFQCTHz5pRLLsKt9532ELtc8FcpX',
+  wallet1: 'tz1YQqEDkFQCTHz5pRLLsKt9532ELtc8FcpX', // xavierpaul
+  wallet2: 'tz1UAAMxy3kcFfg2ZPo8q5racMqgaqFuRZv3',
 }

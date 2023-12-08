@@ -98,35 +98,38 @@ export async function getCollection(address: string) {
   return collectionObject
 }
 
-export async function getWalletNfts(address: string) {
+export async function getWalletNfts(address: string, xtzPrice: number) {
   const queryResult = await fetch(`query test {
-    holder(where: {address: {_in: [${address}]}}) {
-      held_tokens {
+    holder(where: {address: {_in: [tz1YQqEDkFQCTHz5pRLLsKt9532ELtc8FcpX]}}) {
+      held_tokens(where: {quantity: {_gt: "0"}, token: {decimals: {_eq: 0}}}) {
         token {
+          display_uri
+          token_id
+          fa_contract
           fa {
-            creator_address
-            metadata
             floor_price
             name
             contract
-            token_link
-            index_contract_metadata
-            website
-            collection_id
-            collection_type
+            volume_total
+            logo
+            items
+            path
+            short_name
           }
-          display_uri
-          token_id
-          galleries {
-            gallery {
-              floor_price
-              items
-              max_items
-              logo
-            }
-            fa_contract
+          events(
+            limit: 1
+            order_by: {timestamp: desc_nulls_last}
+            where: {marketplace_event_type: {_in: ["list_buy","english_auction_settle","dutch_auction_buy","offer_accept","offer_floor_accept"]}}
+          ) {
+            timestamp
+            price_xtz
+            amount
+            marketplace_event_type
+            event_type
           }
         }
+        quantity
+        last_incremented_at
       }
     }
   }
@@ -134,26 +137,24 @@ export async function getWalletNfts(address: string) {
 
   const heldTokens = queryResult.holder[0].held_tokens
 
-  return heldTokens.map((token) => {
-    const faData = token.token.fa
-    const galleryData = token.token.galleries?.[0]?.gallery
-    // const creatorAddress = faData.creator_address
+  return heldTokens.map(token => {
+    const collection = token?.token?.fa
 
     return {
-      id : faData.contract.concat("#", token.token.token_id),
-      image : token.token.display_uri,
-      name : faData.name,
-      //lastSalePrice : ,
-      collection: {
-        id: faData.contract,
-        image: galleryData?.logo ?? null,
-        name: galleryData?.name ?? null,
-        supply: galleryData?.max_items ?? null,
-        floorPrice: galleryData?.floor_price ?? null,
-        topSale: null, // TO FILL
-        marketplaceLink: null, // TO FILL
-      } as Collection,
-      //lastTransferDate : ,
+      id: collection?.contract + '_' + token?.token?.token_id,
+      image: token?.token?.display_uri,
+      name: collection?.name,
+      lastSalePrice: token?.token?.events?.price_xtz * xtzPrice / 10**6 / token?.token?.events?.amount,
+      lastTransferDate: token.last_incremented_at,
+      collection: ({
+        id: collection?.contract,
+        image: ipfsToHttps(collection?.logo),
+        name: collection?.short_name || collection?.name,
+        supply: collection?.items,
+        floorPrice: collection?.floor_price ?? null,
+        topSale: null,
+        marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? collection?.contract),
+      } as Collection),
     } as Nft
   }) as Nft[]
 }

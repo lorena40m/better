@@ -18,7 +18,7 @@ export async function getServerSideProps({ params, locale }: any) {
   let ArtifactResponse = null;
   const miscResponse = await MiscellaneousEndpoint({});
   try {
-    ArtifactResponse = JSON.stringify(await ArtifactEndpoint({ pageSize: 10, id: params.id }));
+    ArtifactResponse = JSON.stringify(await ArtifactEndpoint({ pageSize: 5, id: params.id }));
 
     return {
       props: {

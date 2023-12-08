@@ -1,6 +1,6 @@
 import axios from 'axios'
-import {getCoinData} from './tzkt'
-import { Holding} from '../API'
+import * as tzkt from './tzkt'
+import { Coin, Holding } from '../API'
 
 async function fetch(urn: string) {
   try {
@@ -76,26 +76,30 @@ export async function getTokenSortedByValue(address: string ) {
   const assets = await fetch(`v1/wallets/${address}/balances`)
   const tokens = assets.filter(item => item.decimals !== 0);
   
-  return (await Promise.all(tokens.map(async tokenData => {
+  return (await Promise.all(tokens.map(async token => {
     // Carefull: every NFT here is considered a token of the owner
     // Carefull 2: The owner can own thousands of tokens
     // Do we want to make thousands of request?
     // On the other side we don't want to miss some important tokens...
     // The answer would be to paginate, but will only be usefull for big wallets...
     // Or to have an index of course
-    // console.log('tokenData', tokenData)
-    const valueInUSD = tokenData?.value_usd
     return {
-      asset: await getCoinData(
-        tokenData.contract,
-        valueInUSD
-      ),
-      quantity: tokenData.balance,
-      valueInUSD,
-      lastTransferDate: "",
+      asset: {
+        id: token.contract + (token.token_type === 'fa2' ? '_' + token.token_id : ''),
+        name: token.name,
+        ticker: token.symbol,
+        decimals: token.decimals,
+        lastPrice: +token?.price_usd,
+        // Using Tzkt is the only way I found for now for having the logo
+        // TODO: find the logo without a new request
+        logo: (await tzkt.getCoin(token.contract, token.token_id, +token?.price_usd)).logo,
+      } as Coin,
+      quantity: token.balance,
+      value: +token?.value_usd,
+      lastTransferDate: await tzkt.getBlockTimestamp(token.last_block),
     } as Holding
   })))
-    .sort((a, b) => b.valueInUSD - a.valueInUSD) as Holding[]
+    .sort((a, b) => b.value - a.value) as Holding[]
 }
 
 export async function getLastOperations(address, number) {
