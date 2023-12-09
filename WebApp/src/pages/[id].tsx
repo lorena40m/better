@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { HomeResponse } from '../endpoints/API';
 import ArtifactEndpoint from '../endpoints/ArtifactEndpoint';
-
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Wallet from "../components/wallet/index";
@@ -12,7 +11,6 @@ import Contract from "../components/smart-contract/index";
 import Token from "../components/token/index";
 import { MiscellaneousResponse } from '../endpoints/API';
 import MiscellaneousEndpoint from '../endpoints/MiscellaneousEndpoint';
-
 
 export async function getServerSideProps({ params, locale }: any) {
   let ArtifactResponse = null;
@@ -49,7 +47,6 @@ const pages = {
 };
 
 const Artifact = ({ ArtifactResponse, miscResponse }) => {
-
   const { t } = useTranslation("common");
   ArtifactResponse = JSON.parse(ArtifactResponse);
   const artifactType = ArtifactResponse.artifactType ?? null;

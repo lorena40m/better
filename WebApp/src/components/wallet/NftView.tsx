@@ -52,7 +52,7 @@ export default function SpacingGrid(props) {
       }}
       navigation={false}
       modules={[Autoplay, Navigation]}
-      className="mySlider"
+      className="Carousel"
     >
       {nfts.map((nft) => {
         if (nft.name && nft.image) {

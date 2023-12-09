@@ -52,6 +52,7 @@ const holdingSchema = assetSchema => object({
 }).required()
 const nftSchema = () => object({
   id: string().required().matches(/^KT.{34}(_\d+)?$/),
+  tokenId: integerStringSchema(),
   image: urlSchema(),
   name: string().required(),
   lastSalePrice: number().required(),

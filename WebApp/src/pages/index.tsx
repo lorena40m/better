@@ -3,7 +3,7 @@ const RATE_USD_TO_EUR = 0.95
 import { useState, useEffect } from 'react'
 import Head from "next/head";
 import Image from "next/image";
-import Header from "../components/Header";
+import Header from "@/components/Header";
 import {
   Grid,
   Button,
@@ -17,28 +17,27 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-// import SearchIcon from "@mui/icons-material/Search";
-import SelectCustom from "../components/SelectCustom";
-import TokenRanking from "../components/Home/TokenRanking";
-import HCarousel from "../components/HCarousel";
+import SelectCustom from "@/components/SelectCustom";
+import TokenRanking from "@/components/Home/TokenRanking";
+import Carousel from "@/components/Carousel/Carousel";
+import CollectionSlide from "@/components/Carousel/CollectionSlide";
 import HeadCrumb from "@/components/Header/HeadCrumb";
-import searchIcon from "../assets/iconSvg/searchIcon.svg";
-import TypingEffect from "../components/others/typingEffect";
-import Background from "../components/others/background";
-// import ScanIcon from "@/assets/iconSvg/ScanIcon.svg";
+import searchIcon from "@/assets/iconSvg/searchIcon.svg";
+import TypingEffect from "@/components/others/typingEffect";
+import Background from "@/components/others/background";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { HomeResponse, MiscellaneousResponse } from '../endpoints/API';
-import HomeEndpoint from '../endpoints/HomeEndpoint';
-import MiscellaneousEndpoint from '../endpoints/MiscellaneousEndpoint';
-import { formatPrice, formatToken } from '../utils/format'
-import useWindowSize from '../hooks/useWindowSize'
+import { HomeResponse, MiscellaneousResponse } from '@/endpoints/API';
+import HomeEndpoint from '@/endpoints/HomeEndpoint';
+import MiscellaneousEndpoint from '@/endpoints/MiscellaneousEndpoint';
+import { formatPrice, formatToken } from '@/utils/format'
+import useWindowSize from '@/hooks/useWindowSize'
 import ChainStats from '@/components/Home/ChainStats'
 
 export async function getServerSideProps({ locale }: any) {
   const miscResponse = await MiscellaneousEndpoint({})
-  const homeResponse = await HomeEndpoint({ pageSize: 1 })
+  const homeResponse = await HomeEndpoint({ pageSize: 30 })
 
   return {
     props: {
@@ -121,18 +120,20 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                 labels={[t('criteriaTrending'), t('criteriaTop')]}
               />
             </Box>
-            <HCarousel collections={homeResponse.collections[collectionCriteria]} />
+            <Carousel Slide={CollectionSlide} items={homeResponse.collections[collectionCriteria]}
+              breakpoints={{
+                100: { slidesPerView: 1 },
+                640: { slidesPerView: 2 },
+                900: { slidesPerView: 3 },
+                1400: { slidesPerView: 4 },
+              }}
+            />
           </Container>
         </Box>
         <Box className="listTableBlock">
           <Container maxWidth="xl">
             <Box className="sectionHead">
               <Box className="sectionHead-title">{t('sectionTitleTokens')}</Box>
-              {/*<SelectCustom
-                onChange={setTokenCriteria}
-                values={['byCap', 'byVolume']}
-                labels={[t('criteriaByCap'), t('criteriaByVolume')]}
-              />*/}
             </Box>
             <TokenRanking coins={homeResponse.coins.byCap} rates={miscResponse.rates} />
           </Container>

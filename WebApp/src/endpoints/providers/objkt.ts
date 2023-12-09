@@ -2,19 +2,6 @@ import axios from 'axios'
 import { ExtendedCollection, Collection, Nft, Holding } from '../API'
 import { ipfsToHttps } from './utils'
 
-// function getISODateForLast24Hours() {
-//   // Get the current date and time
-//   const currentDate = new Date();
-
-//   // Calculate the date and time 24 hours ago
-//   const twentyFourHoursAgo = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
-
-//   // Convert the date to an ISO 8601 format string
-//   const isoDateString = twentyFourHoursAgo.toISOString();
-
-//   return isoDateString;
-// }
-
 async function fetch(query) {
   const url = 'https://data.objkt.com/v3/graphql'
 
@@ -107,6 +94,7 @@ export async function getWalletNfts(address: string, xtzPrice: number) {
         quantity
         last_incremented_at
         token {
+          name
           artifact_uri
           token_id
           fa {
@@ -142,8 +130,9 @@ export async function getWalletNfts(address: string, xtzPrice: number) {
         value: lastSalePrice,
         asset: {
           id: collection?.contract + '_' + token?.token?.token_id,
+          tokenId: token?.token?.token_id?.toString(),
           image: ipfsToHttps(token?.token?.artifact_uri),
-          name: collection?.name,
+          name: token?.token?.name,
           lastSalePrice,
           collection: ({
             id: collection?.contract,

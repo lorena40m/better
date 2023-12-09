@@ -6,12 +6,19 @@ import NftView from "@/components/wallet/NftView";
 import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
 import ConfirmModal from "@/components/wallet/ConfirmModal";
 import TezosIcon from "../../assets/images/tezos.svg";
-
 import Image from "next/image";
 import Operations from "@/components/wallet/Operations";
 import { appWithTranslation, useTranslation } from "next-i18next";
+import Carousel from "@/components/Carousel/Carousel";
+import NftSlide from "@/components/Carousel/NftSlide";
+import { WalletResponse, MiscellaneousResponse } from "@/endpoints/API";
 
-const Wallet = ({ ArtifactResponse, miscResponse }) => {
+type Props = {
+  ArtifactResponse: WalletResponse,
+  miscResponse: MiscellaneousResponse,
+}
+
+const Wallet = ({ ArtifactResponse, miscResponse }: Props) => {
   const { t } = useTranslation("common");
 
   const [open, setOpen] = useState<Boolean>(false);
@@ -39,7 +46,15 @@ const Wallet = ({ ArtifactResponse, miscResponse }) => {
                 operationCount={ArtifactResponse.wallet.operationCount}
                 nativeBalance={ArtifactResponse.wallet.nativeBalance}
               />
-              <NftView nfts={ArtifactResponse.nfts} />
+              {/*<NftView nfts={ArtifactResponse.nfts} />*/}
+              <h5 className="operationCard__title">{t("Wallet.Nfts")}</h5>
+              <Carousel Slide={NftSlide} items={ArtifactResponse.nfts} breakpoints={{
+                100: { slidesPerView: 1 },
+                640: { slidesPerView: 1 },
+                900: { slidesPerView: 2 },
+                1400: { slidesPerView: 2 },
+              }} delay={4000} rates={miscResponse.rates} />
+              <h5 className="operationCard__title">{t("Wallet.Tokens")}</h5>
               <CryptoMonnaise tokens={ArtifactResponse.tokens} miscResponse={miscResponse} />
             </Grid>
             <Grid item md={6} paddingLeft={"15px"}>

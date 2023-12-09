@@ -101,6 +101,7 @@ export type ExtendedCoin = Coin & {
 
 export type Nft = {
   id: string,
+  tokenId: string,
   image: UrlString,
   name: string,
   lastSalePrice: Dollars,

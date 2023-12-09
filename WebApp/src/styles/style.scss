@@ -326,71 +326,69 @@ body {
   padding: 10px 15px;
 }
 
-.collectionBox {
+.Carousel {
+  overflow-x: hidden;
+}
+
+.CarouselSlide {
   position: relative;
   padding-top: 100%;
   background-size: cover;
   background-position: center;
   border-radius: 20px;
-}
 
-.collectionBox::before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  overflow: hidden;
-  z-index: 1;
-  background: linear-gradient(rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.7) 100%);
-  border-radius: 20px;
-}
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+    background: linear-gradient(-160deg, rgb(0 0 0 / 14%) 60%, rgb(0 0 0 / 49%) 100%);
+    border-radius: 20px;
+  }
 
-.collectionBox-title-floating {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
-  color: white !important;
-  font-weight: 700 !important;
-  // background-color: rgb(83 83 83 / 90%);
-  padding: 8px 15px;
-  border-radius: 10px;
-  z-index: 2;
-}
+  &-title-floating {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    color: white !important;
+    font-weight: 700 !important;
+    padding: 8px 15px;
+    border-radius: 10px;
+    z-index: 2;
+  }
 
-.collectionBox-title {
-  font-weight: 700 !important;
-  font-size: 20px !important;
-  margin: 0 !important;
-}
+  &-title {
+    font-weight: 700 !important;
+    font-size: 20px !important;
+    margin: 0 !important;
+  }
 
-.collectionBox-subTitle {
-  font-weight: 300 !important;
-  font-size: 14px !important;
-  color: #dadada;
-  margin: 0 !important;
-}
+  &-subTitle {
+    font-weight: 300 !important;
+    font-size: 14px !important;
+    color: #dadada;
+    margin: 0 !important;
+  }
 
-.collectionBox-likeBtn {
-  position: absolute;
-  right: 14px;
-  top: 14px;
-  background: rgba(160, 163, 189, 0.6);
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  &-likeBtn {
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    background: rgba(160, 163, 189, 0.6);
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
 }
-
-/* .mySlider {
-  padding: 0 !important;
-  cursor: grab;
-} */
 
 .listTableBlock {
   margin: 60px 0;
@@ -718,9 +716,6 @@ body {
       background: linear-gradient(180deg, #f7454520 0%, #3384f520 101.41%);
     }
   }
-}
-.NftSliderToken {
-  margin-bottom: 40px !important;
 }
 .tokenOtherInfos {
   background: #ffffff;
@@ -1177,64 +1172,6 @@ Project: less intrusive search button
       }
     }
   }
-  .NftSlider {
-    padding: 55px 0;
-    &__title {
-      font-weight: 700;
-      font-size: 21px;
-      line-height: 28px;
-      color: #2a3b51;
-      margin-bottom: 15px;
-    }
-    .mySlider {
-      position: relative;
-      padding: 0 !important;
-      &::before {
-        content: "";
-        position: absolute;
-        height: 100%;
-        width: 214px;
-        background: linear-gradient(
-          266.56deg,
-          #fafafb 32%,
-          rgba(255, 255, 255, 0) 77.14%
-        );
-        z-index: 2;
-        right: 0;
-      }
-      .collectionBox {
-        border: 1.05px solid rgba(179, 193, 213, 0.4);
-        border-radius: 10px;
-        &-img {
-          border-radius: 10px 10px 0 0;
-          margin: 0;
-        }
-        &-title {
-          font-size: 14px !important;
-          line-height: 19px !important;
-          margin-bottom: 3px !important;
-        }
-        &-subTitle {
-          font-weight: 400 !important;
-          font-size: 12px !important;
-          line-height: 16px !important;
-          margin-bottom: 16px !important;
-        }
-        &-label {
-          font-weight: 700;
-          font-size: 10px;
-          line-height: 14px;
-          color: #a0a3bd;
-        }
-        &-discription {
-          font-weight: 700;
-          font-size: 10px;
-          line-height: 14px;
-          color: #2a3b51;
-        }
-      }
-    }
-  }
   
   .crypto{
     margin-top: 20px !important;
@@ -1324,12 +1261,6 @@ Project: less intrusive search button
   margin-top: 15px;
   &__p {
     font-size: 21px !important;
-  }
-}
-.sliderBlock
-{
-  .mySlider {
-    overflow-x: hidden;
   }
 }
 .listTableBlock {
@@ -1561,9 +1492,6 @@ Project: less intrusive search button
           margin-bottom: 30px;
         }
       }
-    }
-    .NftSlider {
-      padding: 40px 0;
     }
   }
   .metamaskBouton {

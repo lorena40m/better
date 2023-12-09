@@ -119,7 +119,7 @@ export default function SpacingGrid(props) {
       }}
       navigation={false}
       modules={[Autoplay, Navigation]}
-      className="mySlider"
+      className="Carousel"
     >
       {trendingData.map((value) => (
         <Link href={'/nft?id='+value.id} key={value.id}>
