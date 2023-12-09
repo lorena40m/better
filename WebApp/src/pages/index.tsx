@@ -38,8 +38,7 @@ import ChainStats from '@/components/Home/ChainStats'
 
 export async function getServerSideProps({ locale }: any) {
   const miscResponse = await MiscellaneousEndpoint({})
-  const homeResponse = await HomeEndpoint({ pageSize: 100 })
-  console.log(homeResponse, miscResponse)
+  const homeResponse = await HomeEndpoint({ pageSize: 1 })
 
   return {
     props: {

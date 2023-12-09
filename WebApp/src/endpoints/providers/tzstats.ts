@@ -69,7 +69,7 @@ export async function getWalletTotalValue(address){
 export async function getTokenLastPrice(address:string){
   const assets = await fetch(`v1/wallets/${address}/balances`)
   const tokens = assets.filter(item => item.decimals !== 0);
-  return Math.round(tokens[0]?.value_usd * 100) 
+  return parseFloat(tokens[0]?.value_usd) // price in USD 
 }
 
 export async function getTokenSortedByValue(address: string ) {
@@ -114,16 +114,22 @@ export async function getLastOperations(address, number) {
 // TODO: convert the averageFee to tez instead of gas
 // this function calculate the averageFee for an address based over the last 100 txs
 export async function getAddressAverageFee(address) {
-  const NUMBER_OF_TXS = 100
+  let NUMBER_OF_TXS = 100
   const data = await getLastOperations(address, NUMBER_OF_TXS)
 
-  var totalGasUsed = 0
+  var totalFee = 0
+  const hashTab = [];
   if (Array.isArray(data)) {
     for (var index in data) {
-      totalGasUsed += data[index]?.gas_used;
+      if (hashTab.includes(data[index].hash)) {
+        NUMBER_OF_TXS--;
+      } else {
+        hashTab.push(data[index].hash);
+      }
+      totalFee += (data[index]?.fee ?? 0) + (data[index]?.burned ?? 0);
     }
-    const averageFee = totalGasUsed / NUMBER_OF_TXS;
-    return Math.round(averageFee);
+    const averageFee = totalFee / NUMBER_OF_TXS;
+    return averageFee;
   } else {
     // Handle the case where data is not an array (e.g., if there's an issue with the API response)
     console.error("Data is not an array:", data);
