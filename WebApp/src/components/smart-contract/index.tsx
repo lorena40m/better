@@ -3,13 +3,13 @@ import Header from "../../components/Header/index";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import Profile from "@/components/wallet/Profile";
 import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
-import GeneralInfos from "@/components/smart-contract/GeneralInfos";
+import GeneralInfos from "@/components/common/GeneralInfos";
 import OtherInfos from "@/components/smart-contract/OtherInfos";
 import ConfirmModal from "@/components/wallet/ConfirmModal";
 import TezosIcon from "../../assets/images/tezos.svg";
 
 import Image from "next/image";
-import Operations from "@/components/smart-contract/Operations";
+import Operations from "@/components/common/Operations";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { formatPrice, formatNumber, formatToken, formatDate } from "@/utils/format";
 import { useRouter } from "next/router";

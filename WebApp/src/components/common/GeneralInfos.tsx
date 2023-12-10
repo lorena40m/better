@@ -28,11 +28,11 @@ const GeneralInfos = (props) => {
     <div className="generalInfos">
       <Toaster />
       <div className="generalInfos__top">
-        <h2>{props.title}</h2>
-        <div className="generalInfos__top__copy" onClick={() => {copy(props.address)}}>
-          <p>{props.address.slice(0, 8)}...</p>
-          <ContentCopyIcon />
-        </div>
+        <h2>{props.title ?? "Anonymous"}</h2>
+            <div className="generalInfos__top__copy" onClick={() => {copy(props.address)}}>
+              <p>{props.address.slice(0, 8)}...</p>
+              <ContentCopyIcon />
+            </div>
       </div>
       <div className="generalInfos__bottom">
         <div>

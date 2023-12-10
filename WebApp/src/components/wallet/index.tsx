@@ -7,11 +7,14 @@ import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
 import ConfirmModal from "@/components/wallet/ConfirmModal";
 import TezosIcon from "../../assets/images/tezos.svg";
 import Image from "next/image";
-import Operations from "@/components/wallet/Operations";
+import Operations from "@/components/common/Operations";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import Carousel from "@/components/Carousel/Carousel";
 import NftSlide from "@/components/Carousel/NftSlide";
 import { WalletResponse, MiscellaneousResponse } from "@/endpoints/API";
+import GeneralInfos from "@/components/common/GeneralInfos";
+import { formatPrice, formatNumber, formatToken, formatDate } from "@/utils/format";
+import { useRouter } from "next/router";
 
 type Props = {
   ArtifactResponse: WalletResponse,
@@ -20,6 +23,7 @@ type Props = {
 
 const Wallet = ({ ArtifactResponse, miscResponse }: Props) => {
   const { t } = useTranslation("common");
+  const { locale } = useRouter();
 
   const [open, setOpen] = useState<Boolean>(false);
   return (
@@ -38,15 +42,16 @@ const Wallet = ({ ArtifactResponse, miscResponse }: Props) => {
           </div>
           <Grid className="walletProfile" container>
             <Grid item md={6} paddingRight={"15px"}>
-              <Profile
-                miscResponse={miscResponse}
-                profileName={ArtifactResponse.wallet.name}
-                walletId={ArtifactResponse.wallet.id}
-                totalValue={ArtifactResponse.wallet.totalValue}
-                operationCount={ArtifactResponse.wallet.operationCount}
-                nativeBalance={ArtifactResponse.wallet.nativeBalance}
+              <GeneralInfos
+                title={ArtifactResponse.wallet.name}
+                address={ArtifactResponse.wallet.id}
+                var1="Total value"
+                value1={formatPrice(ArtifactResponse.wallet.totalValue, locale, miscResponse.rates)}
+                var2="Operations"
+                value2={formatNumber(ArtifactResponse.wallet.operationCount, locale)}
+                var3="Balance"
+                value3={`${formatToken(ArtifactResponse.wallet.nativeBalance, 6, locale)} XTZ`}
               />
-              {/*<NftView nfts={ArtifactResponse.nfts} />*/}
               <h5 className="operationCard__title">{t("Wallet.Nfts")}</h5>
               <Carousel Slide={NftSlide} items={ArtifactResponse.nfts} breakpoints={{
                 100: { slidesPerView: 1 },
@@ -58,7 +63,7 @@ const Wallet = ({ ArtifactResponse, miscResponse }: Props) => {
               <CryptoMonnaise tokens={ArtifactResponse.tokens} miscResponse={miscResponse} />
             </Grid>
             <Grid item md={6} paddingLeft={"15px"}>
-              <Operations operations={ArtifactResponse.history} />
+              <Operations operations={ArtifactResponse.history} contractAddress={ArtifactResponse.wallet.id} />
             </Grid>
           </Grid>
         </Container>

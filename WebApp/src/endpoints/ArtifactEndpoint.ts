@@ -124,7 +124,7 @@ export async function listLastOperationsMinimalInfos(address, number) {
     },
     to: {
       id: transaction.receiver,
-      name: await objkt.getAddressDomain(transaction.sender) ?? null
+      name: await objkt.getAddressDomain(transaction.receiver) ?? null
     },
     date: transaction.time,
     quantity: ((transaction.volume ?? 0) * 10**6)?.toString(),
