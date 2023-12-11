@@ -24,9 +24,52 @@ type Props = {
 
 async function fetchAccountData(address) {
   try {
-    const response = await axios.get(`/api/user?address=${address}`);
-    console.log(response.data);
-    return response.data;
+    const response = await axios.get(`/api/user?address=${address}&historyLimit=${5}`);
+    const domains = [];
+    const nfts = [];
+    const coins = [];
+    const othersTokens = [];
+    response.data.tokens.map((token) => {
+      if (token.Metadata) {
+        if (token.Metadata.decimals) {
+          if (token.Metadata.decimals === "0") {
+            if (token.Metadata.artifactUri) {
+              nfts.push(token);
+            } else if (token.ContractId === 1262424) {
+              domains.push(token);
+            } else {
+              othersTokens.push(token);
+            }
+          } else {
+            coins.push(token);
+          }
+        } else {
+          othersTokens.push(token);
+        }
+      } else {
+        othersTokens.push(token);
+      }
+    });
+    console.log ({
+      address: response.data.user.Address,
+      balance: response.data.user.Balance,
+      operationsCount: response.data.user.TransactionsCount,
+      operationsHistory: response.data.user.history,
+      domains: domains,
+      nfts: nfts,
+      coins: coins,
+      othersTokens: othersTokens,
+    });
+    return ({
+      address: response.data.user.Address,
+      balance: response.data.user.Balance,
+      operationsCount: response.data.user.TransactionsCount,
+      operationsHistory: response.data.user.history,
+      domains: domains,
+      nfts: nfts,
+      coins: coins,
+      othersTokens: othersTokens,
+    });
   } catch (error) {
     console.error('Erreur lors de la récupération des données :', error);
   }
