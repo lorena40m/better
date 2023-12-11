@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header/index";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import Profile from "@/components/wallet/Profile";
@@ -15,15 +15,30 @@ import { WalletResponse, MiscellaneousResponse } from "@/endpoints/API";
 import GeneralInfos from "@/components/common/GeneralInfos";
 import { formatPrice, formatNumber, formatToken, formatDate } from "@/utils/format";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 type Props = {
   ArtifactResponse: WalletResponse,
   miscResponse: MiscellaneousResponse,
 }
 
+async function fetchAccountData(address) {
+  try {
+    const response = await axios.get(`/api/user?address=${address}`);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des données :', error);
+  }
+}
+
 const Wallet = ({ ArtifactResponse, miscResponse }: Props) => {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
+
+  useEffect(() => {
+    fetchAccountData(ArtifactResponse.wallet.id);
+  }, []);
 
   const [open, setOpen] = useState<Boolean>(false);
   return (
