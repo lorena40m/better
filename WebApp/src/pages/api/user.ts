@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import pool from './db';
+import pool from '../../endpoints/providers/db';
 
 export default async function handler(
   req: NextApiRequest,
@@ -7,7 +7,7 @@ export default async function handler(
 ) {
   const address = req.query.address;
   try {
-    const user = await pool.query('SELECT "Balance", "Address", "TransactionsCount" FROM "Accounts" WHERE "Address" = $1', [address]);
+    const { rows: user} = await pool.query('SELECT "Balance", "Address", "TransactionsCount" FROM "Accounts" WHERE "Address" = $1', [address]);
     const { rows: history } = await pool.query('select t.*, a."Address"  from "Accounts" as a INNER join "TransactionOps" as t on t."SenderId" = A."Id" where a."Address" = $1', [address]);
     const response = {
       user : user,
