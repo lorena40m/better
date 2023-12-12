@@ -9,8 +9,8 @@ import {
 import React from "react";
 import Image from "next/image";
 import CreateIcon from "@mui/icons-material/Create";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import CheckIcon from "../../assets/iconSvg/checkIcon.svg";
+import CopyPastIcon from "@/assets/iconSvg/copyPastIcon.svg";
+import CheckIcon from "@/assets/iconSvg/checkIcon.svg";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -28,10 +28,10 @@ const GeneralInfos = (props) => {
     <div className="generalInfos">
       <Toaster />
       <div className="generalInfos__top">
-        <h2>{props.title ?? "Anonymous"}</h2>
+        <h2>{props.title ?? "User"}</h2>
             <div className="generalInfos__top__copy" onClick={() => {copy(props.address)}}>
               <p>{props.address.slice(0, 8)}...</p>
-              <ContentCopyIcon />
+              <Image src={CopyPastIcon} alt="copy past icon"/>
             </div>
       </div>
       <div className="generalInfos__bottom">

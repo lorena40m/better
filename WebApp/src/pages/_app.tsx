@@ -5,9 +5,6 @@ import { useRouter } from 'next/router';
 import {appWithTranslation} from "next-i18next";
 
 const publicPages = [
-  "/sign-in/[[...index]]",
-  "/sign-up/[[...index]]",
-  "/_error",
   "/",
 ];
 

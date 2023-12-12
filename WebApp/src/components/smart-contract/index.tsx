@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Header from "../../components/Header/index";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import Profile from "@/components/wallet/Profile";
-import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
+import CryptoMonnaise from "@/components/wallet/CoinBox";
 import GeneralInfos from "@/components/common/GeneralInfos";
 import OtherInfos from "@/components/smart-contract/OtherInfos";
 import ConfirmModal from "@/components/wallet/ConfirmModal";

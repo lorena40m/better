@@ -8,7 +8,7 @@ import Operation from"@/components/token/Operations";
 import OtherInfos from "@/components/token/OtherInfos";
 import Holders from "@/components/token/Holders";
 import GeneralInfo from "@/components/token/GeneralInfos";
-import CryptoMonnaise from "@/components/wallet/CryptoMonnaise";
+import CryptoMonnaise from "@/components/wallet/CoinBox";
 import TempleIcon from "../../assets/images/temple-logo.png";
 import { appWithTranslation, useTranslation } from "next-i18next";
 

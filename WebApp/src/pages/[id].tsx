@@ -13,8 +13,8 @@ import { MiscellaneousResponse } from '../endpoints/API';
 import MiscellaneousEndpoint from '../endpoints/MiscellaneousEndpoint';
 
 export async function getServerSideProps({ params, locale }: any) {
+  /*const miscResponse = await MiscellaneousEndpoint({});
   let ArtifactResponse = null;
-  const miscResponse = await MiscellaneousEndpoint({});
   try {
     ArtifactResponse = JSON.stringify(await ArtifactEndpoint({ pageSize: 5, id: params.id }));
 
@@ -34,7 +34,13 @@ export async function getServerSideProps({ params, locale }: any) {
         miscResponse
       },
     };
-  }
+  }*/
+  return ({
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      hash: params.id,
+    },
+  });
 }
 
 const pages = {
@@ -46,9 +52,9 @@ const pages = {
   Token
 };
 
-const Artifact = ({ ArtifactResponse, miscResponse }) => {
+const Artifact = (props) => {
   const { t } = useTranslation("common");
-  ArtifactResponse = JSON.parse(ArtifactResponse);
+  /*ArtifactResponse = JSON.parse(ArtifactResponse);
   const artifactType = ArtifactResponse.artifactType ?? null;
   const componentName = artifactType[0].toUpperCase() + artifactType.slice(1);
 
@@ -56,9 +62,14 @@ const Artifact = ({ ArtifactResponse, miscResponse }) => {
 
   return (
 	  <>
-      <ComponentToRender ArtifactResponse={ArtifactResponse} miscResponse={miscResponse} />
+      <ComponentToRender ArtifactResponse={ArtifactResponse} address="tz1YQqEDkFQCTHz5pRLLsKt9532ELtc8FcpX" miscResponse={miscResponse} />
 	  </>
-  )
+  )*/
+  if (props.hash.substring(0, 2) === "tz") {
+    return (
+      <Wallet address={props.hash} />
+    )
+  }
 };
 
 export default Artifact;

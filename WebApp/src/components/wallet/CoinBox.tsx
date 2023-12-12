@@ -20,10 +20,23 @@ import TezosIcon from "../../assets/images/tezos.svg";
 import { useRouter } from "next/router";
 import { formatPrice, formatToken } from '../../utils/format'
 
-const CryptoMonnaise = (props) => {
+const CoinBox = (props) => {
   const label = { inputProps: { "aria-label": "Color switch demo" } };
   const { locale } = useRouter();
-  return (
+
+  function ipfsToLink(stringIpfs) {
+    if (!stringIpfs) {
+      return ("");
+    }
+    if (stringIpfs.substring(0, 7) !== "ipfs://") {
+      return (stringIpfs);
+    }
+    const baseUrl = "https://ipfs.io/ipfs/";
+    const ipfsId = stringIpfs.slice(7);
+    return (baseUrl + ipfsId);
+  }
+
+  /*return (
     <Card className="ElevationBox" style={{ margin: "20px 0 0 0" }}>
      
 
@@ -53,7 +66,28 @@ const CryptoMonnaise = (props) => {
         </Table>
       </TableContainer>
     </Card>
+  );*/
+  return (
+    <div className="coinBox">
+      {props.coins.map((coin) => {
+        return (
+          <div className="coinBox__coin" style={coin.Metadata.thumbnailUri ? null : {alignSelf: "flex-end"}}>
+            <div className="coinBox__coin__left">
+              {coin.Metadata.thumbnailUri ? <img src={ipfsToLink(coin.Metadata.thumbnailUri)} alt={coin.Metadata.name + "logo"} /> : null}
+              <div>
+                <p className="coinBox__coin__left__title">{coin.Metadata.symbol} ({coin.Metadata.name})</p>
+                <p>price</p>
+              </div>
+            </div>
+            <div className="coinBox__coin__right">
+              <p>{formatToken(coin.Balance, Number(coin.Metadata.decimals), locale)}</p>
+              <p>Value</p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 };
 
-export default CryptoMonnaise;
+export default CoinBox;

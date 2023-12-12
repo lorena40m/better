@@ -10,24 +10,24 @@ const Operations = (props) => {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
 
-  console.log(props.operations);
   return (
     <div className="operationsBox">
       <h3>Latest operations</h3>
       {props.operations.map(operation => {
-        const user = operation.from.id === props.contractAddress ? operation.to : operation.from;
-        const userName = user.name ?? (user.id.substring(0, 2) === "KT" ? "Contract" : "User");
+        const user = operation.TargetId === props.accountId ? operation.SenderId : operation.TargetId;
+        //const userName = user.name ?? (user.id.substring(0, 2) === "KT" ? "Contract" : "User");
+        const userName = "User";
         return (
-          <div className="operationsBox__operation" key={operation.id}>
+          <div className="operationsBox__operation" key={operation.Id}>
             <div className="operationsBox__operation__start">
-              <Image src={user.id.substring(0, 2) === "KT" ? SmartContractIcon : UserIcon} alt="Tezos logo" />
+              <Image src={/*user.id.substring(0, 2) === "KT" ? SmartContractIcon :*/ UserIcon} alt="Tezos logo" />
               <div>
                 <p className="operationsBox__operation__start__name">{userName}</p>
-                <p className="operationsBox__operation__start__date">{operation.date}</p>
+                <p className="operationsBox__operation__start__date">{formatDate(operation.Timestamp, locale)}</p>
               </div>
             </div>
             <div className="operationsBox__operation__end">
-              <p>{operation.from.id === props.contractAddress ? "-" : "+"}{formatToken((operation.quantity).toString(), 6, locale)} XTZ</p>
+              <p style={operation.TargetId === props.accountId ? {color: "#2e6552", backgroundColor: "#cce5c8"} : {color: "#2a3b51"}}>{operation.TargetId === props.accountId ? "" : "- "}{formatToken((operation.Amount).toString(), 6, locale)} XTZ</p>
             </div>
           </div>
         );

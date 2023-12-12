@@ -9,18 +9,27 @@ import { Holding, Nft } from "@/endpoints/API"
 import { formatPrice } from '@/utils/format'
 
 type Props = {
-  item: Holding<Nft>,
+  item: any,
   rates: any,
 }
 
 export default function CollectionSlide({ item, rates }: Props) {
-  const { t } = useTranslation("common")
-  const { locale } = useRouter()
+  const { t } = useTranslation("common");
+  const { locale } = useRouter();
+
+  function ipfsToLink(stringIpfs) {
+    if (stringIpfs.substring(0, 7) !== "ipfs://") {
+      return (stringIpfs);
+    }
+    const baseUrl = "https://ipfs.io/ipfs/";
+    const ipfsId = stringIpfs.slice(7);
+    return (baseUrl + ipfsId);
+  }
 
   return (
-    <Link href={'/' + item.asset.collection.id}>
+    <Link href={'/' /* + id du token ou de la collection */}>
       <Box className="CarouselSlide"
-        style={{ backgroundImage: `url(${item.asset.image})` }}
+        style={{ backgroundImage: `url(${ipfsToLink(item.Metadata.artifactUri)})` }}
       >
         <Box className="CarouselSlide-title-floating">
           <Typography
@@ -28,15 +37,15 @@ export default function CollectionSlide({ item, rates }: Props) {
             variant="h5"
             className="CarouselSlide-title"
           >
-            {item.asset.name}
+            {item.Metadata.name}
           </Typography>
           <Typography
             gutterBottom
             variant="h5"
             className="CarouselSlide-subTitle"
           >
-            {t('Carousel.Nft.Collection', { collectionName: `${item.asset.collection.name} # ${item.asset.tokenId}` })}
-            <br/>{t('Carousel.Nft.LastSale', { lastSalePrice: formatPrice(item.asset.lastSalePrice, locale, rates) })}
+            {/*t('Carousel.Nft.Collection', { collectionName: `${item.asset.collection.name} # ${item.asset.tokenId}` })*/}
+            <br/>{/*t('Carousel.Nft.LastSale', { lastSalePrice: formatPrice(item.asset.lastSalePrice, locale, rates) })*/}
           </Typography>
         </Box>
       </Box>
