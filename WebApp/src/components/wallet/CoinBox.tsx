@@ -19,6 +19,7 @@ import EthereumIcon from "../../assets/images/eth.svg";
 import TezosIcon from "../../assets/images/tezos.svg";
 import { useRouter } from "next/router";
 import { formatPrice, formatToken } from '../../utils/format'
+import { divide } from "cypress/types/lodash";
 
 const CoinBox = (props) => {
   const label = { inputProps: { "aria-label": "Color switch demo" } };
@@ -36,56 +37,32 @@ const CoinBox = (props) => {
     return (baseUrl + ipfsId);
   }
 
-  /*return (
-    <Card className="ElevationBox" style={{ margin: "20px 0 0 0" }}>
-     
-
-      <TableContainer className="MonnaiseTable" component={Paper}>
-        <Table aria-label="simple table">
-          <TableBody>
-            {props.tokens.map((token: any) => (
-              <TableRow
-                key={token.asset.id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell scope="row">
-                  <div className="profilePart">
-                    <Image src={token.asset.logo} alt="" height={44} width={44} />
-                    <div className="profilePart__text">
-                      <span>{(token.quantity / 10**token.asset.decimals).toFixed(6)}</span>
-                      <span>{token.asset.ticker}</span>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell align="right">
-                  <div className="tablerighttext">{formatPrice(token.value, locale, props.miscResponse.rates) }</div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Card>
-  );*/
   return (
     <div className="coinBox">
-      {props.coins.map((coin) => {
-        return (
-          <div className="coinBox__coin" style={coin.Metadata.thumbnailUri ? null : {alignSelf: "flex-end"}}>
-            <div className="coinBox__coin__left">
-              {coin.Metadata.thumbnailUri ? <img src={ipfsToLink(coin.Metadata.thumbnailUri)} alt={coin.Metadata.name + "logo"} /> : null}
-              <div>
-                <p className="coinBox__coin__left__title">{coin.Metadata.symbol} ({coin.Metadata.name})</p>
-                <p>price</p>
+      <h3>Coins</h3>
+      <div className="coinBox__container">
+        <div className="coinBox__container__header">
+          <p>symbol</p>
+          <p>balance</p>
+        </div>
+        <div className="coinBox__coin-container">
+          {props.coins.map((coin) => {
+            return (
+              <div className="coinBox__coin" style={coin.Metadata.thumbnailUri ? {order: "1"} : {order: "2"}}>
+                <div className="coinBox__coin__left">
+                  {coin.Metadata.thumbnailUri ? <img src={ipfsToLink(coin.Metadata.thumbnailUri)} alt={coin.Metadata.name + "logo"} /> : <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="no image" />}
+                  <div>
+                    <p className="coinBox__coin__left__title">{coin.Metadata.symbol}</p>
+                  </div>
+                </div>
+                <div className="coinBox__coin__right">
+                  <p>{formatToken(coin.Balance, Number(coin.Metadata.decimals), locale)}</p>
+                </div>
               </div>
-            </div>
-            <div className="coinBox__coin__right">
-              <p>{formatToken(coin.Balance, Number(coin.Metadata.decimals), locale)}</p>
-              <p>Value</p>
-            </div>
-          </div>
-        );
-      })}
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };

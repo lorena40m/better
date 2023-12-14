@@ -145,10 +145,7 @@ const Wallet = ({ address }: Props) => {
               }} delay={4000} rates={miscResponse.rates} />*/}
               {
                 tokens.coins[0] ?
-                  <>
-                    <h5 className="operationCard__title">{t("Wallet.Tokens")}</h5>
                     <CoinBox coins={tokens.coins} miscResponse={miscResponse} />
-                  </>
                 : null
               }
             </Grid>
