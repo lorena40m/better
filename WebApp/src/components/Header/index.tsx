@@ -5,8 +5,11 @@ import LogoIcon from "../../assets/images/icon-logo.svg";
 import Logo from "../../assets/images/logo.svg";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Select from "@/components/common/Select";
+import { useTranslation } from "next-i18next";
 
 export default function Header() {
+  const { t } = useTranslation("common");
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [language, setLanguage] = useState(router.locale);
@@ -53,10 +56,11 @@ export default function Header() {
           </div>
         </div>
         <div className="main-header__container__right">
-          <select name="" id="" value={language} onChange={(e) => {onToggleLanguageClick(changeTo); setLanguage(e.target.value)}}>
-            <option value="en">🇺🇸 English</option>
-            <option value="fr">🇫🇷 Français</option>
-          </select>
+          <Select
+            onChange={(e) => {onToggleLanguageClick(changeTo); setLanguage(e.target.value)}}
+            values={['en', 'fr']}
+            labels={[t('🇺🇸 English'), t('🇫🇷 Français')]}
+          />
         </div>
       </div>
     </header>

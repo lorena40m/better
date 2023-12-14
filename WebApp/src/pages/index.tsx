@@ -17,7 +17,7 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import SelectCustom from "@/components/SelectCustom";
+import Select from "@/components/common/Select";
 import TokenRanking from "@/components/Home/TokenRanking";
 import Carousel from "@/components/Carousel/Carousel";
 import CollectionSlide from "@/components/Carousel/CollectionSlide";
@@ -114,7 +114,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
           <Container maxWidth="xl">
             <Box className="sectionHead">
               <Box className="sectionHead-title">{t('sectionTitleCollections')}</Box>
-              <SelectCustom
+              <Select
                 onChange={setCollectionCriteria}
                 values={['trending', 'top']}
                 labels={[t('criteriaTrending'), t('criteriaTop')]}
