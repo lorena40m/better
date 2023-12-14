@@ -18,7 +18,7 @@ const 	Nft = ({homeResponse}) => {
   const [open, setOpen] = useState<Boolean>(false);
   return (
     <main>
-      <Header />
+      <Header hideSearch={false} />
       <Box className="pageTemplate WalletOprationCard">
         <Container maxWidth="xl">
 			<div className="pageTemplate__head">

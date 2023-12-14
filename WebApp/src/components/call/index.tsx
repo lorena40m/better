@@ -24,7 +24,7 @@ const Operation = () => {
 
   return (
     <main  >
-      <Header />
+      <Header hideSearch={false} />
       <Box className="pageTemplate">
         <Container maxWidth="xl">
           <div className="pageTemplate__head">

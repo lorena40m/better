@@ -17,7 +17,7 @@ const Token = ({homeResponse}) => {
 
     return(
         <main>
-            <Header/>
+            <Header hideSearch={false} />
         
             <Box className="pageTemplate WalletOprationCard">
         <Container maxWidth="xl">

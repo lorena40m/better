@@ -120,7 +120,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                 900: { slidesPerView: 3 },
                 1400: { slidesPerView: 4 },
               }}
-            />
+            rates={miscResponse.rates} />
           </Container>
         </Box>
         <Box className="listTableBlock">

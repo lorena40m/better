@@ -48,7 +48,9 @@ const CoinBox = (props) => {
         <div className="coinBox__coin-container">
           {props.coins.map((coin) => {
             return (
-              <div className="coinBox__coin hoverItem" style={coin.Metadata.thumbnailUri ? {order: "1"} : {order: "2"}}>
+              <div key={coin.id} className="coinBox__coin hoverItem"
+                style={coin.Metadata.thumbnailUri ? {order: "1"} : {order: "2"}}
+              >
                 <div className="coinBox__coin__left">
                   {coin.Metadata.thumbnailUri ? <img src={ipfsToLink(coin.Metadata.thumbnailUri)} alt={coin.Metadata.name + "logo"} /> : <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="no image" />}
                   <div>

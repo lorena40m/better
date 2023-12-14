@@ -21,7 +21,7 @@ const 	Contract = ({ ArtifactResponse, miscResponse }) => {
   const [open, setOpen] = useState<Boolean>(false);
   return (
     <main>
-      <Header />
+      <Header hideSearch={false} />
       <Box className="pageTemplate">
         <Container maxWidth="xl">
 			<div className="pageTemplate__head">
