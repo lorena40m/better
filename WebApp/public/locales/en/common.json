@@ -66,5 +66,6 @@
   "Totalvalue": "Total Value",
   "Transfer successful": "Transfer successful",
   "From": "From",
-  "To": "To"
+  "To": "To",
+  "Header.Search.Placeholder": "Search"
 }

@@ -8,7 +8,7 @@ import ConfirmModal from "@/components/wallet/ConfirmModal";
 import TezosIcon from "../../assets/images/tezos.svg";
 import Image from "next/image";
 import Operations from "@/components/common/Operations";
-import { appWithTranslation, useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import Carousel from "@/components/Carousel/Carousel";
 import NftSlide from "@/components/Carousel/NftSlide";
 import GeneralInfos from "@/components/common/GeneralInfos";
@@ -16,6 +16,7 @@ import { formatPrice, formatNumber, formatToken, formatDate } from "@/utils/form
 import { useRouter } from "next/router";
 import axios from "axios";
 import MiscellaneousEndpoint from '../../endpoints/MiscellaneousEndpoint';
+import Head from "next/head";
 
 type Props = {
   address: string,
@@ -112,7 +113,10 @@ const Wallet = ({ address }: Props) => {
 
   return (
     <main>
-      <Header />
+      <Head>
+        <title>{tokens.domains[0]?.Metadata?.name} | BetterScan</title>
+      </Head>
+      <Header hideSearch={true} />
       <Box className="pageTemplate WalletOprationCard">
         <Container maxWidth="xl">
           <div className="pageTemplate__head">
@@ -120,7 +124,7 @@ const Wallet = ({ address }: Props) => {
               {t("WalletPage.Title")}
               <span className="pageTemplate__status">
                 <Image src={TezosIcon} alt="" height={40} width={40} onClick={() => {console.log({account: account, tokens: tokens, transactionsHistory: transactionsHistory})}}/>
-                  Tezos
+                Tezos
               </span>
             </Typography>
           </div>

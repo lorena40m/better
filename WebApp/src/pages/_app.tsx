@@ -3,6 +3,7 @@ import "@/styles/style.scss";
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import {appWithTranslation} from "next-i18next";
+import Head from "next/head";
 
 const publicPages = [
   "/",
@@ -17,6 +18,10 @@ function App({ Component, pageProps }: AppProps) {
   
   return (
     <>
+      <Head>
+        <title>BetterScan</title>
+        <meta name="description" content="The Blockchain Explorer" />
+      </Head>
       {
         isPublicPage ?
         <Component {...pageProps} />

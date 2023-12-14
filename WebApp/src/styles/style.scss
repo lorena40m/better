@@ -1299,11 +1299,11 @@ Project: less intrusive search button
       &__input {
         border-radius: 100px;
         overflow: hidden;
-        height: 40%;
+        height: 55%;
         display: flex;
         align-items: center;
-        border: 1px solid #c9cacb;
-        width: 400px;
+        border: 1px solid #b3b3b3;
+        width: 600px;
         max-width: 80%;
         transition: background-color 0.2s, border 0.2s;
         input {
@@ -1312,8 +1312,10 @@ Project: less intrusive search button
           border-radius: 100px 0 0 100px;
           height: 100%;
           outline: none;
-          padding: 0 20px;
+          padding: 0 40px;
           width: 100%;
+          border: none;
+          font-size: 1.2em;
         }
         div {
           display: flex;
@@ -1330,13 +1332,9 @@ Project: less intrusive search button
           padding: 0;
         }
       }
-      &__input:hover {
-        background-color: #e6e7e9;
-        border: 1px solid #e6e7e9;
-      }
-      &__input:focus-within {
-        background-color: #e6e7e9;
-        border: 1px solid #e6e7e9;
+      &__input:hover, &__input:focus-within {
+        // background-color: #e6e7e9;
+        border: 2px solid #ababab;
       }
     }
     &__right {
@@ -1467,19 +1465,16 @@ Project: less intrusive search button
 
 .operationsBox {
   width: 100%;
-  border-radius: 20px;
-  background: linear-gradient(150deg, #F2474A20, #3E81EC20);
-  padding: 10px 10px 10px 10px;
+  padding: 25px;
+
   &__operation {
     width: 100%;
-    background-color: #ffffffa0;
     border-radius: 10px;
     padding: 20px 20px;
     margin-top: 10px;
     display: flex;
-    cursor: pointer;
     justify-content: space-between;
-    transition: background-color 0.2s, box-shadow 0.2s;
+
     &__start {
       display: flex;
       align-items: center;
@@ -1512,37 +1507,40 @@ Project: less intrusive search button
       padding: 0 0 0 5px;
     }
   }
-  &__operation:hover {
-    background-color: #ffffff;
-    box-shadow: 0 0 5px #00000030;
-  }
 }
 
-
-.operationsBox h3 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #2a3b51;
-  margin-bottom: 10px;
-  margin-left: 20px;
-}
-
-.coinBox {
-  width: 100%;
-  background: linear-gradient(150deg, #F2474A20, #3E81EC20);
+.box {
+  background: white;
+  border: 2px solid #0000002b;
+  padding: 25px;
   border-radius: 20px;
-  padding: 10px 5px 5px 5px;
+
   h3 {
     font-size: 24px;
     font-weight: 700;
     color: #2a3b51;
-    margin-left: 25px;
-    margin-bottom: 5px;
+    margin-bottom: 25px;
+    margin-left: 15px;
   }
+}
+
+.hoverItem {
+  background-color: #f5f6f8;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e6e7e9;
+  }
+}
+
+.coinBox {
+  width: 100%;
+
   &__container {
     background-color: #ffffff;
     border-radius: 15px;
-    padding: 10px;
+
     &__header {
       display: flex;
       width: 100%;
@@ -1557,6 +1555,7 @@ Project: less intrusive search button
   &__coin-container {
     display: flex;
     flex-direction: column;
+    gap: 10px;
   }
   &__coin {
     width: 100%;

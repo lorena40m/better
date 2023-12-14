@@ -11,14 +11,14 @@ const Operations = (props) => {
   const { locale } = useRouter();
 
   return (
-    <div className="operationsBox">
+    <div className="operationsBox box">
       <h3>Latest operations</h3>
       {props.operations.map(operation => {
         const user = operation.TargetId === props.accountId ? operation.SenderId : operation.TargetId;
         //const userName = user.name ?? (user.id.substring(0, 2) === "KT" ? "Contract" : "User");
         const userName = "User";
         return (
-          <div className="operationsBox__operation" key={operation.Id}>
+          <div className="operationsBox__operation hoverItem" key={operation.Id}>
             <div className="operationsBox__operation__start">
               <Image src={/*user.id.substring(0, 2) === "KT" ? SmartContractIcon :*/ UserIcon} alt="Tezos logo" />
               <div>
@@ -27,7 +27,9 @@ const Operations = (props) => {
               </div>
             </div>
             <div className="operationsBox__operation__end">
-              <p style={operation.TargetId === props.accountId ? {color: "#2e6552", backgroundColor: "#cce5c8"} : {color: "#2a3b51"}}>{operation.TargetId === props.accountId ? "" : "- "}{formatToken((operation.Amount).toString(), 6, locale)} XTZ</p>
+              <p style={operation.TargetId === props.accountId ? {color: "rgb(39 169 27)"} : {color: "rgb(255 131 9)"}}>
+                {operation.TargetId === props.accountId ? "+" : "-"}{formatToken((operation.Amount).toString(), 6, locale)} XTZ
+              </p>
             </div>
           </div>
         );

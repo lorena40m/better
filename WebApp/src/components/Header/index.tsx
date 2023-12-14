@@ -8,7 +8,11 @@ import Link from "next/link";
 import Select from "@/components/common/Select";
 import { useTranslation } from "next-i18next";
 
-export default function Header() {
+type Props = {
+  hideSearch: boolean
+}
+
+export default function Header({ hideSearch }: Props) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -25,6 +29,7 @@ export default function Header() {
       router.push(`/${encodeURIComponent(search)}`);
     }
   } 
+
   return (
     <header className="main-header">
       <div className="main-header__container">
@@ -47,14 +52,18 @@ export default function Header() {
             />
           </Link>
         </div>
-        <div className="main-header__container__center">
+        {hideSearch && <div className="main-header__container__center">
           <div className="main-header__container__center__input">
-            <input type="text" value={search} onChange={(e) => {setSearch(e.target.value)}} onKeyDown={(e) => {e.key === 'Enter' ? searchEvent() : null}} />
+            <input type="text" placeholder={t('Header.Search.Placeholder')}
+            value={search}
+            onChange={(e) => {setSearch(e.target.value)}}
+            onKeyDown={(e) => {e.key === 'Enter' ? searchEvent() : null}}
+          />
             <div onClick={searchEvent}>
               <Image src={searchIcon} alt="search icon" />
             </div>
           </div>
-        </div>
+        </div>}
         <div className="main-header__container__right">
           <Select
             onChange={(e) => {onToggleLanguageClick(changeTo); setLanguage(e.target.value)}}
