@@ -154,7 +154,7 @@ const Wallet = ({ address }: Props) => {
               }
             </Grid>
             <Grid item md={6} paddingLeft={"15px"}>
-              <Operations operations={transactionsHistory} accountId={account.id} />
+              <Operations operations={transactionsHistory} address={address} />
             </Grid>
           </Grid>
         </Container>
