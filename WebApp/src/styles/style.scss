@@ -1312,7 +1312,7 @@ Project: less intrusive search button
           border-radius: 100px 0 0 100px;
           height: 100%;
           outline: none;
-          padding: 0 40px;
+          padding: 0 30px;
           width: 100%;
           border: none;
           font-size: 1.2em;
@@ -1323,6 +1323,7 @@ Project: less intrusive search button
           height: 100%;
           cursor: pointer;
           transition: background-color 0.2s;
+          padding-right: 10px;
         }
         div:hover {
           background-color: #f5f6f8;
@@ -1505,6 +1506,7 @@ Project: less intrusive search button
       font-size: 20px;
       font-weight: 700;
       padding: 0 0 0 5px;
+      text-align: right;
     }
   }
 }

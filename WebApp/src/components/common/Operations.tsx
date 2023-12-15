@@ -15,7 +15,7 @@ const Operations = (props) => {
       <h3>Latest operations</h3>
       {props.operations.map(operation => {
         const user = operation.TargetAddress === props.address ? operation.SenderAddress : operation.TargetAddress;
-        const userName = user.substring(0, 2) === "KT" ? "Contract" : "User";
+        const userName = user?.substring(0, 2) === "KT" ? "Contract" : "User";
         let tokenName = operation?.Metadata?.symbol;
         tokenName = (tokenName ? tokenName : "XTZ");
         let tokenDecimals = operation?.Metadata?.decimals;
@@ -23,7 +23,7 @@ const Operations = (props) => {
         return (
           <div className="operationsBox__operation hoverItem" key={operation.Id}>
             <div className="operationsBox__operation__start">
-              <Image src={user.substring(0, 2) === "KT" ? SmartContractIcon : UserIcon} alt="Tezos logo" />
+              <Image src={user?.substring(0, 2) === "KT" ? SmartContractIcon : UserIcon} alt="Tezos logo" />
               <div>
                 <p className="operationsBox__operation__start__name">{userName}</p>
                 <p className="operationsBox__operation__start__date">{formatDate(operation.Timestamp, locale)}</p>
