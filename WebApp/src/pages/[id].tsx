@@ -13,8 +13,8 @@ import { MiscellaneousResponse } from '../endpoints/API';
 import MiscellaneousEndpoint from '../endpoints/MiscellaneousEndpoint';
 
 export async function getServerSideProps({ params, locale }: any) {
-  /*const miscResponse = await MiscellaneousEndpoint({});
-  let ArtifactResponse = null;
+  const miscResponse = await MiscellaneousEndpoint({});
+  /*let ArtifactResponse = null;
   try {
     ArtifactResponse = JSON.stringify(await ArtifactEndpoint({ pageSize: 5, id: params.id }));
 
@@ -39,6 +39,7 @@ export async function getServerSideProps({ params, locale }: any) {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
       hash: params.id,
+      miscResponse,
     },
   });
 }
@@ -67,7 +68,7 @@ const Artifact = (props) => {
   )*/
   if (props.hash.substring(0, 2) === "tz") {
     return (
-      <Wallet address={props.hash} />
+      <Wallet address={props.hash} miscResponse={props.miscResponse} />
     )
   }
 };
