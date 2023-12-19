@@ -14,9 +14,9 @@ import NftSlide from "@/components/Carousel/NftSlide";
 import GeneralInfos from "@/components/common/GeneralInfos";
 import { formatPrice, formatNumber, formatToken, formatDate } from "@/utils/format";
 import { useRouter } from "next/router";
-import axios from "axios";
 import MiscellaneousEndpoint from '../../endpoints/MiscellaneousEndpoint';
 import Head from "next/head";
+import { fetchAccountInfos, fetchAccountTokens, fetchAccountTransactionsHistory } from '@/utils/apiClient';
 
 type Props = {
   address: string,
@@ -31,69 +31,6 @@ const Wallet = ({ address }: Props) => {
   const [transactionsHistory, setTransactionsHistory] = useState([]);
   const [miscResponse, setMiscResponse] = useState({rates: {"EUR/USD": 0}, xtzPrice: 0});
 
-
-
-  const fetchAccountTokens = async (address) => {
-    try {
-      const response = await axios.get(`/api/account-tokens?address=${address}`);
-      const domains = [];
-      const nfts = [];
-      const coins = [];
-      const othersTokens = [];
-      response.data.map((token) => {
-        if (token.Metadata) {
-          if (token.Metadata.decimals) {
-            if (token.Metadata.decimals === "0") {
-              if (token.Metadata.artifactUri) {
-                nfts.push(token);
-              } else if (token.ContractId === 1262424) {
-                domains.push(token);
-              } else {
-                othersTokens.push(token);
-              }
-            } else {
-              coins.push(token);
-            }
-          } else {
-            othersTokens.push(token);
-          }
-        } else {
-          othersTokens.push(token);
-        }
-      });
-      setTokens({
-        domains: domains,
-        nfts: nfts,
-        coins: coins,
-        othersTokens: othersTokens,
-      });
-    } catch (error) {
-      console.error('Erreur lors de la récupération des données :', error);
-    }
-  };
-
-  const fetchAccountInfos = async (address) => {
-    try {
-      const response = await axios.get(`/api/account-infos?address=${address}`);
-      setAccount({
-        balance: response.data.Balance,
-        transactionsCount: response.data.TransactionsCount,
-        id: response.data.Id,
-      });
-    } catch (error) {
-      console.error('Erreur lors de la récupération des données :', error);
-    }
-  };
-
-  const fetchAccountTransactionsHistory = async (address, limit) => {
-    try {
-      const response = await axios.get(`/api/account-history?address=${address}&limit=${limit}`);
-      setTransactionsHistory(response.data);
-    } catch (error) {
-      console.error('Erreur lors de la récupération des données :', error);
-    }
-  };
-
   const fetchMiscellaneousInfos = async () => {
     try {
       const response = await MiscellaneousEndpoint({});
@@ -104,9 +41,15 @@ const Wallet = ({ address }: Props) => {
   }
 
   useEffect(() => {
-    fetchAccountTokens(address);
-    fetchAccountInfos(address);
-    fetchAccountTransactionsHistory(address, 10);
+    fetchAccountTokens(address).then((data) => {
+      setTokens(data);
+    });
+    fetchAccountInfos(address).then((data) => {
+      setAccount(data);
+    });
+    fetchAccountTransactionsHistory(address, 10).then((data) => {
+      setTransactionsHistory(data);
+    });
     fetchMiscellaneousInfos();
   }, [address]);
 

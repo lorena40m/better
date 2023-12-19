@@ -1305,7 +1305,6 @@ Project: less intrusive search button
         border: 1px solid #b3b3b3;
         width: 600px;
         max-width: 80%;
-        transition: background-color 0.2s, border 0.2s;
         input {
           //border-right: none;
           background: transparent;
@@ -1335,7 +1334,7 @@ Project: less intrusive search button
       }
       &__input:hover, &__input:focus-within {
         // background-color: #e6e7e9;
-        border: 2px solid #ababab;
+        outline: 1px solid #ababab;
       }
     }
     &__right {
