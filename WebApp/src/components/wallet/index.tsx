@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import MiscellaneousEndpoint from '../../endpoints/MiscellaneousEndpoint';
 import Head from "next/head";
 import { fetchAccountInfos, fetchAccountTokens, fetchAccountTransactionsHistory } from '@/utils/apiClient';
+import fetchCoinsInfos from '@/pages/api/coins-infos';
 
 type Props = {
   address: string,
@@ -30,6 +31,7 @@ const Wallet = ({ address }: Props) => {
   const [account, setAccount] = useState({balance: 0, transactionsCount: 0, id: 0});
   const [transactionsHistory, setTransactionsHistory] = useState([]);
   const [miscResponse, setMiscResponse] = useState({rates: {"EUR/USD": 0}, xtzPrice: 0});
+  const [coinsInfos, setCoinsInfos] = useState();
 
   const fetchMiscellaneousInfos = async () => {
     try {
@@ -50,6 +52,10 @@ const Wallet = ({ address }: Props) => {
     fetchAccountTransactionsHistory(address, 10).then((data) => {
       setTransactionsHistory(data);
     });
+    fetch('/api/coins-infos')
+      .then(response => response.json())
+      .then(data => setCoinsInfos(data))
+      .catch(error => console.error('Error fetching data:', error));
     fetchMiscellaneousInfos();
   }, [address]);
 
@@ -66,7 +72,7 @@ const Wallet = ({ address }: Props) => {
             <Typography variant="h4" className="pageTemplate__title">
               {t("WalletPage.Title")}
               <span className="pageTemplate__status">
-                <Image src={TezosIcon} alt="" height={40} width={40} onClick={() => {console.log({account: account, tokens: tokens, transactionsHistory: transactionsHistory})}}/>
+                <Image src={TezosIcon} alt="" height={40} width={40} onClick={() => {console.log({account: account, tokens: tokens, transactionsHistory: transactionsHistory, coinsInfos: coinsInfos})}}/>
                 Tezos
               </span>
             </Typography>
@@ -79,7 +85,7 @@ const Wallet = ({ address }: Props) => {
                 var1="Total value"
                 value1={/*formatPrice(ArtifactResponse.wallet.totalValue, locale, miscResponse.rates)*/0}
                 var2="Operations"
-                value2={/*formatNumber(ArtifactResponse.wallet.operationCount, locale)*/account?.transactionsCount}
+                value2={formatNumber(account?.transactionsCount, locale)}
                 var3="Balance"
                 value3={`${formatToken(account.balance.toString(), 6, locale)} XTZ`}
               />
@@ -92,7 +98,7 @@ const Wallet = ({ address }: Props) => {
               }} delay={4000} rates={miscResponse.rates} />*/}
               {
                 tokens.coins[0] ?
-                    <CoinBox coins={tokens.coins} miscResponse={miscResponse} />
+                    <CoinBox coins={tokens.coins} miscResponse={miscResponse} coinsInfos={coinsInfos} />
                 : null
               }
             </Grid>

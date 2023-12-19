@@ -41,24 +41,26 @@ const CoinBox = (props) => {
     <div className="coinBox box">
       <h3>Coins</h3>
       <div className="coinBox__container">
-        <div className="coinBox__container__header">
+        {/*<div className="coinBox__container__header">
           <p>symbol</p>
           <p>balance</p>
-        </div>
+        </div>*/}
         <div className="coinBox__coin-container">
           {props.coins.map((coin) => {
+            const coinInfos = props.coinsInfos.find(coinInfos => coinInfos.tokenAddress === coin.Address);
+            const coinValue = coinInfos?.exchangeRate ?? 0;
             return (
-              <div key={coin.id} className="coinBox__coin hoverItem"
+              <div key={coin.id} className="coinBox__coin"
                 style={coin.Metadata.thumbnailUri ? {order: "1"} : {order: "2"}}
               >
                 <div className="coinBox__coin__left">
                   {coin.Metadata.thumbnailUri ? <img src={ipfsToLink(coin.Metadata.thumbnailUri)} alt={coin.Metadata.name + "logo"} /> : <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="no image" />}
                   <div>
-                    <p className="coinBox__coin__left__title">{coin.Metadata.symbol}</p>
+                    <p className="coinBox__coin__left__title">{formatToken(coin.Balance, Number(coin.Metadata.decimals), locale).slice(0, 4)}... <strong>{coin.Metadata.symbol}</strong></p>
                   </div>
                 </div>
                 <div className="coinBox__coin__right">
-                  <p>{formatToken(coin.Balance, Number(coin.Metadata.decimals), locale)}</p>
+                  <p>{(Number(formatToken(coin.Balance, Number(coin.Metadata.decimals), locale)) * coinValue).toString().slice(0, 4)}$</p>
                 </div>
               </div>
             );

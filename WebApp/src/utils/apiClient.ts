@@ -1,6 +1,6 @@
 import axios from "axios";
 
-async function fetch(url) {
+async function fetchDatabase(url) {
 	try {
 		const response = await axios.get(`/api/${url}`);
 		return (response.data);
@@ -10,7 +10,7 @@ async function fetch(url) {
 }
 
 export async function fetchAccountTokens(address) {
-	const response = await fetch(`account-tokens?address=${address}`);
+	const response = await fetchDatabase(`account-tokens?address=${address}`);
 	const domains = [];
 	const nfts = [];
 	const coins = [];
@@ -46,7 +46,7 @@ export async function fetchAccountTokens(address) {
 };
 
 export async function fetchAccountInfos(address) {
-	const response = await fetch(`account-infos?address=${address}`);
+	const response = await fetchDatabase(`account-infos?address=${address}`);
 	return ({
 		balance: response.Balance,
 		transactionsCount: response.TransactionsCount,
@@ -55,6 +55,6 @@ export async function fetchAccountInfos(address) {
 }
 
 export async function fetchAccountTransactionsHistory(address, limit) {
-	const response = await fetch(`/account-history?address=${address}&limit=${limit}`);
+	const response = await fetchDatabase(`/account-history?address=${address}&limit=${limit}`);
 	return (response);
 }
