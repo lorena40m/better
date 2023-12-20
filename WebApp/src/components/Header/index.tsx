@@ -17,6 +17,7 @@ export default function Header({ hideSearch }: Props) {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [language, setLanguage] = useState(router.locale);
+  const [searchActive, setSearchActive] = useState(false);
 
   const onToggleLanguageClick = (newLocale: any) => {
     const { pathname, query } = router;
@@ -25,14 +26,18 @@ export default function Header({ hideSearch }: Props) {
   const changeTo = router.locale === "en" ? "fr" : "en";
 
   function searchEvent() {
-    if (search && search[0]) {
+    if (window.innerWidth < 800 && !searchActive) {
+      setSearchActive(true);
+    }
+    else if (search && search[0]) {
       router.push(`/${encodeURIComponent(search)}`);
     }
   } 
 
   return (
     <header className="main-header">
-      <div className="main-header__container">
+      <div className={"main-header__container " + (searchActive ? "main-header__container__search-active" : "")}>
+        <div className="main-header__container__black-overlay" onClick={() => {setSearchActive(false)}}></div>
         <div className="main-header__container__left">
           <Link href="/" style={{display: "flex"}}>
             <Image
@@ -49,16 +54,17 @@ export default function Header({ hideSearch }: Props) {
               height={35}
               width={150}
               alt="Logo"
+              className="main-header__container__left__biglogo"
             />
           </Link>
         </div>
         {hideSearch && <div className="main-header__container__center">
           <div className="main-header__container__center__input">
             <input type="text" placeholder={t('Header.Search.Placeholder')}
-            value={search}
-            onChange={(e) => {setSearch(e.target.value)}}
-            onKeyDown={(e) => {e.key === 'Enter' ? searchEvent() : null}}
-          />
+              value={search}
+              onChange={(e) => {setSearch(e.target.value)}}
+              onKeyDown={(e) => {e.key === 'Enter' ? searchEvent() : null}}
+            />
             <div onClick={searchEvent}>
               <Image src={searchIcon} alt="search icon" />
             </div>
@@ -68,7 +74,7 @@ export default function Header({ hideSearch }: Props) {
           <Select
             onChange={(e) => {onToggleLanguageClick(changeTo); setLanguage(e.target.value)}}
             values={['en', 'fr']}
-            labels={[t('🇺🇸 English'), t('🇫🇷 Français')]}
+            labels={['🇺🇸 English', '🇫🇷 Français']}
           />
         </div>
       </div>

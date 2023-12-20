@@ -1282,13 +1282,36 @@ Project: less intrusive search button
   justify-content: center;
   &__container {
     width: 1328px;
+    max-width: 100%;
     height: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 24px;
+    &__black-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 100;
+      background-color: #00000088;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      cursor: pointer;
+    }
     &__left {
       width: 20%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      a {
+        height: 80%;
+      }
+      img {
+        height: 100%;
+      }
     }
     &__center {
       height: 100%;
@@ -1296,6 +1319,8 @@ Project: less intrusive search button
       align-items: center;
       justify-content: center;
       width: 60%;
+      z-index: 101;
+      transition: width 0.3s;
       &__input {
         border-radius: 100px;
         overflow: hidden;
@@ -1306,7 +1331,6 @@ Project: less intrusive search button
         width: 600px;
         max-width: 80%;
         input {
-          //border-right: none;
           background: transparent;
           border-radius: 100px 0 0 100px;
           height: 100%;
@@ -1333,7 +1357,6 @@ Project: less intrusive search button
         }
       }
       &__input:hover, &__input:focus-within {
-        // background-color: #e6e7e9;
         outline: 1px solid #ababab;
       }
     }
@@ -1541,7 +1564,6 @@ Project: less intrusive search button
   &__container {
     background-color: #ffffff;
     border-radius: 15px;
-
     &__header {
       display: flex;
       width: 100%;
@@ -1607,6 +1629,17 @@ Project: less intrusive search button
   }
 }
 
+@media (min-width: 1000px) and (max-width: 1199px) {
+  .generalInfos__bottom {
+    &__var {
+      font-size: 18px;
+    }
+    &__value {
+      font-size: 22px;
+    }
+  }
+}
+
 @media (min-width: 900px) and (max-width: 999px) {
   .generalInfos__bottom {
     &__var {
@@ -1618,13 +1651,69 @@ Project: less intrusive search button
   }
 }
 
-@media (min-width: 1000px) and (max-width: 1199px) {
-  .generalInfos__bottom {
-    &__var {
-      font-size: 18px;
+@media screen and (max-width: 899px) {
+  .main-header__container__left {
+    width: 5%;
+  }
+  .main-header__container__center {
+    width: 75%;
+  }
+  .main-header__container__right {
+    width: 20%;
+  }
+  .main-header__container__left__biglogo {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 799px) {
+  .main-header__container__left {
+    width: auto;
+  }
+  .main-header__container__right {
+    width: 50%;
+    transition: opacity 0.2s, display 0s 0s 0.2s;
+  }
+  .main-header__container__center {
+    margin-right: auto;
+    margin-left: 20px;
+    width: 69px;
+    &__input {
+      width: auto;
+      transition: width 5.3s;
+      input {
+        display: none;
+        transition: width 0.3s;
+      }
+      div {
+        padding: 0;
+        width: 66.78px;
+        justify-content: center;
+      }
     }
-    &__value {
-      font-size: 22px;
+  }
+  .main-header__container__search-active {
+    .main-header__container__black-overlay {
+      pointer-events: all;
+      opacity: 1;
+    }
+    .main-header__container__right {
+      display: none;
+      opacity: 0;
+    }
+    .main-header__container__center {
+      margin-right: 0;
+      width: 100%;
+      &__input {
+        width: 100%;
+        max-width: 100%;
+        background-color: #f5f6f8;
+        input {
+          display: block;
+          width: 100%;
+        }
+      }
+
     }
   }
 }
