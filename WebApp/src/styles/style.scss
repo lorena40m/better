@@ -1624,6 +1624,9 @@ Project: less intrusive search button
     bottom: -5px;
     left: 5%;
   }
+  &__coin:last-child::after {
+    display: none;
+  }
   &__coin:hover {
     background-color: #e6e7e9;
   }
@@ -1672,7 +1675,7 @@ Project: less intrusive search button
   }
   .main-header__container__right {
     width: 50%;
-    transition: opacity 0.2s, display 0s 0s 0.2s;
+    transition: opacity 0.2s;
   }
   .main-header__container__center {
     margin-right: auto;
@@ -1974,7 +1977,7 @@ Project: less intrusive search button
     padding-top: 0;
     .css-19r6kue-MuiContainer-root {
       padding: 0;
-      .MuiGrid-grid-md-6:first-child,
+      .MuiGrid-grid-md-6,
       .pageTemplate__head {
         padding: 0 20px !important;
       }

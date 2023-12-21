@@ -51,7 +51,7 @@ const CoinBox = (props) => {
             const coinValue = coinInfos?.exchangeRate ?? 0;
             return (
               <div key={coin.id} className="coinBox__coin"
-                style={coin.Metadata.thumbnailUri ? {order: "1"} : {order: "2"}}
+                style={coin.Metadata.thumbnailUri ? {order: "1"} : {order: "1"}}
               >
                 <div className="coinBox__coin__left">
                   {coin.Metadata.thumbnailUri ? <img src={ipfsToLink(coin.Metadata.thumbnailUri)} alt={coin.Metadata.name + "logo"} /> : <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="no image" />}

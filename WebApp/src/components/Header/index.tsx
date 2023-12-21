@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import searchIcon from "../../assets/iconSvg/searchIconBlack.svg";
 import LogoIcon from "../../assets/images/icon-logo.svg";
@@ -18,6 +18,26 @@ export default function Header({ hideSearch }: Props) {
   const [search, setSearch] = useState("");
   const [language, setLanguage] = useState(router.locale);
   const [searchActive, setSearchActive] = useState(false);
+  const [searchHistory, setSearchHistory] = useState([]);
+
+  useEffect(() => {
+    let storedHistory = localStorage.getItem("searchHistory");
+    storedHistory = storedHistory ? JSON.parse(storedHistory) : [];
+    if (!storedHistory.includes(router.query.id)) {
+      if (storedHistory.length >= 10) {
+        storedHistory.pop();
+      }
+      if (router.query.id) {
+        storedHistory.unshift(router.query.id);
+      }
+    } else {
+      const index = storedHistory.indexOf(router.query.id);
+      storedHistory.splice(index, 1);
+      storedHistory.unshift(router.query.id);
+    }
+    localStorage.setItem("searchHistory", JSON.stringify(storedHistory));
+    setSearchHistory(storedHistory);
+  }, [router.query.id]);
 
   const onToggleLanguageClick = (newLocale: any) => {
     const { pathname, query } = router;
@@ -32,7 +52,7 @@ export default function Header({ hideSearch }: Props) {
     else if (search && search[0]) {
       router.push(`/${encodeURIComponent(search)}`);
     }
-  } 
+  }
 
   return (
     <header className="main-header">
