@@ -7,4 +7,5 @@ export const ids: any = {
   collection: 'KT1Q71TpT9Y6UGLx4EnKoLe4duTLzmoePQCA',
   wallet1: 'tz1YQqEDkFQCTHz5pRLLsKt9532ELtc8FcpX', // xavierpaul
   wallet2: 'tz1UAAMxy3kcFfg2ZPo8q5racMqgaqFuRZv3',
+  wallet3: 'KT1EC9cuswn2quyhM77iWpngTju1BjqLSd5u', // delegator
 }

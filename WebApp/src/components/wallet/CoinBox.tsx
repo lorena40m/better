@@ -14,9 +14,6 @@ import {
 } from "@mui/material";
 import React from "react";
 import Image from "next/image";
-import BitcoinIcon from "../../assets/images/btc.svg";
-import EthereumIcon from "../../assets/images/eth.svg";
-import TezosIcon from "../../assets/images/tezos.svg";
 import { useRouter } from "next/router";
 import { formatPrice, formatToken } from '../../utils/format'
 import { divide } from "cypress/types/lodash";

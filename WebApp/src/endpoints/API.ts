@@ -85,7 +85,18 @@ export type ExtendedCollection = Collection & {
   supply: Integer,
 }
 
+export type Nft = {
+  assetType: 'nft',
+  id: string,
+  tokenId: string,
+  image: UrlString,
+  name: string,
+  lastSalePrice: Dollars,
+  collection: Collection,
+}
+
 export type Coin = {
+  assetType: 'coin',
   id: string | 'tezos',
   name: string,
   ticker: string,
@@ -99,14 +110,7 @@ export type ExtendedCoin = Coin & {
   holders: Integer,
 }
 
-export type Nft = {
-  id: string,
-  tokenId: string,
-  image: UrlString,
-  name: string,
-  lastSalePrice: Dollars,
-  collection: Collection,
-}
+export type Asset = Coin | Nft
 
 export type Address = {
   id: string,
@@ -115,8 +119,6 @@ export type Address = {
   // app or contract name, or by default the entire address
   name: string | null,
 }
-
-export type Asset = Coin | Nft
 
 export type Holder = Address & {
   quantity: TokenDecimals,
@@ -156,18 +158,25 @@ export type HomeResponse = {
   },
 }
 
-export type Transfer = {
+export type Operation = {
   id: string,
+  operationType: 'transfer' | 'call' | 'contractCreation' | 'stakingOperation',
+  stakingType: '',
   status: 'waiting' | 'success' | 'failure',
   date: DateString,
   from: Address,
   to: Address,
+  functionName: string | null, // for Call only
   transferedAssets: {
     from: Address,
     to: Address,
     asset: Asset,
     quantity: TokenDecimals,
   }[],
+  fee: {
+    value: Dollars,
+    nativeValue: TokenDecimals,
+  },
 }
 
 export type MinimalTransfer = {
@@ -179,35 +188,13 @@ export type MinimalTransfer = {
   quantity: TokenDecimals,
 }
 
-export type Call = Transfer & {
-  contractName: string,
-  functionName: string,
-}
-
-export type Operation = Transfer | Call
-
-
-export type AbstractOperationResponse = {
-  artifactType: 'transfer' | 'call',
+export type OperationResponse = {
+  artifactType: 'operation',
   operation: Operation,
-  fee: {
-    value: Dollars,
-    nativeValue: TokenDecimals,
-  },
   history: {
     from: Operation[], // paginated
     to: Operation[], // paginated
   },
-}
-
-export type TransferResponse = AbstractOperationResponse & {
-  artifactType: 'transfer',
-  operation: Transfer,
-}
-
-export type CallResponse = AbstractOperationResponse & {
-  artifactType: 'call',
-  operation: Call,
 }
 
 export type WalletResponse = {
