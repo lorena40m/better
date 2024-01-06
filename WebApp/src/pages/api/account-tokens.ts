@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import pool from '../../endpoints/providers/db';
+import { query } from '@/endpoints/providers/db';
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,7 +8,7 @@ export default async function handler(
   const address = req.query.address;
 
   try {
-    const { rows: tokens } = await pool.query('
+    const tokens = await query('TOKENS', `
 
     SELECT
         "TokenBalances"."TokenId",
@@ -29,11 +29,12 @@ export default async function handler(
         "Tokens"."Metadata"
     HAVING
         MAX(("Tokens"."Metadata"->>'decimals')::INT) > 0;
-      ', [address]);
+      `, [address]);
     // recuperer le storage des tokens afin de calculer le prix des tokens via : token_pool / tez_pool
     // sinon utiliser : https://temple-api-mainnet.prod.templewallet.com/api/exchange-rates
     res.status(200).json(tokens);
   } catch (err) {
-    res.status(500).json({ error: 'Erreur du serveur' });
+    res.status(500).json({ error: `Erreur du serveur ${err}` });
+    console.error(err)
   }
 }
