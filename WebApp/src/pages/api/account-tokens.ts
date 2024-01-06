@@ -8,13 +8,34 @@ export default async function handler(
   const address = req.query.address;
 
   try {
+    //TODO : add value in dollars, add lastPrice into Asset object and check that it's the right id 
     const tokens = await query('TOKENS', `
 
     SELECT
         "TokenBalances"."TokenId",
-        SUM("TokenBalances"."Balance"::NUMERIC) AS "TotalBalance",
-        "Tokens"."ContractId",
-        "Tokens"."Metadata"
+        CASE
+        WHEN (("Tokens"."Metadata"->>'decimals')::INT > 0) THEN
+            jsonb_build_object(
+                'assetType', 'coin',
+                'id', "Tokens"."ContractId",
+                'name', "Tokens"."Metadata"->>'name',
+                'ticker', "Tokens"."Metadata"->>'symbol',
+                'decimals', ("Tokens"."Metadata"->>'decimals')::INT,
+                'logo', "Tokens"."Metadata"->>'thumbnailUri',
+                'lastPrice', 0
+            )
+        WHEN (("Tokens"."Metadata"->>'decimals')::INT = 0) THEN
+            jsonb_build_object(
+                'assetType', 'nft',
+                'id', "Tokens"."ContractId",
+                'tokenId', "Tokens"."ContractId",
+                'image', "Tokens"."Metadata"->>'thumbnailUri',
+                'name', "Tokens"."Metadata"->>'name',
+                'lastSalePrice', 0,
+                'collection', 'to_implement' 
+            )
+    END Asset, 
+        SUM("TokenBalances"."Balance"::NUMERIC) AS "quantity"
     FROM
         "Accounts"
     INNER JOIN
@@ -27,8 +48,6 @@ export default async function handler(
         "TokenBalances"."TokenId",
         "Tokens"."ContractId",
         "Tokens"."Metadata"
-    HAVING
-        MAX(("Tokens"."Metadata"->>'decimals')::INT) > 0;
       `, [address]);
     // recuperer le storage des tokens afin de calculer le prix des tokens via : token_pool / tez_pool
     // sinon utiliser : https://temple-api-mainnet.prod.templewallet.com/api/exchange-rates
