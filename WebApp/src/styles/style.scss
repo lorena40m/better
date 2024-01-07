@@ -1549,7 +1549,8 @@ Project: less intrusive search button
 }
 
 .hoverItem {
-  background-color: #f5f6f8;
+  background-color: #f6f6f680;
+  border: #d6d6d6 1px solid;
   transition: background-color 0.2s, box-shadow 0.2s;
   cursor: pointer;
 
