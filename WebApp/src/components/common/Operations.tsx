@@ -13,7 +13,7 @@ const Operations = (props) => {
   return (
     <div className="operationsBox box">
       <h3>Latest operations</h3>
-      {props.operations.map(operation => {
+      {props.operations?.map(operation => {
         const user = operation.TargetAddress === props.address ? operation.SenderAddress : operation.TargetAddress;
         const userName = user?.substring(0, 2) === "KT" ? "Contract" : "User";
         let tokenName = operation?.Metadata?.symbol;
