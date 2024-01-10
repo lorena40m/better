@@ -11,6 +11,6 @@ export default async function handler(
     const user = await query('ACCOUNT INFOS', 'SELECT "Balance", "Id", "TransactionsCount" FROM "Accounts" WHERE "Address" = $1', [address]);
     res.status(200).json(user[0]);
   } catch (err) {
-    res.status(500).json({ error: 'Erreur du serveur' });
+    res.status(500).json({ error: err.toString() });
   }
 }

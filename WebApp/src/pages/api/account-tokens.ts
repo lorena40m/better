@@ -8,7 +8,7 @@ export default async function handler(
   const address = req.query.address;
 
   try {
-    //TODO : add value in dollars, add lastPrice into Asset object and check that it's the right id 
+    //TODO : add value in dollars, add lastPrice into Asset object and check that it's the right id
     const tokens = await query('TOKENS', `
 
     SELECT
@@ -32,9 +32,9 @@ export default async function handler(
                 'image', "Tokens"."Metadata"->>'thumbnailUri',
                 'name', "Tokens"."Metadata"->>'name',
                 'lastSalePrice', 0,
-                'collection', 'to_implement' 
+                'collection', 'to_implement'
             )
-    END Asset, 
+    END Asset,
         SUM("TokenBalances"."Balance"::NUMERIC) AS "quantity"
     FROM
         "Accounts"

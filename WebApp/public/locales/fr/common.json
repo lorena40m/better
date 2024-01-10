@@ -66,5 +66,12 @@
   "Transfer successful": "Transfert réussi",
   "From": "De",
   "To": "À",
-  "Header.Search.Placeholder": "Rechercher"
+  "Header.Search.Placeholder": "Rechercher",
+  "History.Counterparty.Name.user": "Utilisateur",
+  "History.Counterparty.Name.addressGroup": "Groupe d'adresses",
+  "History.Counterparty.Name.baker": "Meunier",
+  "History.Counterparty.Name.ghostContract": "Receveur invalide",
+  "History.Counterparty.Name.delegator": "Délégateur",
+  "History.Counterparty.Name.contract": "Contrat",
+  "History.Counterparty.Name.asset": "Actif Financier"
 }

@@ -166,7 +166,9 @@ export type Operation = {
   date: DateString,
   from: Address,
   to: Address,
-  functionName: string | null, // for Call only
+  functionName: string | null, // only for Call
+  contractCreated: string | null,
+  contractName: string | null,
   transferedAssets: {
     from: Address,
     to: Address,

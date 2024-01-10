@@ -15,7 +15,7 @@ import GeneralInfos from "@/components/common/GeneralInfos";
 import { formatPrice, formatNumber, formatToken, formatDate } from "@/utils/format";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { fetchAccountInfos, fetchAccountTokens, fetchAccountTransactionsHistory } from '@/utils/apiClient';
+import { fetchAccountInfos, fetchAccountTokens, fetchAccountHistory } from '@/utils/apiClient';
 import fetchCoinsInfos from '@/pages/api/coins-infos';
 
 type Props = {
@@ -29,8 +29,8 @@ const Wallet = ({ address, miscResponse }: Props) => {
   const [open, setOpen] = useState<Boolean>(false);
   const [tokens, setTokens] = useState({domains: [], nfts: [], coins: [], othersTokens: []});
   const [account, setAccount] = useState({balance: 0, transactionsCount: 0, id: 0});
-  const [transactionsHistory, setTransactionsHistory] = useState([]);
-  const [coinsInfos, setCoinsInfos] = useState();
+  const [history, setHistory] = useState([]);
+  const [coinsInfos, setCoinsInfos] = useState(null);
 
   useEffect(() => {
     fetchAccountTokens(address).then((data) => {
@@ -39,9 +39,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
     fetchAccountInfos(address).then((data) => {
       setAccount(data);
     });
-    fetchAccountTransactionsHistory(address, 10).then((data) => {
-      setTransactionsHistory(data);
-    });
+    fetchAccountHistory(address, 10).then(setHistory);
     fetch('/api/coins-infos')
       .then(response => response.json())
       .then(data => setCoinsInfos(data))
@@ -61,7 +59,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
             <Typography variant="h4" className="pageTemplate__title">
               {t("WalletPage.Title")}
               <span className="pageTemplate__status">
-                <Image src={TezosIcon} alt="" height={40} width={40} onClick={() => {console.log({account: account, tokens: tokens, transactionsHistory: transactionsHistory, coinsInfos: coinsInfos, miscResponse: miscResponse})}}/>
+                <Image src={TezosIcon} alt="" height={40} width={40} onClick={() => {console.log({account: account, tokens: tokens, history: history, coinsInfos: coinsInfos, miscResponse: miscResponse})}}/>
                 Tezos
               </span>
             </Typography>
@@ -75,7 +73,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
                 value1={
                   (account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) + 
                   tokens.coins.reduce(
-                    (total, coin) => total + ((coinsInfos.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.Balance / 10**coin.asset.decimals), 
+                    (total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
                     0
                   )}
                 var2="Operations"
@@ -92,13 +90,13 @@ const Wallet = ({ address, miscResponse }: Props) => {
                 1400: { slidesPerView: 2 },
               }} delay={4000} rates={miscResponse.rates} />*/}
               {
-                tokens.coins[0] ?
-                    <CoinBox coins={tokens.coins} coinsInfos={coinsInfos} />
+                tokens.coins[0] && coinsInfos ?
+                  <CoinBox coins={tokens.coins} coinsInfos={coinsInfos} />
                 : null
               }
             </Grid>
             <Grid item md={6} paddingLeft={"15px"}>
-              <Operations operations={transactionsHistory} address={address} />
+              <Operations history={history} address={address} />
             </Grid>
           </Grid>
         </Container>
