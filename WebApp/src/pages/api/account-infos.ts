@@ -20,6 +20,6 @@ export default async function handler(
     `, [address]);
     res.status(200).json(user[0]);
   } catch (err) {
-    res.status(500).json({ error: 'Erreur du serveur' });
+    res.status(500).json({ error: err.toString() });
   }
 }

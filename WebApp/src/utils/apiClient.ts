@@ -1,16 +1,16 @@
 import axios from "axios";
 
-async function fetchDatabase(url) {
+async function fetchApi(url) {
 	try {
 		const response = await axios.get(`/api/${url}`);
 		return (response.data);
 	} catch (err) {
-		console.error(`Error on /api/${url} :`, err);
+		console.error(`Error on /api/${url}:`, err);
 	}
 }
 
 export async function fetchAccountTokens(address) {
-	const response = await fetchDatabase(`account-tokens?address=${address}`);
+	const response = await fetchApi(`account-tokens?address=${address}`);
 	const domains = [];
 	const nfts = [];
 	const coins = [];
@@ -36,7 +36,7 @@ export async function fetchAccountTokens(address) {
 };
 
 export async function fetchAccountInfos(address) {
-	const response = await fetchDatabase(`account-infos?address=${address}`);
+	const response = await fetchApi(`account-infos?address=${address}`);
 	return ({
 		balance: response.Balance,
 		transactionsCount: response.TransactionsCount,
@@ -45,7 +45,7 @@ export async function fetchAccountInfos(address) {
 }
 
 export async function fetchContractInfos(address) {
-	const response = await fetchDatabase(`contract-infos?address=${address}`);
+	const response = await fetchApi(`contract-infos?address=${address}`);
 	return ({
 		balance: response.Balance,
 		transactionsCount: response.TransactionsCount,
@@ -53,8 +53,7 @@ export async function fetchContractInfos(address) {
 		creatorAddress: response.Address
 	});
 }
-
-export async function fetchAccountTransactionsHistory(address, limit) {
-	const response = await fetchDatabase(`/account-history?address=${address}&limit=${limit}`);
-	return (response);
+export async function fetchAccountHistory(address, limit) {
+	const response = await fetchApi(`/account-history?address=${address}&limit=${limit}`);
+	return response.history;
 }

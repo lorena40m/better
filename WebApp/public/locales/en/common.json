@@ -67,5 +67,12 @@
   "Transfer successful": "Transfer successful",
   "From": "From",
   "To": "To",
-  "Header.Search.Placeholder": "Search"
+  "Header.Search.Placeholder": "Search",
+  "History.Counterparty.Name.user": "User",
+  "History.Counterparty.Name.addressGroup": "Group of addresses",
+  "History.Counterparty.Name.baker": "Baker",
+  "History.Counterparty.Name.ghostContract": "Invalid target",
+  "History.Counterparty.Name.delegator": "Delegator",
+  "History.Counterparty.Name.contract": "Contract",
+  "History.Counterparty.Name.asset": "Financial Asset"
 }

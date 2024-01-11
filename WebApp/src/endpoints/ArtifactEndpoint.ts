@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {
   ArtifactEndpoint,
-  TransferResponse, CallResponse, WalletResponse,
+  OperationResponse, WalletResponse,
   CollectionResponse, CoinResponse, ContractResponse,
 } from './API'
 import * as tzkt from './providers/tzkt'

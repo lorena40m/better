@@ -53,11 +53,11 @@ const CoinBox = (props) => {
                 <div className="coinBox__coin__left">
                   {coin.asset.logo ? <img src={ipfsToLink(coin.asset.logo)} alt={coin.asset.name + "logo"} /> : <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="no image" />}
                   <div>
-                    <p className="coinBox__coin__left__title">{formatToken(coin.quantity, Number(coin.asset.decimals), locale).slice(0, 4)}... <strong>{coin.asset.ticker}</strong></p>
+                    <p className="coinBox__coin__left__title">{formatToken(coin.quantity, Number(coin.asset.decimals), locale)} <strong>{coin.asset.ticker}</strong></p>
                   </div>
                 </div>
                 <div className="coinBox__coin__right">
-                  <p>{(Number(formatToken(coin.quantity, Number(coin.asset.decimals), locale)) * coinValue).toString().slice(0, 4)}$</p>
+                  <p>{formatPrice(coin.quantity / 10**coin.asset.decimals * coinValue, locale, props.rates)}</p>
                 </div>
               </div>
             );

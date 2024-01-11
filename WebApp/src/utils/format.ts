@@ -41,7 +41,9 @@ const dustTerm = {
   fr: 'poussière',
 }
 
-function _formatNumber(quantity: string, decimals: number, significantDigits = 3, locale: string) {
+function _formatNumber(quantity: string, decimals: number, significantDigits = 3, locale: string): string {
+  const sign = quantity.startsWith('-') ? '-' : ''
+  if (quantity.startsWith('-')) quantity = quantity.substring(1)
   if (/^0*$/.test(quantity)) return '0'
 
   quantity = quantity.replace(/^0+/, '')
@@ -55,23 +57,19 @@ function _formatNumber(quantity: string, decimals: number, significantDigits = 3
       firstDigits = firstDigits.slice(0, biggerSignificantDigit % 3)
         + floatSeparator[locale] + firstDigits.slice(quantity.length % 3)
     };
-    return firstDigits + ' ' + magnitudeTerm +
+    return sign + firstDigits + ' ' + magnitudeTerm +
       (firstDigits[0] == '1' && quantity.length % 3 === 1 ? '' : 's')
   }
 
   if (biggerSignificantDigit >= 3) {
     let number = Math.floor(+quantity / Math.pow(10, decimals))
-    return new Intl.NumberFormat(locale).format(number)
+    return sign + new Intl.NumberFormat(locale).format(number)
   }
 
   const significance = biggerSignificantDigit + Math.min(significantDigits - biggerSignificantDigit, decimals)
 
-  if (biggerSignificantDigit >= 0) {
-    let number = +firstDigits / Math.pow(10, significance - biggerSignificantDigit)
-    return number.toFixed(Math.min(significance - biggerSignificantDigit, decimals)).replace('.', floatSeparator[locale])
-  }
-
-  return (+quantity / Math.pow(10, decimals)).toFixed(decimals).replace('.', floatSeparator[locale])
+  let number = +firstDigits / Math.pow(10, significance - biggerSignificantDigit)
+  return sign + number.toFixed(Math.min(significance - biggerSignificantDigit, decimals)).replace('.', floatSeparator[locale])
 }
 
 export function formatNumber(number: number, locale: string) {

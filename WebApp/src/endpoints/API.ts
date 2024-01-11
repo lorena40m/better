@@ -38,7 +38,7 @@ export type LoadMoreHomeEndpoint = (params: {
 export type ArtifactEndpoint = (params: {
   id: string,
   pageSize: number,
-}) => Promise<TransferResponse | CallResponse | // operations
+}) => Promise<OperationResponse | // operations
   WalletResponse | CoinResponse | CollectionResponse | ContractResponse | // addresses
   NotFoundResponse>
 

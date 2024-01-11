@@ -21,19 +21,19 @@ export default function Header({ hideSearch }: Props) {
   const [searchHistory, setSearchHistory] = useState([]);
 
   useEffect(() => {
-    let storedHistory = localStorage.getItem("searchHistory");
-    storedHistory = storedHistory ? JSON.parse(storedHistory) : [];
-    if (!storedHistory.includes(router.query.id)) {
+    let encodedStoredHistory = localStorage.getItem("searchHistory");
+    let storedHistory: string[] = encodedStoredHistory ? JSON.parse(encodedStoredHistory) : [];
+    if (!storedHistory.includes(router.query.id as string)) {
       if (storedHistory.length >= 10) {
         storedHistory.pop();
       }
       if (router.query.id) {
-        storedHistory.unshift(router.query.id);
+        storedHistory.unshift(router.query.id as string);
       }
     } else {
-      const index = storedHistory.indexOf(router.query.id);
+      const index = storedHistory.indexOf(router.query.id as string);
       storedHistory.splice(index, 1);
-      storedHistory.unshift(router.query.id);
+      storedHistory.unshift(router.query.id as string);
     }
     localStorage.setItem("searchHistory", JSON.stringify(storedHistory));
     setSearchHistory(storedHistory);
@@ -92,9 +92,10 @@ export default function Header({ hideSearch }: Props) {
         </div>}
         <div className="main-header__container__right">
           <Select
-            onChange={(e) => {onToggleLanguageClick(changeTo); setLanguage(e.target.value)}}
+            onChange={value => {onToggleLanguageClick(changeTo); setLanguage(value)}}
             values={['en', 'fr']}
             labels={['🇺🇸 English', '🇫🇷 Français']}
+            defaultValue={language}
           />
         </div>
       </div>
