@@ -1497,4 +1497,4 @@ export default (async ({ pageSize }) => {
       byVolume: [],// await coinmarketcap.getTop50Cryptos('volume_24h'), // paginated
     },
   }
-}) as HomeEndpoint
+}) // as HomeEndpoint

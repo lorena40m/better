@@ -99,7 +99,7 @@ export async function getCoin(contractHash, tokenId, lastPrice) {
     lastPrice,
     circulatingSupplyOnChain: coin?.totalSupply,
     holders: coin?.holdersCount.toString(),
-  } as Coin
+  } // as Coin
 }
 
 export async function getCoinHolders(contractHash) {

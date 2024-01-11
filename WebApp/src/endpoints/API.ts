@@ -38,7 +38,7 @@ export type LoadMoreHomeEndpoint = (params: {
 export type ArtifactEndpoint = (params: {
   id: string,
   pageSize: number,
-}) => Promise<TransferResponse | CallResponse | // operations
+}) => Promise<OperationResponse | // operations
   WalletResponse | CoinResponse | CollectionResponse | ContractResponse | // addresses
   NotFoundResponse>
 
@@ -166,9 +166,7 @@ export type Operation = {
   date: DateString,
   from: Address,
   to: Address,
-  functionName: string | null, // only for Call
-  contractCreated: string | null,
-  contractName: string | null,
+  functionName: string | null, // for Call only
   transferedAssets: {
     from: Address,
     to: Address,

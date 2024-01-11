@@ -53,9 +53,9 @@ const Operations = (props: Props) => {
                         Call <pre>{operation.functionName}</pre>
                       </p>
                     :
-                      operation.transferedAssets.map(transfer =>
+                      operation.transferedAssets.map((transfer, i) =>
                         transfer.asset.assetType === 'coin' ?
-                        <p style={+transfer.quantity > 0 ? {color: "rgb(39 169 27)"} : +transfer.quantity < 0 ? {color: "rgb(255 131 9)"} : null}>
+                        <p key={i} style={+transfer.quantity > 0 ? {color: "rgb(39 169 27)"} : +transfer.quantity < 0 ? {color: "rgb(255 131 9)"} : null}>
                           {/*<span title={formatTokenWithExactAllDecimals(transfer.quantity, transfer.asset.decimals, locale) + ' ' + transfer.asset.ticker}>*/}
                             {+transfer.quantity > 0 ? '+' : +transfer.quantity == 0 ? '=' : '-'}
                             {transfer.quantity}
@@ -64,7 +64,7 @@ const Operations = (props: Props) => {
                           {/*</span>*/}
                         </p>
                         :
-                        <p style={+transfer.quantity > 0 ? {color: "rgb(39 169 27)"} : +transfer.quantity < 0 ? {color: "rgb(255 131 9)"} : null}>
+                        <p key={i} style={+transfer.quantity > 0 ? {color: "rgb(39 169 27)"} : +transfer.quantity < 0 ? {color: "rgb(255 131 9)"} : null}>
                           {/*<span title={formatNumber(+transfer.quantity, locale) + ' NFT' + (transfer.quantity[1] === '1' ? '' : 's')}>
                             {transfer.quantity[0]}
                             {formatNumber(+transfer.quantity, locale)}

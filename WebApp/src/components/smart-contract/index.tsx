@@ -52,7 +52,7 @@ const 	Contract = ({ ArtifactResponse, miscResponse }) => {
 					/>
 				</Grid>
 				<Grid sm={12} md={6} paddingLeft={"10px"} paddingRight={"10px"}>
-					<Operations operations={ArtifactResponse.history} contractAddress={ArtifactResponse.contract.id} />
+					<Operations history={ArtifactResponse.history} address={ArtifactResponse.contract.id} />
 				</Grid>
 			</Grid>
         </Container>

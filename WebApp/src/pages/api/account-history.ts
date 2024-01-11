@@ -28,7 +28,7 @@ function groupBy(arr, keyFn): Map<any, any> {
 }
 
 function sum(numbers: number[] | BigInt[]) {
-  return numbers.reduce((total, num) => total + num, typeof numbers[0] === 'number' ? 0 : BigInt(0));
+  return (numbers as number[]).reduce((total, num) => (total as number) + num, typeof numbers[0] === 'number' ? 0 : BigInt(0));
 }
 
 const accountTypes = {
@@ -69,20 +69,21 @@ export type Operation = {
   },
   transferedAssets: Array<{
     quantity: TokenDecimals, // -/+ signed balance changes for the user
-    asset: {
-      assetType: 'nft',
-      id: string,
-      name: string,
-      image: UrlString,
-    } | {
-      assetType: 'coin',
-      id: string | 'tezos',
-      name: string,
-      ticker: string,
-      decimals: number,
-      image: UrlString, // image is null when id = 'tezos'
-    },
+    asset: Asset,
   }>,
+}
+export type Asset = {
+  assetType: 'nft',
+  id: string,
+  name: string,
+  image: UrlString,
+} | {
+  assetType: 'coin',
+  id: string | 'tezos',
+  name: string,
+  ticker: string,
+  decimals: number,
+  image: UrlString, // image is null when id = 'tezos'
 }
 
 export default async function handler(
@@ -269,7 +270,7 @@ export default async function handler(
               ticker: 'XTZ',
               decimals: 6,
               image: null, // will be stored by frontend
-            },
+            } as Asset,
           }] : [])(sum(operationsByRoot[root.Id].map(o => (/*isSender()*/true ? -1 : 1) * +o.Amount)))
           .concat(
             Array.from(groupBy(transfersByRoot[root.Id] ?? [], t => t.AssetId))
