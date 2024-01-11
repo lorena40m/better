@@ -71,11 +71,16 @@ const Wallet = ({ address, miscResponse }: Props) => {
                 address={address}
                 var1="Total value"
                 value1={
-                  (account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) + 
-                  tokens.coins.reduce(
-                    (total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
-                    0
-                  )}
+                  formatPrice(
+                    (account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
+                    tokens.coins.reduce(
+                      (total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
+                      0
+                    ),
+                    locale,
+                    miscResponse.rates
+                  )
+                }
                 var2="Operations"
                 value2={formatNumber(account?.transactionsCount, locale)}
                 var3="Balance"
@@ -91,7 +96,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
               }} delay={4000} rates={miscResponse.rates} />*/}
               {
                 tokens.coins[0] && coinsInfos ?
-                  <CoinBox coins={tokens.coins} coinsInfos={coinsInfos} />
+                  <CoinBox coins={tokens.coins} coinsInfos={coinsInfos} rates={miscResponse.rates} />
                 : null
               }
             </Grid>

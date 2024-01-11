@@ -92,9 +92,10 @@ export default function Header({ hideSearch }: Props) {
         </div>}
         <div className="main-header__container__right">
           <Select
-            onChange={(e) => {onToggleLanguageClick(changeTo); setLanguage(e.target.value)}}
+            onChange={value => {onToggleLanguageClick(changeTo); setLanguage(value)}}
             values={['en', 'fr']}
             labels={['🇺🇸 English', '🇫🇷 Français']}
+            defaultValue={language}
           />
         </div>
       </div>

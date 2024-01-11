@@ -65,6 +65,7 @@ const formatToken_CASES = [
   { quantity: '1234568900000000000', decimals: 18, locale: 'en', expect: '1.23', },
   { quantity: '123456789', decimals: 18, locale: 'en', expect: '0.000000000123', },
   { quantity: '12', decimals: 18, locale: 'en', expect: '0.000000000000000012', },
+  { quantity: '12', decimals: 18, locale: 'en', expect: '0.000000000000000012', },
 ]
 
 TestScript(async function () {

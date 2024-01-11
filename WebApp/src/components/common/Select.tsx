@@ -5,9 +5,9 @@ import FormControl from "@mui/material/FormControl";
 import MuiSelect, { SelectChangeEvent } from "@mui/material/Select";
 import { useTranslation } from "next-i18next";
 
-export default function Select({ onChange, values, labels }) {
+export default function Select({ onChange, values, labels, defaultValue }) {
   const { t } = useTranslation("common");
-  const [value, setValue] = React.useState(values[0]);
+  const [value, setValue] = React.useState(defaultValue ?? values[0]);
 
   return (
     <FormControl sx={{ minWidth: 150 }}>
