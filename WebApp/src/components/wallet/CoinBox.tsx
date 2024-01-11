@@ -44,20 +44,20 @@ const CoinBox = (props) => {
         </div>*/}
         <div className="coinBox__coin-container">
           {props.coins.map((coin) => {
-            const coinInfos = props.coinsInfos.find(coinInfos => coinInfos.tokenAddress === coin.Address);
+            const coinInfos = props.coinsInfos.find(coinInfos => coinInfos.tokenAddress === coin.asset.address);
             const coinValue = coinInfos?.exchangeRate ?? 0;
             return (
-              <div key={coin.id} className="coinBox__coin"
-                style={coin.Metadata.thumbnailUri ? {order: "1"} : {order: "1"}}
+              <div key={coin.TokenId} className="coinBox__coin"
+                style={coin.asset.logo ? {order: "1"} : {order: "1"}}
               >
                 <div className="coinBox__coin__left">
-                  {coin.Metadata.thumbnailUri ? <img src={ipfsToLink(coin.Metadata.thumbnailUri)} alt={coin.Metadata.name + "logo"} /> : <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="no image" />}
+                  {coin.asset.logo ? <img src={ipfsToLink(coin.asset.logo)} alt={coin.asset.name + "logo"} /> : <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="no image" />}
                   <div>
-                    <p className="coinBox__coin__left__title">{formatToken(coin.Balance, Number(coin.Metadata.decimals), locale).slice(0, 4)}... <strong>{coin.Metadata.symbol}</strong></p>
+                    <p className="coinBox__coin__left__title">{formatToken(coin.quantity, Number(coin.asset.decimals), locale).slice(0, 4)}... <strong>{coin.asset.ticker}</strong></p>
                   </div>
                 </div>
                 <div className="coinBox__coin__right">
-                  <p>{(Number(formatToken(coin.Balance, Number(coin.Metadata.decimals), locale)) * coinValue).toString().slice(0, 4)}$</p>
+                  <p>{(Number(formatToken(coin.quantity, Number(coin.asset.decimals), locale)) * coinValue).toString().slice(0, 4)}$</p>
                 </div>
               </div>
             );

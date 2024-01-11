@@ -52,7 +52,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
   return (
     <main>
       <Head>
-        <title>{tokens.domains[0]?.Metadata?.name} | BetterScan</title>
+        <title>{tokens.domains[0]?.Metadata?.name || 'User'} | BetterScan</title>
       </Head>
       <Header hideSearch={true} />
       <Box className="pageTemplate WalletOprationCard">
@@ -75,7 +75,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
                 value1={
                   (account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) + 
                   tokens.coins.reduce(
-                    (total, coin) => total + ((coinsInfos.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.Balance / 10**coin.Metadata.decimals), 
+                    (total, coin) => total + ((coinsInfos.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.Balance / 10**coin.asset.decimals), 
                     0
                   )}
                 var2="Operations"

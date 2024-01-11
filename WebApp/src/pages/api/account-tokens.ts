@@ -17,6 +17,7 @@ export default async function handler(
         WHEN (("Tokens"."Metadata"->>'decimals')::INT > 0) THEN
             jsonb_build_object(
                 'assetType', 'coin',
+                'address', MIN(contract."Address"),
                 'id', "Tokens"."ContractId",
                 'name', "Tokens"."Metadata"->>'name',
                 'ticker', "Tokens"."Metadata"->>'symbol',
@@ -28,7 +29,6 @@ export default async function handler(
             jsonb_build_object(
                 'assetType', 'nft',
                 'id', "Tokens"."ContractId",
-                'tokenId', "Tokens"."ContractId",
                 'image', "Tokens"."Metadata"->>'thumbnailUri',
                 'name', "Tokens"."Metadata"->>'name',
                 'lastSalePrice', 0,
@@ -42,6 +42,8 @@ export default async function handler(
         "TokenBalances" ON "Accounts"."Id" = "TokenBalances"."AccountId"
     INNER JOIN
         "Tokens" ON "TokenBalances"."TokenId" = "Tokens"."Id"
+    LEFT JOIN
+        "Accounts" as contract ON "Tokens"."ContractId" = contract."Id"
     WHERE
         "Accounts"."Address" = $1 AND "TokenBalances"."Balance" <> '0'
     GROUP BY

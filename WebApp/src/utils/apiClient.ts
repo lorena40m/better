@@ -16,22 +16,12 @@ export async function fetchAccountTokens(address) {
 	const coins = [];
 	const othersTokens = [];
 	response.map((token) => {
-		if (token.Metadata) {
-			if (token.Metadata.decimals) {
-				if (token.Metadata.decimals === "0") {
-					if (token.Metadata.artifactUri) {
-						nfts.push(token);
-					} else if (token.ContractId === 1262424) {
-						domains.push(token);
-					} else {
-						othersTokens.push(token);
-					}
-				} else {
-					coins.push(token);
-				}
-			} else {
-				othersTokens.push(token);
-			}
+		if (token.asset?.assetType === 'coin') {
+			coins.push(token);
+		} else if (token.asset?.assetType === 'nft') {
+			nfts.push(token);
+		} else if (token.asset?.id === 1262424) {
+			domains.push(token);
 		} else {
 			othersTokens.push(token);
 		}
