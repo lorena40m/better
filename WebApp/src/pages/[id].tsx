@@ -69,7 +69,11 @@ const Artifact = (props) => {
   if (props.hash.substring(0, 2) === "tz") {
     return (
       <Wallet address={props.hash} miscResponse={props.miscResponse} />
-    )
+    );
+  } else if (props.hash.substring(0, 2) === "KT") {
+    return (
+      <Contract address={props.hash} miscResponse={props.miscResponse} />
+    );
   }
 };
 

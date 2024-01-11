@@ -26,7 +26,6 @@ type Props = {
 const Wallet = ({ address, miscResponse }: Props) => {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
-  const [open, setOpen] = useState<Boolean>(false);
   const [tokens, setTokens] = useState({domains: [], nfts: [], coins: [], othersTokens: []});
   const [account, setAccount] = useState({balance: 0, transactionsCount: 0, id: 0});
   const [transactionsHistory, setTransactionsHistory] = useState([]);
@@ -75,7 +74,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
                 value1={
                   (account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) + 
                   tokens.coins.reduce(
-                    (total, coin) => total + ((coinsInfos.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.Balance / 10**coin.asset.decimals), 
+                    (total, coin) => total + ((coinsInfos.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals), 
                     0
                   )}
                 var2="Operations"
@@ -103,7 +102,6 @@ const Wallet = ({ address, miscResponse }: Props) => {
           </Grid>
         </Container>
       </Box>
-      <ConfirmModal open={open} close={() => setOpen(false)} />
     </main>
   );
 };

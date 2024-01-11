@@ -44,6 +44,16 @@ export async function fetchAccountInfos(address) {
 	});
 }
 
+export async function fetchContractInfos(address) {
+	const response = await fetchDatabase(`contract-infos?address=${address}`);
+	return ({
+		balance: response.Balance,
+		transactionsCount: response.TransactionsCount,
+		id: response.Id,
+		creatorAddress: response.Address
+	});
+}
+
 export async function fetchAccountTransactionsHistory(address, limit) {
 	const response = await fetchDatabase(`/account-history?address=${address}&limit=${limit}`);
 	return (response);

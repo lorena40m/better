@@ -10,13 +10,16 @@ export default async function handler(
   try {
     const user = await query('ACCOUNT INFOS', `
     SELECT
-      "Balance",
-      "Id",
-      "TransactionsCount"
+      contract."Balance",
+      contract."Id",
+      contract."TransactionsCount",
+      creator."Address"
     FROM
-      "Accounts"
+      "Accounts" as contract
+    INNER JOIN
+      "Accounts" as creator ON creator."Id" = contract."CreatorId"
     WHERE
-      "Address" = $1
+      contract."Address" = $1
     `, [address]);
     res.status(200).json(user[0]);
   } catch (err) {
