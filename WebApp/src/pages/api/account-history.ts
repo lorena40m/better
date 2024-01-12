@@ -61,16 +61,17 @@ export type Operation = {
   status: 'waiting' | 'success' | 'failure',
   date: DateString,
   functionName: string,
-  counterparty: null | { // counterparty is null when operationType is 'transferGroup'
-    accountType: 'user' | 'baker' | 'ghostContract' | 'delegator' | 'contract' | 'asset',
-    address: string,
-    name: string,
-    image: UrlString | null,
-  },
+  counterparty: Account | null, // counterparty is null when operationType is 'transferGroup'
   transferedAssets: Array<{
     quantity: TokenDecimals, // -/+ signed balance changes for the user
     asset: Asset,
   }>,
+}
+export type Account = {
+  accountType: 'user' | 'baker' | 'ghostContract' | 'delegator' | 'contract' | 'asset',
+  address: string,
+  name: string,
+  image: UrlString | null,
 }
 export type Asset = {
   assetType: 'nft',

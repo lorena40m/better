@@ -7,16 +7,19 @@ import CoinBox from "@/components/wallet/CoinBox";
 import ConfirmModal from "@/components/wallet/ConfirmModal";
 import TezosIcon from "../../assets/images/tezos.svg";
 import Image from "next/image";
+import Link from "next/link";
 import Operations from "@/components/common/Operations";
 import { useTranslation } from "next-i18next";
 import Carousel from "@/components/Carousel/Carousel";
 import NftSlide from "@/components/Carousel/NftSlide";
 import GeneralInfos from "@/components/common/GeneralInfos";
-import { formatPrice, formatNumber, formatToken, formatDate } from "@/utils/format";
+import { formatPrice, formatNumber, formatToken, formatDate, formatTokenWithExactAllDecimals } from "@/utils/format";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { fetchAccountInfos, fetchAccountTokens, fetchAccountHistory } from '@/utils/apiClient';
 import fetchCoinsInfos from '@/pages/api/coins-infos';
+import TezosIcon2 from "@/assets/images/tezos.png";
+import { accountIcon } from '@/components/common/artifactIcon'
 
 type Props = {
   address: string,
@@ -57,18 +60,25 @@ const Wallet = ({ address, miscResponse }: Props) => {
           <div className="pageTemplate__head">
             <Typography variant="h4" className="pageTemplate__title">
               {t("WalletPage.Title")}
-              <span className="pageTemplate__status">
+              <Link href={'/'}>
+              <span className="pageTemplate__status hoverItem">
                 <Image src={TezosIcon} alt="" height={40} width={40} onClick={() => {console.log({account: account, tokens: tokens, history: history, coinsInfos: coinsInfos, miscResponse: miscResponse})}}/>
                 Tezos
               </span>
+              </Link>
             </Typography>
           </div>
           <Grid className="walletProfile" container>
             <Grid item md={6} paddingRight={"15px"}>
               <GeneralInfos
-                title={tokens.domains[0]?.Metadata?.name}
+                icon={accountIcon({
+                  name: tokens.domains[0]?.Metadata?.name ?? 'User',
+                  image: null,
+                  accountType: 'user',
+                })}
+                title={tokens.domains[0]?.Metadata?.name ?? 'User'}
                 address={address}
-                var1="Total value"
+                var1={t('Wallet.TotalValue')}
                 value1={
                   formatPrice(
                     (account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
@@ -80,11 +90,16 @@ const Wallet = ({ address, miscResponse }: Props) => {
                     miscResponse.rates
                   )
                 }
-                var2="Operations"
+                title1={null}
+                var2={t('Wallet.Operations')}
                 value2={formatNumber(account?.transactionsCount, locale)}
-                var3="Balance"
-                
-                value3={`${formatToken(account.balance.toString(), 6, locale)} XTZ`}
+                title2={null}
+                var3={t('Wallet.Balance')}
+                value3={<>
+                  <Image src={TezosIcon2} alt="XTZ" width={40} style={{ marginRight: 5 }} />
+                  {formatToken(account.balance.toString(), 6, locale)} XTZ
+                </>}
+                title3={'Tezos\n' + formatTokenWithExactAllDecimals(account.balance.toString(), 6, locale) + ' XTZ'}
               />
               {/*{tokens.nfts[0] ? <h5 className="operationCard__title">{t("Wallet.Nfts")}</h5> : null}
               <Carousel Slide={NftSlide} items={tokens.nfts} breakpoints={{

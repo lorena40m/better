@@ -111,6 +111,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                 onChange={setCollectionCriteria}
                 values={['trending', 'top']}
                 labels={[t('criteriaTrending'), t('criteriaTop')]}
+                defaultValue="trending"
               />
             </Box>
             <Carousel Slide={CollectionSlide} items={homeResponse.collections[collectionCriteria]}

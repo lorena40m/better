@@ -55,6 +55,10 @@ const 	Contract = ({ address, miscResponse }) => {
 			<Grid className="walletProfile" container>
 				<Grid sm={12} md={6} paddingLeft={"10px"} paddingRight={"10px"}>
 					<GeneralInfos
+						icon={null}
+						title1={null}
+						title2={null}
+						title3={null}
 						title={'Contract'}
 						address={address}
 						var1="Usages"
@@ -62,9 +66,9 @@ const 	Contract = ({ address, miscResponse }) => {
 						var2="Average fee"
 						value2={'0'}
 						var3="Treasury"
-						value3={(account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) + 
+						value3={(account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
 						tokens.coins.reduce(
-						  (total, coin) => total + ((coinsInfos.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals), 
+						  (total, coin) => total + ((coinsInfos.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
 						  0
 						)}
 					/>

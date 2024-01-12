@@ -41,6 +41,11 @@ const dustTerm = {
   fr: 'poussière',
 }
 
+const yesterday = {
+  en: 'yesterday',
+  fr: 'hier',
+}
+
 function _formatNumber(quantity: string, decimals: number, significantDigits = 3, locale: string): string {
   const sign = quantity.startsWith('-') ? '-' : ''
   if (quantity.startsWith('-')) quantity = quantity.substring(1)
@@ -112,7 +117,26 @@ export function formatPrice(price: number, locale: string, rates: object) {
 
 export function formatDate(date: string | number | Date, locale: string) {
   date = new Date(date)
-  if (date.toLocaleDateString() === (new Date).toLocaleDateString())
-    return date.toLocaleTimeString()
-  return date.toLocaleDateString(locale)
+  let time = date.toLocaleTimeString(locale, { timeStyle: 'short' })
+  time = locale === 'fr' ? time.replace(':', 'h') : time
+  if (date.toLocaleDateString() === (new Date).toLocaleDateString()) {
+    return time
+  }
+  const yesterdate = (new Date((new Date).setDate((new Date).getDate()-1)))
+  if (date.toLocaleDateString() === yesterdate.toLocaleDateString()) {
+    return yesterday[locale] + ' ' + time
+  }
+  return date.toLocaleDateString(locale, {
+    dateStyle: 'full',
+  })
+}
+
+export function formatEntiereDate(date: string | number | Date, locale: string) {
+  return (new Date(date)).toLocaleString(locale)
+}
+
+export function addSign(formattedNumber: string) {
+  return formattedNumber?.[0] === '-' ? formattedNumber :
+    formattedNumber === '0' ? '=' + formattedNumber :
+    '+' + formattedNumber
 }

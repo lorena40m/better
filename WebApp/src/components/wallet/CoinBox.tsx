@@ -13,16 +13,20 @@ import {
   Paper,
 } from "@mui/material";
 import React from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { formatPrice, formatToken } from '../../utils/format'
+import { formatPrice, formatToken, formatTokenWithExactAllDecimals } from '../../utils/format'
 import { divide } from "cypress/types/lodash";
+import { useTranslation } from "next-i18next";
+import { coinIcon } from '@/components/common/artifactIcon'
 
 const CoinBox = (props) => {
   const label = { inputProps: { "aria-label": "Color switch demo" } };
   const { locale } = useRouter();
+  const { t } = useTranslation("common");
 
-  function ipfsToLink(stringIpfs) {
+  function ipfsToLink(stringIpfs: string): string {
     if (!stringIpfs) {
       return ("");
     }
@@ -36,7 +40,7 @@ const CoinBox = (props) => {
 
   return (
     <div className="coinBox box">
-      <h3>Coins</h3>
+      <h3>{t('Coins.Title')}</h3>
       <div className="coinBox__container">
         {/*<div className="coinBox__container__header">
           <p>symbol</p>
@@ -51,12 +55,21 @@ const CoinBox = (props) => {
                 style={coin.asset.logo ? {order: "1"} : {order: "1"}}
               >
                 <div className="coinBox__coin__left">
-                  {coin.asset.logo ? <img src={ipfsToLink(coin.asset.logo)} alt={coin.asset.name + "logo"} /> : <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="no image" />}
+                  <Link href={'/' + coin.asset.address}>
+                    {coinIcon({ image: ipfsToLink(coin.asset.logo), ticker: coin.asset.ticker, id: coin.asset.address })}
+                  </Link>
                   <div>
-                    <p className="coinBox__coin__left__title">{formatToken(coin.quantity, Number(coin.asset.decimals), locale)} <strong>{coin.asset.ticker}</strong></p>
+                    <p className="coinBox__coin__left__title" title={
+                      coin.asset.name + '\n' +
+                      formatTokenWithExactAllDecimals(coin.quantity, Number(coin.asset.decimals), locale) + ' ' + coin.asset.ticker
+                    }>
+                      {formatToken(coin.quantity, Number(coin.asset.decimals), locale)}
+                      <Link href={'/' + coin.asset.address}><strong className="ticker hoverItem">{coin.asset.ticker}</strong></Link>
+                    </p>
                   </div>
                 </div>
-                <div className="coinBox__coin__right">
+                <div className="coinBox__coin__right"
+                  title={formatPrice(coinValue, locale, props.rates) + '/' + coin.asset.ticker}>
                   <p>{formatPrice(coin.quantity / 10**coin.asset.decimals * coinValue, locale, props.rates)}</p>
                 </div>
               </div>

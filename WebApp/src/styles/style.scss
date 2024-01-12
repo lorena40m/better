@@ -1425,6 +1425,14 @@ Project: less intrusive search button
     font-weight: 500;
     color: #2a3b51;
     width: 60%;
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 70px;
+      height: 70px;
+      margin-right: 10px;
+    }
   }
   &__bottom {
     display: flex;
@@ -1434,6 +1442,9 @@ Project: less intrusive search button
       font-size: 22px;
       font-weight: 700;
       color: #839BBB;
+      display: flex;
+      align-items: center;
+      min-height: 40px;
     }
     &__value {
       font-size: 28px;
@@ -1441,6 +1452,10 @@ Project: less intrusive search button
       background: linear-gradient(-30deg,#F64545, #3384F5);
       background-clip: text;
       -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      min-height: 40px;
+      white-space: nowrap;
     }
   }
   &__bottom div {
@@ -1449,7 +1464,7 @@ Project: less intrusive search button
     flex-direction: column;
     align-items: center;
   }
-  &__bottom div span {
+  &__bottom .divider {
     width: 80%;
     height: 2px;
     background-color: #839BBB;
@@ -1495,6 +1510,7 @@ Project: less intrusive search button
     margin-top: 10px;
     border-radius: 10px;
     padding: 20px 20px;
+    border: #d6d6d6 1px solid;
 
     &__operation {
       display: flex;
@@ -1503,35 +1519,81 @@ Project: less intrusive search button
       &__start {
         display: flex;
         align-items: center;
-        width: 70%;
+        max-width: 50%;
         gap: 20px;
+
+        img.accountIcon {
+          height: 50px;
+          object-fit: scale-down;
+          width: auto;
+        }
+
         &__name {
           font-size: 18px;
           font-weight: 700;
           color: #2a3b51;
           margin-bottom: 5px;
         }
+
         &__date {
           font-size: 16px;
           font-weight: 500;
           color: #2a3b51a0;
-        }
-        img {
-          height: 50px;
-          object-fit: scale-down;
-          width: auto;
+          display: flex;
+          align-items: center;
+
+          img.statusIcon {
+            margin-right: 5px;
+          }
         }
       }
       &__end {
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+
+        p {
+          text-align: right;
+          padding: 1px 4px;
+
+          pre {
+            display: inline-block;
+            color: #646464;
+            margin-left: 5px;
+          }
+        }
+
+        p {
+          display: flex;
+          align-items: center;
+          justify-content: end;
+
+          img.coinIcon {
+            width: 30px;
+            height: 30px;
+          }
+
+          img {
+            margin-right: 5px;
+          }
+
+          span {
+            // flex: 1;
+            text-align: right;
+          }
+        }
+
+        p.nft img {
+          border: 1px solid grey;
+          border-radius: 10px;
+        }
       }
-      &__end p {
-        font-size: 20px;
-        font-weight: 700;
-        padding: 0 0 0 5px;
-        text-align: right;
-      }
+    }
+
+    &__more {
+      padding: 20px 0px 0px 70px;
+      font-size: 18px;
+      // font-weight: 700;
     }
   }
 }
@@ -1553,7 +1615,6 @@ Project: less intrusive search button
 
 .hoverItem {
   background-color: #f6f6f680;
-  border: #d6d6d6 1px solid;
   transition: background-color 0.2s, box-shadow 0.2s;
   cursor: pointer;
 
@@ -1588,25 +1649,28 @@ Project: less intrusive search button
     width: 100%;
     border-radius: 5px;
     position: relative;
-    height: 80px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0px 15px;
-    transition: background-color 0.2s;
-    cursor: pointer;
     &__left {
       height: 100%;
       display: flex;
       align-items: center;
       gap: 10px;
       &__title {
-        font-size: 22px;
+        font-size: 20px;
         color: #2A3B51;
+
+        .ticker {
+          padding: 5px;
+        }
       }
     }
     &__left img {
-      height: 60%;
+      width: 40px;
+      height: 40px;
     }
     &__right {
       height: 100%;
@@ -1614,7 +1678,7 @@ Project: less intrusive search button
       flex-direction: column;
       align-items: flex-end;
       justify-content: center;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 500;
       color: #2A3B51;
     }
@@ -1630,9 +1694,6 @@ Project: less intrusive search button
   }
   &__coin:last-child::after {
     display: none;
-  }
-  &__coin:hover {
-    background-color: #e6e7e9;
   }
 }
 
