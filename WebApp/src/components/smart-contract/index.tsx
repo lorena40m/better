@@ -12,7 +12,7 @@ import Image from "next/image";
 import Operations from "@/components/common/Operations";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { formatPrice, formatNumber, formatToken, formatDate } from "@/utils/format";
-import { fetchContractInfos, fetchAccountTokens, fetchAccountTransactionsHistory } from '@/utils/apiClient';
+import { fetchContractInfos, fetchAccountTokens, fetchAccountHistory } from '@/utils/apiClient';
 import { useRouter } from "next/router";
 
 const 	Contract = ({ address, miscResponse }) => {
@@ -21,7 +21,7 @@ const 	Contract = ({ address, miscResponse }) => {
   const [tokens, setTokens] = useState({domains: [], nfts: [], coins: [], othersTokens: []});
   const [account, setAccount] = useState({balance: 0, transactionsCount: 0, id: 0, creatorAddress: ''});
   const [transactionsHistory, setTransactionsHistory] = useState([]);
-  const [coinsInfos, setCoinsInfos] = useState();
+  const [coinsInfos, setCoinsInfos] = useState(null);
 
   useEffect(() => {
 	fetchAccountTokens(address).then((data) => {
@@ -30,7 +30,7 @@ const 	Contract = ({ address, miscResponse }) => {
     fetchContractInfos(address).then((data) => {
       setAccount(data);
     });
-    fetchAccountTransactionsHistory(address, 10).then((data) => {
+    fetchAccountHistory(address, 10).then((data) => {
       setTransactionsHistory(data);
     });
     fetch('/api/coins-infos')
@@ -68,7 +68,7 @@ const 	Contract = ({ address, miscResponse }) => {
 						var3="Treasury"
 						value3={(account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
 						tokens.coins.reduce(
-						  (total, coin) => total + ((coinsInfos.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
+						  (total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
 						  0
 						)}
 					/>
