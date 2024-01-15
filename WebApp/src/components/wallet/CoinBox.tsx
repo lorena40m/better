@@ -16,7 +16,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { formatPrice, formatToken, formatTokenWithExactAllDecimals } from '../../utils/format'
+import { formatPrice, formatToken, formatTokenWithExactAllDecimals, formatInteger } from '../../utils/format'
 import { divide } from "cypress/types/lodash";
 import { useTranslation } from "next-i18next";
 import { coinIcon } from '@/components/common/artifactIcon'
@@ -40,16 +40,20 @@ const CoinBox = (props) => {
 
   return (
     <div className="coinBox box">
-      <h3>{t('Coins.Title')}</h3>
+      <div className="header">
+        <h3>{t('Coins.Title')}</h3>
+        <span className="headerInfo">{formatInteger(props.coins.length, locale)} {t('Coins.TokensFound')}</span>
+      </div>
       <div className="coinBox__container">
-        {/*<div className="coinBox__container__header">
-          <p>symbol</p>
-          <p>balance</p>
-        </div>*/}
         <div className="coinBox__coin-container">
           {props.coins.map((coin) => {
-            const coinInfos = props.coinsInfos.find(coinInfos => coinInfos.tokenAddress === coin.asset.address);
-            const coinValue = coinInfos?.exchangeRate ?? 0;
+            let coinValue
+            if (coin.asset.address === 'tezos') {
+              coinValue = parseInt(props.xtzPrice)
+            } else {
+              const coinInfos = props.coinsInfos.find(coinInfos => coinInfos.tokenAddress === coin.asset.address);
+              coinValue = coinInfos?.exchangeRate ?? 0;
+            }
             return (
               <div key={coin.TokenId} className="coinBox__coin"
                 style={coin.asset.logo ? {order: "1"} : {order: "1"}}

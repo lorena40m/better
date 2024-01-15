@@ -16,6 +16,7 @@ const LIMIT_TRANSFERS_BY_OPERATION = 4
 type Props = {
   history: History,
   address: string,
+  operationCount: number,
 }
 
 const Operations = (props: Props) => {
@@ -24,7 +25,11 @@ const Operations = (props: Props) => {
 
   return (
     <div className="operationsBox box">
-      <h3>{t('History.Title')}</h3>
+      <div className="header">
+        <h3>{t('History.Title')}</h3>
+        <span className="headerInfo">{formatInteger(props.operationCount, locale)} {t('History.OperationsFound')}</span>
+      </div>
+
       {props.history.map(batch => {
         const operationLimit = batch.length > LIMIT_OPERATIONS_BY_BATCH && LIMIT_OPERATIONS_BY_BATCH - 1
 

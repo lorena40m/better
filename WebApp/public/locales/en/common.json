@@ -72,7 +72,9 @@
   "Wallet.Operations": "Operations",
   "Wallet.Balance": "Balance",
   "Coins.Title": "Coins",
+  "Coins.TokensFound": "tokens",
   "History.Title": "Lastest Operations",
+  "History.OperationsFound": "operations",
   "AccountDefaultName.user": "User",
   "AccountDefaultName.userGroup": "Group of addresses",
   "AccountDefaultName.baker": "Baker",
@@ -83,7 +85,7 @@
   "History.Status.success": "Secured on ",
   "History.Status.failure": "Failed on ",
   "History.Status.waiting": "Pending on ",
-  "History.Call": "Call",
+  "History.Call": "",
   "History.More.Operations": "operations",
   "History.More.Transfers": "transfers"
 }

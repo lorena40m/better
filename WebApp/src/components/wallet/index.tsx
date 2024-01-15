@@ -12,7 +12,7 @@ import Operations from "@/components/common/Operations";
 import { useTranslation } from "next-i18next";
 import Carousel from "@/components/Carousel/Carousel";
 import NftSlide from "@/components/Carousel/NftSlide";
-import GeneralInfos from "@/components/common/GeneralInfos";
+import MainInfos from "@/components/common/MainInfos";
 import { formatPrice, formatNumber, formatToken, formatDate, formatTokenWithExactAllDecimals } from "@/utils/format";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -23,7 +23,7 @@ import { accountIcon } from '@/components/common/artifactIcon'
 
 type Props = {
   address: string,
-  miscResponse: {rates: {"EUR/USD": 0}, xtzPrice: 0},
+  miscResponse: {rates: {"EUR/USD": number}, xtzPrice: number},
 }
 
 const Wallet = ({ address, miscResponse }: Props) => {
@@ -48,6 +48,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
       .catch(error => console.error('Error fetching data:', error));
   }, [address]);
 
+  console.log('misc', miscResponse)
 
   return (
     <main>
@@ -70,16 +71,16 @@ const Wallet = ({ address, miscResponse }: Props) => {
           </div>
           <Grid className="walletProfile" container>
             <Grid item md={6} paddingRight={"15px"}>
-              <GeneralInfos
+              <MainInfos
                 icon={accountIcon({
                   name: tokens.domains[0]?.Metadata?.name ?? 'User',
                   image: null,
                   accountType: 'user',
                 })}
-                title={tokens.domains[0]?.Metadata?.name ?? 'User'}
+                name={tokens.domains[0]?.Metadata?.name ?? 'User'}
                 address={address}
-                var1={t('Wallet.TotalValue')}
-                value1={
+                var={t('Wallet.TotalValue')}
+                value={
                   formatPrice(
                     (account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
                     tokens.coins.reduce(
@@ -90,16 +91,18 @@ const Wallet = ({ address, miscResponse }: Props) => {
                     miscResponse.rates
                   )
                 }
-                title1={null}
-                var2={t('Wallet.Operations')}
-                value2={formatNumber(account?.transactionsCount, locale)}
-                title2={null}
-                var3={t('Wallet.Balance')}
-                value3={<>
-                  <Image src={TezosIcon2} alt="XTZ" width={40} style={{ marginRight: 5 }} />
-                  {formatToken(account.balance.toString(), 6, locale)} XTZ
-                </>}
-                title3={'Tezos\n' + formatTokenWithExactAllDecimals(account.balance.toString(), 6, locale) + ' XTZ'}
+                title={null}
+
+                // var1={t('Wallet.Operations')}
+                // value1=
+                // title1={null}
+                // var3={t('Wallet.Balance')}
+                // value3={<>
+                //   <Image src={TezosIcon2} alt="XTZ" width={40} style={{ marginRight: 5 }} />
+                //   {formatToken(account.balance.toString(), 6, locale)} XTZ
+                // </>}
+                // title3={'Tezos\n' + formatTokenWithExactAllDecimals(account.balance.toString(), 6, locale) + ' XTZ'}
+
               />
               {/*{tokens.nfts[0] ? <h5 className="operationCard__title">{t("Wallet.Nfts")}</h5> : null}
               <Carousel Slide={NftSlide} items={tokens.nfts} breakpoints={{
@@ -109,13 +112,26 @@ const Wallet = ({ address, miscResponse }: Props) => {
                 1400: { slidesPerView: 2 },
               }} delay={4000} rates={miscResponse.rates} />*/}
               {
-                tokens.coins[0] && coinsInfos ?
-                  <CoinBox coins={tokens.coins} coinsInfos={coinsInfos} rates={miscResponse.rates} />
+                tokens.coins[0] && coinsInfos || account.balance > 0 ?
+                  <CoinBox coins={[{
+                    "TokenId": null,
+                    "asset": {
+                        "id": 'tezos',
+                        "logo": null,
+                        "name": "Tezos",
+                        "ticker": "XTZ",
+                        "address": 'tezos',
+                        "decimals": 6,
+                        "assetType": "coin",
+                        "lastPrice": 1
+                    },
+                    "quantity": account.balance.toString()
+                  }].concat(tokens.coins)} coinsInfos={coinsInfos} rates={miscResponse.rates} xtzPrice={miscResponse.xtzPrice} />
                 : null
               }
             </Grid>
             <Grid item md={6} paddingLeft={"15px"}>
-              <Operations history={history} address={address} />
+              <Operations history={history} address={address} operationCount={account?.transactionsCount} />
             </Grid>
           </Grid>
         </Container>

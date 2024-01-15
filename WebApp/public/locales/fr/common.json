@@ -71,7 +71,9 @@
   "Wallet.Operations": "Opérations",
   "Wallet.Balance": "Solde",
   "Coins.Title": "Cryptomonnaies",
+  "Coins.TokensFound": "jetons",
   "History.Title": "Opérations récentes",
+  "History.OperationsFound": "opérations",
   "AccountDefaultName.user": "Utilisateur",
   "AccountDefaultName.userGroup": "Groupe d'adresses",
   "AccountDefaultName.baker": "Meunier",
@@ -82,7 +84,7 @@
   "History.Status.success": "Sécurisé le ",
   "History.Status.failure": "Échoué le ",
   "History.Status.waiting": "En attente le ",
-  "History.Call": "Appel",
+  "History.Call": "",
   "History.More.Operations": "opérations",
   "History.More.Transfers": "transferts"
 }
