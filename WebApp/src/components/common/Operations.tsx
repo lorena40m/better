@@ -59,15 +59,10 @@ const Operations = (props: Props) => {
                       }[operation.status]} alt={operation.status} width={20} />
                       <span>{formatDate(operation.date, locale)}</span>
                     </p>}
+                    <pre className="operationsBox__batch__operation__start__method">{operation.functionName}</pre>
                   </div>
                 </div>
                 <div className="operationsBox__batch__operation__end">
-                  {operation.transferedAssets.length === 0 && (
-                    <p style={{color: "#2a3b51"}}>
-                      {t('History.Call')}<pre>{operation.functionName}</pre>
-                    </p>
-                  )}
-
                   {operation.transferedAssets.slice(0, transferLimit || operation.transferedAssets.length).map((transfer, i) =>
                     transfer.asset.assetType === 'coin' ?
                     <p key={i} className="coin"

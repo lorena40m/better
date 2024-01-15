@@ -30,10 +30,10 @@ type Props = {
   title: string | undefined,
 }
 
-export default (props: Props) => {
+export default function MainInfos(props: Props) {
   const { t } = useTranslation("common");
 
-  return(
+  return (
     <div className="MainInfos">
       <Toaster />
       <div className="__top">

@@ -1,17 +1,22 @@
 import Image from "next/image"
 import UserIcon from "@/assets/iconSvg/userIcon.svg"
+import UsersIcon from "@/assets/images/users.png"
 import SmartContractIcon from "@/assets/iconSvg/smartContractIcon.svg"
+import FailureIcon from "@/assets/images/failure.png"
+import DelegatorIcon from "@/assets/images/delegator.png"
+import BakerIcon from "@/assets/images/baker.png"
+import AssetIcon from "@/assets/images/token.png"
 import TokenIcon from "@/assets/images/token.png"
 import TezosIcon from "@/assets/images/tezos.png"
 
 const accountIcons = {
   user: UserIcon,
-  userGroup: UserIcon,
-  baker: SmartContractIcon,
-  ghostContract: SmartContractIcon,
-  delegator: SmartContractIcon,
+  userGroup: UsersIcon,
+  baker: BakerIcon,
+  ghostContract: FailureIcon,
+  delegator: DelegatorIcon,
   contract: SmartContractIcon,
-  asset: SmartContractIcon,
+  asset: AssetIcon,
 }
 
 const accountAlts = {

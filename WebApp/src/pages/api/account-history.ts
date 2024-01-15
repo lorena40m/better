@@ -186,7 +186,11 @@ export default async function handler(
       SELECT
         jsonb_agg(root.*) as root,
         array_agg(d1."Name") as "SenderDomains",
-        array_agg(d1."Data") as "SenderDomainData"
+        array_agg(d1."Data") as "SenderDomainData",
+        array_agg(t1."Metadata") as "SenderTokenMetadata",
+        array_agg(d2."Name") as "TargetDomains",
+        array_agg(d2."Data") as "TargetDomainData",
+        array_agg(t2."Metadata") as "TargetTokenMetadata"
       FROM (
         SELECT
           'TransactionOps' AS "OperationType",
@@ -196,12 +200,16 @@ export default async function handler(
           root."Status",
           root."Timestamp",
           root."TokenTransfers",
+          root."SenderId",
+          root."TargetId",
           a1."Address" as "SenderAddress",
           a2."Address" as "TargetAddress",
           a1."Type" as "SenderAccountType",
           a2."Type" as "TargetAccountType",
           a1."Kind" as "SenderAccountKind",
-          a2."Kind" as "TargetAccountKind"
+          a2."Kind" as "TargetAccountKind",
+          a1."Metadata" as "SenderAccountMetadata",
+          a2."Metadata" as "TargetAccountMetadata"
         FROM "TransactionOps" as internal
         JOIN "TransactionOps" as root ON
           root."InitiatorId" is null
@@ -214,6 +222,9 @@ export default async function handler(
         LIMIT 1
       ) as root
       LEFT JOIN "Domains" as d1 ON d1."Address" = root."SenderAddress"
+      LEFT JOIN "Domains" as d2 ON d2."Address" = root."TargetAddress"
+      LEFT JOIN "Tokens" as t1 ON t1."ContractId" = root."SenderId" and t1."TokenId" = '0'
+      LEFT JOIN "Tokens" as t2 ON t2."ContractId" = root."TargetId" and t2."TokenId" = '0'
       GROUP BY root."Id"
     `;
     const rootRows = (await Promise.all(
@@ -257,8 +268,8 @@ export default async function handler(
           party => ({
             accountType: root[party + 'AccountType'] == 2 ? contractTypes[root[party + 'AccountKind']] : accountTypes[root[party + 'AccountType']],
             address: root[party + 'Address'],
-            name: solveAddressName(root[party + 'Domains'], root[party + 'DomainData']),
-            image: solveAddressImage(root[party + 'DomainData']),
+            name: solveAddressName(root[party + 'Domains'], root[party + 'DomainData'], root[party + 'AccountMetadata'], root[party + 'TokenMetadata']),
+            image: solveAddressImage(root[party + 'DomainData'], root[party + 'AccountMetadata'], root[party + 'TokenMetadata']),
           })
         )(root.SenderAddress !== address ? 'Sender' : 'Target'),
         transferedAssets:

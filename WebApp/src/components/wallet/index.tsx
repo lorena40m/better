@@ -48,8 +48,6 @@ const Wallet = ({ address, miscResponse }: Props) => {
       .catch(error => console.error('Error fetching data:', error));
   }, [address]);
 
-  console.log('misc', miscResponse)
-
   return (
     <main>
       <Head>
@@ -92,17 +90,6 @@ const Wallet = ({ address, miscResponse }: Props) => {
                   )
                 }
                 title={null}
-
-                // var1={t('Wallet.Operations')}
-                // value1=
-                // title1={null}
-                // var3={t('Wallet.Balance')}
-                // value3={<>
-                //   <Image src={TezosIcon2} alt="XTZ" width={40} style={{ marginRight: 5 }} />
-                //   {formatToken(account.balance.toString(), 6, locale)} XTZ
-                // </>}
-                // title3={'Tezos\n' + formatTokenWithExactAllDecimals(account.balance.toString(), 6, locale) + ' XTZ'}
-
               />
               {/*{tokens.nfts[0] ? <h5 className="operationCard__title">{t("Wallet.Nfts")}</h5> : null}
               <Carousel Slide={NftSlide} items={tokens.nfts} breakpoints={{
