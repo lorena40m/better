@@ -14,14 +14,12 @@ export default async function handler(
     SELECT
         "TokenBalances"."TokenId",
         jsonb_build_object(
-                'assetType', 'coin',
-                'address', MIN(contract."Address"),
+                'assetType', 'nft',
                 'id', "Tokens"."ContractId",
+                'image', "Tokens"."Metadata"->>'thumbnailUri',
                 'name', "Tokens"."Metadata"->>'name',
-                'ticker', "Tokens"."Metadata"->>'symbol',
-                'decimals', ("Tokens"."Metadata"->>'decimals')::INT,
-                'logo', "Tokens"."Metadata"->>'thumbnailUri',
-                'lastPrice', 0
+                'lastSalePrice', 0,
+                'collection', 'to_implement'
             )
     AS "Asset",
         SUM("TokenBalances"."Balance"::NUMERIC) AS "quantity"
