@@ -1654,10 +1654,10 @@ Project: less intrusive search button
         gap: 20px;
         margin-bottom: 10px;
 
-        img.accountIcon {
+        img.ArtifactIcon {
           height: 50px;
+          width: 50px;
           object-fit: scale-down;
-          width: auto;
         }
 
         &__name {
@@ -1680,7 +1680,7 @@ Project: less intrusive search button
           }
         }
 
-        &__method pre {
+        &__method {
           color: #4c4b4b;
           line-height: 25px;
           font-size: 14px;
@@ -1707,7 +1707,7 @@ Project: less intrusive search button
           align-items: center;
           justify-content: end;
 
-          img.coinIcon {
+          img.ArtifactIcon {
             width: 30px;
             height: 30px;
           }

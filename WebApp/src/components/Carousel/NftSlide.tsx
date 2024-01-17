@@ -21,9 +21,8 @@ export default function CollectionSlide({ item, rates }: Props) {
     if (stringIpfs.substring(0, 7) !== "ipfs://") {
       return (stringIpfs);
     }
-    const baseUrl = "https://ipfs.io/ipfs/";
     const ipfsId = stringIpfs.slice(7);
-    return (baseUrl + ipfsId);
+    return (process.env.IPFS_GATEWAY + ipfsId);
   }
 
   return (

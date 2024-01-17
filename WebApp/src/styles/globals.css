@@ -112,6 +112,10 @@ a, a:visited {
   text-decoration: none;
 }
 
+img {
+  object-fit: scale-down;
+}
+
 /* ! SWIPER CSS */
 .swiper {
   width: 100%;

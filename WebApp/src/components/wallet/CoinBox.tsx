@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 import { formatPrice, formatToken, formatTokenWithExactAllDecimals, formatInteger } from '../../utils/format'
 import { divide } from "cypress/types/lodash";
 import { useTranslation } from "next-i18next";
-import { coinIcon } from '@/components/common/artifactIcon'
+import { CoinIcon } from '@/components/common/ArtifactIcon'
 
 const CoinBox = (props) => {
   const label = { inputProps: { "aria-label": "Color switch demo" } };
@@ -33,9 +33,8 @@ const CoinBox = (props) => {
     if (stringIpfs.substring(0, 7) !== "ipfs://") {
       return (stringIpfs);
     }
-    const baseUrl = "https://ipfs.io/ipfs/";
     const ipfsId = stringIpfs.slice(7);
-    return (baseUrl + ipfsId);
+    return (process.env.IPFS_GATEWAY + ipfsId);
   }
 
   return (
@@ -59,16 +58,26 @@ const CoinBox = (props) => {
                 style={coin.asset.logo ? {order: "1"} : {order: "1"}}
               >
                 <div className="coinBox__coin__left">
-                  <Link href={'/' + coin.asset.address}>
-                    {coinIcon({ image: ipfsToLink(coin.asset.logo), ticker: coin.asset.ticker, id: coin.asset.address })}
-                  </Link>
+                  {coin.asset.address === 'tezos' ?
+                    <CoinIcon coin={{ image: ipfsToLink(coin.asset.logo), ticker: coin.asset.ticker, id: coin.asset.address }} />
+                    :
+                    <Link href={'/' + coin.asset.address}>
+                      <CoinIcon coin={{ image: ipfsToLink(coin.asset.logo), ticker: coin.asset.ticker, id: coin.asset.address }} />
+                    </Link>
+                  }
                   <div>
                     <p className="coinBox__coin__left__title" title={
                       coin.asset.name + '\n' +
                       formatTokenWithExactAllDecimals(coin.quantity, Number(coin.asset.decimals), locale) + ' ' + coin.asset.ticker
                     }>
                       {formatToken(coin.quantity, Number(coin.asset.decimals), locale)}
-                      <Link href={'/' + coin.asset.address}><strong className="ticker hoverItem">{coin.asset.ticker}</strong></Link>
+                      {coin.asset.address === 'tezos' ?
+                        <strong className="ticker">{coin.asset.ticker}</strong>
+                        :
+                        <Link href={'/' + coin.asset.address}>
+                          <strong className="ticker hoverItem">{coin.asset.ticker}</strong>
+                        </Link>
+                      }
                     </p>
                   </div>
                 </div>

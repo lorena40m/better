@@ -19,7 +19,7 @@ import Head from "next/head";
 import { fetchAccountInfos, fetchAccountTokens, fetchAccountHistory } from '@/utils/apiClient';
 import fetchCoinsInfos from '@/pages/api/coins-infos';
 import TezosIcon2 from "@/assets/images/tezos.png";
-import { accountIcon } from '@/components/common/artifactIcon'
+import { AccountIcon } from '@/components/common/ArtifactIcon'
 
 type Props = {
   address: string,
@@ -70,11 +70,12 @@ const Wallet = ({ address, miscResponse }: Props) => {
           <Grid className="walletProfile" container>
             <Grid item md={6} paddingRight={"15px"}>
               <MainInfos
-                icon={accountIcon({
+                icon={<AccountIcon account={{
+                  address,
                   name: tokens.domains[0]?.Metadata?.name ?? 'User',
                   image: null,
                   accountType: 'user',
-                })}
+                }} />}
                 name={tokens.domains[0]?.Metadata?.name ?? 'User'}
                 address={address}
                 var={t('Wallet.TotalValue')}
