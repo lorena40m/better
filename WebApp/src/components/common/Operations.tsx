@@ -28,7 +28,7 @@ const Operations = (props: Props) => {
   const [aliases, setAliases] = useState(null)
 
   useEffect(() => {
-    const [history$, aliases$] = fetchAccountHistory(props.address, LIMIT_HISTORY)
+    const { history$, aliases$ } = fetchAccountHistory(props.address, LIMIT_HISTORY)
     history$.then(setHistory)
     aliases$.then(setAliases)
   }, [props.address])

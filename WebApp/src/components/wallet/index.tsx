@@ -16,10 +16,11 @@ import MainInfos from "@/components/common/MainInfos";
 import { formatPrice, formatNumber, formatToken, formatDate, formatTokenWithExactAllDecimals } from "@/utils/format";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { fetchAccountInfos, fetchAccountTokens } from '@/utils/apiClient';
+import { fetchUserInfos, fetchAccountTokens } from '@/utils/apiClient';
 import fetchCoinsInfos from '@/pages/api/coins-infos';
 import TezosIcon2 from "@/assets/images/tezos.png";
 import { AccountIcon } from '@/components/common/ArtifactIcon'
+import { Infos } from '@/pages/api/user-infos'
 
 type Props = {
   address: string,
@@ -30,23 +31,33 @@ const Wallet = ({ address, miscResponse }: Props) => {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
   const [tokens, setTokens] = useState({domains: [], nfts: [], coins: [], othersTokens: []});
-  const [account, setAccount] = useState({balance: 0, transactionsCount: 0, id: 0});
+  const [infos, setInfos] = useState({
+    balance: '0',
+    operationCount: 0,
+    account: {
+      address,
+      name: null,
+      image: null,
+      accountType: 'user',
+    }
+  } as Infos);
   const [coinsInfos, setCoinsInfos] = useState(null);
+  const [alias, setAlias] = useState(null);
 
   useEffect(() => {
     fetchAccountTokens(address).then((data) => {
       setTokens(data);
     });
-    fetchAccountInfos(address).then((data) => {
-      setAccount(data);
-    });
+    const { infos$, alias$ } = fetchUserInfos(address)
+    infos$.then(setInfos)
+    alias$.then(setAlias)
     fetch('/api/coins-infos')
       .then(response => response.json())
       .then(data => setCoinsInfos(data))
       .catch(error => console.error('Error fetching data:', error));
   }, [address]);
 
-  const name = tokens.domains[0]?.Metadata?.name || t('AccountDefaultName.user')
+  const name = infos.account.name ?? alias ?? t('AccountDefaultName.user')
 
   return (
     <main>
@@ -70,18 +81,13 @@ const Wallet = ({ address, miscResponse }: Props) => {
           <Grid className="walletProfile" container>
             <Grid item md={6} paddingRight={"15px"}>
               <MainInfos
-                icon={<AccountIcon account={{
-                  address,
-                  name,
-                  image: null,
-                  accountType: 'user',
-                }} />}
+                icon={<AccountIcon account={infos.account} />}
                 name={name}
                 address={address}
                 var={t('Wallet.TotalValue')}
                 value={
                   formatPrice(
-                    (account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
+                    (+infos.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
                     tokens.coins.reduce(
                       (total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
                       0
@@ -100,7 +106,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
                 1400: { slidesPerView: 2 },
               }} delay={4000} rates={miscResponse.rates} />*/}
               {
-                tokens.coins[0] && coinsInfos || account.balance > 0 ?
+                (tokens.coins[0] && coinsInfos || parseInt(infos.balance) > 0) &&
                   <CoinBox coins={[{
                     "TokenId": null,
                     "asset": {
@@ -113,13 +119,12 @@ const Wallet = ({ address, miscResponse }: Props) => {
                         "assetType": "coin",
                         "lastPrice": 1
                     },
-                    "quantity": account.balance.toString()
+                    "quantity": infos.balance.toString()
                   }].concat(tokens.coins)} coinsInfos={coinsInfos} rates={miscResponse.rates} xtzPrice={miscResponse.xtzPrice} />
-                : null
               }
             </Grid>
             <Grid item md={6} paddingLeft={"15px"}>
-              <Operations address={address} operationCount={account?.transactionsCount} />
+              <Operations address={address} operationCount={infos?.operationCount} />
             </Grid>
           </Grid>
         </Container>
