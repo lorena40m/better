@@ -50,10 +50,12 @@ export async function fetchContractInfos(address) {
 		balance: response.Balance,
 		transactionsCount: response.TransactionsCount,
 		id: response.Id,
-		creatorAddress: response.Address
+		creatorAddress: response.Address,
+		creatorDomain: response.Name,
+		creationDate: response.Timestamp
 	});
 }
 export async function fetchAccountHistory(address, limit) {
 	const response = await fetchApi(`/account-history?address=${address}&limit=${limit}`);
-	return response.history;
+	return response?.history;
 }

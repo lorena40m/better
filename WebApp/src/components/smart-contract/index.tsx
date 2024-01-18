@@ -19,8 +19,8 @@ const 	Contract = ({ address, miscResponse }) => {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
   const [tokens, setTokens] = useState({domains: [], nfts: [], coins: [], othersTokens: []});
-  const [account, setAccount] = useState({balance: 0, transactionsCount: 0, id: 0, creatorAddress: ''});
-  const [transactionsHistory, setTransactionsHistory] = useState([]);
+  const [account, setAccount] = useState({balance: 0, transactionsCount: 0, id: 0, creatorAddress: '', creatorDomain: '', creationDate: ''});
+  const [history, setHistory] = useState([]);
   const [coinsInfos, setCoinsInfos] = useState(null);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const 	Contract = ({ address, miscResponse }) => {
       setAccount(data);
     });
     fetchAccountHistory(address, 10).then((data) => {
-      setTransactionsHistory(data);
+		setHistory(data);
     });
     fetch('/api/coins-infos')
       .then(response => response.json())
@@ -61,27 +61,28 @@ const 	Contract = ({ address, miscResponse }) => {
 						title3={null}
 						title={'Contract'}
 						address={address}
-						var1="Usages"
+						var1="Uses"
 						value1={formatNumber(account?.transactionsCount, locale)}
 						var2="Average fee"
 						value2={'0'}
 						var3="Treasury"
-						value3={(account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
-						tokens.coins.reduce(
-						  (total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
-						  0
-						)}
+						value3={formatPrice(
+							(account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
+							tokens.coins.reduce(
+							  (total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
+							  0
+							),
+							locale,
+							miscResponse.rates
+						  )}
 					/>
 					<OtherInfos
-						creator={account?.creatorAddress.slice(0, 8) + "..."}
-						date={/*formatDate(ArtifactResponse.contract.creationDate, locale)*/'test'}
-						link={/*ArtifactResponse.contract.officialWebsite*/'test'}
+						creator={{domain: account?.creatorDomain || null, address: account?.creatorAddress}}
+						date={account?.creationDate}
 					/>
 				</Grid>
 				<Grid sm={12} md={6} paddingLeft={"10px"} paddingRight={"10px"}>
-					{/*
-					<Operations operations={ArtifactResponse.history} contractAddress={ArtifactResponse.contract.id} />
-					*/}
+					<Operations history={history} address={address} operationCount={account?.transactionsCount} />
 				</Grid>
 			</Grid>
         </Container>

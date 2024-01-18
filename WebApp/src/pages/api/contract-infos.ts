@@ -13,11 +13,17 @@ export default async function handler(
       contract."Balance",
       contract."Id",
       contract."TransactionsCount",
-      creator."Address"
+      creator."Address",
+      creatorDomain."Name",
+      creationBlock."Timestamp"
     FROM
       "Accounts" as contract
     INNER JOIN
       "Accounts" as creator ON creator."Id" = contract."CreatorId"
+    INNER JOIN
+      "Blocks" as creationBlock ON creationBlock."Level" = contract."FirstLevel"
+    LEFT JOIN
+      "Domains" as creatorDomain ON creatorDomain."Address" = creator."Address"
     WHERE
       contract."Address" = $1
     `, [address]);

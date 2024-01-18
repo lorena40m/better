@@ -30,7 +30,7 @@ const Operations = (props: Props) => {
         <span className="headerInfo">{formatInteger(props.operationCount, locale)} {t('History.OperationsFound')}</span>
       </div>
 
-      {props.history.map(batch => {
+      {props.history?.map(batch => {
         const operationLimit = batch.length > LIMIT_OPERATIONS_BY_BATCH && LIMIT_OPERATIONS_BY_BATCH - 1
 
         return (
