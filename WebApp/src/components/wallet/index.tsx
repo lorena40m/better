@@ -16,7 +16,7 @@ import MainInfos from "@/components/common/MainInfos";
 import { formatPrice, formatNumber, formatToken, formatDate, formatTokenWithExactAllDecimals } from "@/utils/format";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { fetchAccountInfos, fetchAccountTokens, fetchAccountHistory } from '@/utils/apiClient';
+import { fetchAccountInfos, fetchAccountTokens } from '@/utils/apiClient';
 import fetchCoinsInfos from '@/pages/api/coins-infos';
 import TezosIcon2 from "@/assets/images/tezos.png";
 import { AccountIcon } from '@/components/common/ArtifactIcon'
@@ -31,7 +31,6 @@ const Wallet = ({ address, miscResponse }: Props) => {
   const { locale } = useRouter();
   const [tokens, setTokens] = useState({domains: [], nfts: [], coins: [], othersTokens: []});
   const [account, setAccount] = useState({balance: 0, transactionsCount: 0, id: 0});
-  const [history, setHistory] = useState([]);
   const [coinsInfos, setCoinsInfos] = useState(null);
 
   useEffect(() => {
@@ -41,7 +40,6 @@ const Wallet = ({ address, miscResponse }: Props) => {
     fetchAccountInfos(address).then((data) => {
       setAccount(data);
     });
-    fetchAccountHistory(address, 10).then(setHistory);
     fetch('/api/coins-infos')
       .then(response => response.json())
       .then(data => setCoinsInfos(data))
@@ -61,7 +59,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
               {t("WalletPage.Title")}
               <Link href={'/'}>
               <span className="pageTemplate__status hoverItem">
-                <Image src={TezosIcon} alt="" height={40} width={40} onClick={() => {console.log({account: account, tokens: tokens, history: history, coinsInfos: coinsInfos, miscResponse: miscResponse})}}/>
+                <Image src={TezosIcon} alt="" height={40} width={40} />
                 Tezos
               </span>
               </Link>
@@ -119,7 +117,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
               }
             </Grid>
             <Grid item md={6} paddingLeft={"15px"}>
-              <Operations history={history} address={address} operationCount={account?.transactionsCount} />
+              <Operations address={address} operationCount={account?.transactionsCount} />
             </Grid>
           </Grid>
         </Container>

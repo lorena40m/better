@@ -53,7 +53,13 @@ export async function fetchContractInfos(address) {
 		creatorAddress: response.Address
 	});
 }
-export async function fetchAccountHistory(address, limit) {
-	const response = await fetchApi(`/account-history?address=${address}&limit=${limit}`);
-	return response.history;
+export function fetchAccountHistory(address, limit) {
+	const history$ = fetchApi(`/account-history?address=${address}&limit=${limit}`)
+		.then(response => response.history)
+	const aliases$ = history$.then(history => {
+		const addresses = history.flat(1).map(operation => operation.counterparty.address)
+		return fetchApi(`/account-names?addresses=${addresses.join(',')}`)
+			.then(response => response.aliases)
+	})
+	return [history$, aliases$];
 }

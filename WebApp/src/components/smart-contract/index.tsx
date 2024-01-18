@@ -20,18 +20,14 @@ const 	Contract = ({ address, miscResponse }) => {
   const { locale } = useRouter();
   const [tokens, setTokens] = useState({domains: [], nfts: [], coins: [], othersTokens: []});
   const [account, setAccount] = useState({balance: 0, transactionsCount: 0, id: 0, creatorAddress: ''});
-  const [transactionsHistory, setTransactionsHistory] = useState([]);
   const [coinsInfos, setCoinsInfos] = useState(null);
 
   useEffect(() => {
-	fetchAccountTokens(address).then((data) => {
-		setTokens(data);
+		fetchAccountTokens(address).then((data) => {
+			setTokens(data);
 	  });
     fetchContractInfos(address).then((data) => {
       setAccount(data);
-    });
-    fetchAccountHistory(address, 10).then((data) => {
-      setTransactionsHistory(data);
     });
     fetch('/api/coins-infos')
       .then(response => response.json())
@@ -79,9 +75,7 @@ const 	Contract = ({ address, miscResponse }) => {
 					/>
 				</Grid>
 				<Grid sm={12} md={6} paddingLeft={"10px"} paddingRight={"10px"}>
-					{/*
-					<Operations operations={ArtifactResponse.history} contractAddress={ArtifactResponse.contract.id} />
-					*/}
+					<Operations address={address} operationCount={account.transactionsCount} />
 				</Grid>
 			</Grid>
         </Container>

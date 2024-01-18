@@ -146,3 +146,7 @@ export async function getContractData(contractHash) {
 export async function getBlockTimestamp(blockLevel) {
   return await fetch(`v1/blocks/${blockLevel}/timestamp`)
 }
+
+export async function getAlias(address) {
+  return (await fetch(`v1/accounts/${address}`)).alias as string | null
+}
