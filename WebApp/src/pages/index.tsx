@@ -33,6 +33,7 @@ import MiscellaneousEndpoint from '@/endpoints/MiscellaneousEndpoint';
 import { formatPrice, formatToken } from '@/utils/format'
 import useWindowSize from '@/hooks/useWindowSize'
 import ChainStats from '@/components/Home/ChainStats'
+import Head from 'next/head'
 
 export async function getServerSideProps({ locale }: any) {
   const miscResponse = await MiscellaneousEndpoint({})
@@ -66,6 +67,9 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
 
   return (
     <>
+      <Head>
+        <title>Tezos x {t('App.Title')}</title>
+      </Head>
       <main>
         {/*<HeadCrumb /> Temporarely disabled*/}
         <Header hideSearch={false} />

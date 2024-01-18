@@ -13,7 +13,9 @@ export default async function handler(
 
     SELECT
         "TokenBalances"."TokenId",
-        jsonb_build_object(
+        CASE
+        WHEN (("Tokens"."Metadata"->>'decimals')::INT > 0) THEN
+            jsonb_build_object(
                 'assetType', 'coin',
                 'address', MIN(contract."Address"),
                 'id', "Tokens"."ContractId",
@@ -23,7 +25,16 @@ export default async function handler(
                 'logo', "Tokens"."Metadata"->>'thumbnailUri',
                 'lastPrice', 0
             )
-    AS "Asset",
+        WHEN (("Tokens"."Metadata"->>'decimals')::INT = 0) THEN
+            jsonb_build_object(
+                'assetType', 'nft',
+                'id', "Tokens"."ContractId",
+                'image', "Tokens"."Metadata"->>'thumbnailUri',
+                'name', "Tokens"."Metadata"->>'name',
+                'lastSalePrice', 0,
+                'collection', 'to_implement'
+            )
+    END Asset,
         SUM("TokenBalances"."Balance"::NUMERIC) AS "quantity"
     FROM
         "Accounts"
@@ -39,8 +50,7 @@ export default async function handler(
         "TokenBalances"."TokenId",
         "Tokens"."ContractId",
         "Tokens"."Metadata"
-      HAVING
-    MAX(("Tokens"."Metadata"->>'decimals')::INT) <> 0`, [address]);
+      `, [address]);
     // recuperer le storage des tokens afin de calculer le prix des tokens via : token_pool / tez_pool
     // sinon utiliser : https://temple-api-mainnet.prod.templewallet.com/api/exchange-rates
     res.status(200).json(tokens);

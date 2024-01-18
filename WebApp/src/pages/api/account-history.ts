@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { query } from '@/endpoints/providers/db';
-import { solveAddressName, solveAddressImage } from '@/utils/solve';
+import { solveAddressName, solveAddressImage, solveAccountType } from '@/pages/api/_solve'
 import { ipfsToHttps } from '@/endpoints/providers/utils'
 
 // keeps ordering
@@ -31,18 +31,6 @@ function sum(numbers: number[] | BigInt[]) {
   return (numbers as number[]).reduce((total, num) => (total as number) + num, typeof numbers[0] === 'number' ? 0 : BigInt(0));
 }
 
-const accountTypes = {
-  0: 'user',
-  1: 'baker',
-  2: 'kt',
-  3: 'ghostContract',
-} // type
-const contractTypes = {
-  0: 'delegator',
-  1: 'contract',
-  2: 'asset',
-} // kind
-
 /*
   Technical Notes:
 
@@ -51,7 +39,8 @@ const contractTypes = {
   and attaches only token transfers pertaining to the user.
 */
 
-import { TokenDecimals, UrlString, DateString } from '@/endpoints/API'
+import { TokenDecimals, UrlString, DateString } from '@/pages/api/_apiTypes'
+import { Account, Asset } from '@/pages/api/_apiTypes'
 export type History = Array<OperationBatch>
 export type OperationBatch = Array<Operation>
 export type Operation = {
@@ -66,25 +55,6 @@ export type Operation = {
     quantity: TokenDecimals, // -/+ signed balance changes for the user
     asset: Asset,
   }>,
-}
-export type Account = {
-  accountType: 'user' | 'baker' | 'ghostContract' | 'delegator' | 'contract' | 'asset',
-  address: string,
-  name: string,
-  image: UrlString | null,
-}
-export type Asset = {
-  assetType: 'nft',
-  id: string,
-  name: string,
-  image: UrlString,
-} | {
-  assetType: 'coin',
-  id: string | 'tezos',
-  name: string,
-  ticker: string,
-  decimals: number,
-  image: UrlString, // image is null when id = 'tezos'
 }
 
 export default async function handler(
@@ -251,7 +221,7 @@ export default async function handler(
     const history: History = batches.map(([hash, batch]) => batch.map(root => {
       const operationType = root.OperationType === 'OriginationOps' ? 'contractCreation' :
         (root.TargetAddress.startsWith('tz') // native xtz transfer
-        || contractTypes[root.TargetAccountKind] === 'asset' && root.Entrypoint === 'transfer') // fa transfer
+        || root.TargetAccountKind === 2 && root.Entrypoint === 'transfer') // fa transfer
         ? (root.TokenTransfers > 1 ? 'transferGroup' : 'transfer') :
         'call'
         // TODO: add staking operations
@@ -266,7 +236,7 @@ export default async function handler(
         // Note: if operationType === 'transferGroup', don't specify, counterparty = false
         counterparty: operationType === 'transferGroup' ? null : (
           party => ({
-            accountType: root[party + 'AccountType'] == 2 ? contractTypes[root[party + 'AccountKind']] : accountTypes[root[party + 'AccountType']],
+            accountType: solveAccountType(root[party + 'AccountType'], root[party + 'AccountKind']),
             address: root[party + 'Address'],
             name: solveAddressName(root[party + 'Domains'], root[party + 'DomainData'], root[party + 'AccountMetadata'], root[party + 'TokenMetadata']),
             image: solveAddressImage(root[party + 'DomainData'], root[party + 'AccountMetadata'], root[party + 'TokenMetadata']),

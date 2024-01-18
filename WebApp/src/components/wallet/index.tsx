@@ -16,10 +16,11 @@ import MainInfos from "@/components/common/MainInfos";
 import { formatPrice, formatNumber, formatToken, formatDate, formatTokenWithExactAllDecimals } from "@/utils/format";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { fetchAccountInfos, fetchAccountTokens, fetchAccountHistory } from '@/utils/apiClient';
+import { fetchUserInfos, fetchAccountTokens } from '@/utils/apiClient';
 import fetchCoinsInfos from '@/pages/api/coins-infos';
 import TezosIcon2 from "@/assets/images/tezos.png";
-import { accountIcon } from '@/components/common/artifactIcon'
+import { AccountIcon } from '@/components/common/ArtifactIcon'
+import { Infos } from '@/pages/api/user-infos'
 
 type Props = {
   address: string,
@@ -30,28 +31,38 @@ const Wallet = ({ address, miscResponse }: Props) => {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
   const [tokens, setTokens] = useState({domains: [], nfts: [], coins: [], othersTokens: []});
-  const [account, setAccount] = useState({balance: 0, transactionsCount: 0, id: 0});
-  const [history, setHistory] = useState([]);
+  const [infos, setInfos] = useState({
+    balance: '0',
+    operationCount: 0,
+    account: {
+      address,
+      name: null,
+      image: null,
+      accountType: 'user',
+    }
+  } as Infos);
   const [coinsInfos, setCoinsInfos] = useState(null);
+  const [alias, setAlias] = useState(null);
 
   useEffect(() => {
     fetchAccountTokens(address).then((data) => {
       setTokens(data);
     });
-    fetchAccountInfos(address).then((data) => {
-      setAccount(data);
-    });
-    fetchAccountHistory(address, 10).then(setHistory);
+    const { infos$, alias$ } = fetchUserInfos(address)
+    infos$.then(setInfos)
+    alias$.then(setAlias)
     fetch('/api/coins-infos')
       .then(response => response.json())
       .then(data => setCoinsInfos(data))
       .catch(error => console.error('Error fetching data:', error));
   }, [address]);
 
+  const name = infos.account.name ?? alias ?? t('AccountDefaultName.user')
+
   return (
     <main>
       <Head>
-        <title>{tokens.domains[0]?.Metadata?.name || 'User'} | BetterScan</title>
+        <title>{name} | {t('App.Title')}</title>
       </Head>
       <Header hideSearch={true} />
       <Box className="pageTemplate WalletOprationCard">
@@ -61,7 +72,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
               {t("WalletPage.Title")}
               <Link href={'/'}>
               <span className="pageTemplate__status hoverItem">
-                <Image src={TezosIcon} alt="" height={40} width={40} onClick={() => {console.log({account: account, tokens: tokens, history: history, coinsInfos: coinsInfos, miscResponse: miscResponse})}}/>
+                <Image src={TezosIcon} alt="" height={40} width={40} />
                 Tezos
               </span>
               </Link>
@@ -70,17 +81,13 @@ const Wallet = ({ address, miscResponse }: Props) => {
           <Grid className="walletProfile" container>
             <Grid item md={6} paddingRight={"15px"}>
               <MainInfos
-                icon={accountIcon({
-                  name: tokens.domains[0]?.Metadata?.name ?? 'User',
-                  image: null,
-                  accountType: 'user',
-                })}
-                name={tokens.domains[0]?.Metadata?.name ?? 'User'}
+                icon={<AccountIcon account={infos.account} />}
+                name={name}
                 address={address}
                 var={t('Wallet.TotalValue')}
                 value={
                   formatPrice(
-                    (account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
+                    (+infos.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
                     tokens.coins.reduce(
                       (total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
                       0
@@ -99,7 +106,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
                 1400: { slidesPerView: 2 },
               }} delay={4000} rates={miscResponse.rates} />*/}
               {
-                tokens.coins[0] && coinsInfos || account.balance > 0 ?
+                (tokens.coins[0] && coinsInfos || parseInt(infos.balance) > 0) &&
                   <CoinBox coins={[{
                     "TokenId": null,
                     "asset": {
@@ -112,13 +119,12 @@ const Wallet = ({ address, miscResponse }: Props) => {
                         "assetType": "coin",
                         "lastPrice": 1
                     },
-                    "quantity": account.balance.toString()
+                    "quantity": infos.balance.toString()
                   }].concat(tokens.coins)} coinsInfos={coinsInfos} rates={miscResponse.rates} xtzPrice={miscResponse.xtzPrice} />
-                : null
               }
             </Grid>
             <Grid item md={6} paddingLeft={"15px"}>
-              <Operations history={history} address={address} operationCount={account?.transactionsCount} />
+              <Operations address={address} operationCount={infos?.operationCount} />
             </Grid>
           </Grid>
         </Container>

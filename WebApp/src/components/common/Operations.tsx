@@ -8,13 +8,15 @@ import { useTranslation } from "next-i18next";
 import { addSign, formatToken, formatDate, formatEntiereDate, formatNumber, formatInteger, formatTokenWithExactAllDecimals } from '../../utils/format'
 import { useRouter } from "next/router";
 import { History } from '@/pages/api/account-history'
-import { accountIcon, coinIcon } from '@/components/common/artifactIcon'
+import { AccountIcon, CoinIcon } from '@/components/common/ArtifactIcon'
+import { fetchAccountHistory } from '@/utils/apiClient';
+import { useState, useEffect } from 'react'
 
+const LIMIT_HISTORY = 10
 const LIMIT_OPERATIONS_BY_BATCH = 4
 const LIMIT_TRANSFERS_BY_OPERATION = 4
 
 type Props = {
-  history: History,
   address: string,
   operationCount: number,
 }
@@ -22,6 +24,14 @@ type Props = {
 const Operations = (props: Props) => {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
+  const [history, setHistory] = useState([])
+  const [aliases, setAliases] = useState(null)
+
+  useEffect(() => {
+    const { history$, aliases$ } = fetchAccountHistory(props.address, LIMIT_HISTORY)
+    history$.then(setHistory)
+    aliases$.then(setAliases)
+  }, [props.address])
 
   return (
     <div className="operationsBox box">
@@ -30,7 +40,7 @@ const Operations = (props: Props) => {
         <span className="headerInfo">{formatInteger(props.operationCount, locale)} {t('History.OperationsFound')}</span>
       </div>
 
-      {props.history?.map(batch => {
+      {history?.map(batch => {
         const operationLimit = batch.length > LIMIT_OPERATIONS_BY_BATCH && LIMIT_OPERATIONS_BY_BATCH - 1
 
         return (
@@ -41,11 +51,12 @@ const Operations = (props: Props) => {
 
               return  <div className="operationsBox__batch__operation" key={i}>
                 <div className="operationsBox__batch__operation__start">
-                  {accountIcon(operation.counterparty)}
+                  <AccountIcon account={operation.counterparty} />
                   <div>
                     <p className="operationsBox__batch__operation__start__name">
                       {
                         operation.counterparty.name ??
+                        aliases?.[operation.counterparty.address] ??
                         t('AccountDefaultName.' + (operation.counterparty?.accountType ?? 'userGroup'))
                       }
                     </p>
@@ -71,7 +82,7 @@ const Operations = (props: Props) => {
                         transfer.asset.name + '\n' +
                         addSign(formatTokenWithExactAllDecimals(transfer.quantity, transfer.asset.decimals, locale) + ' ' + transfer.asset.ticker)
                       }>
-                      {coinIcon(transfer.asset)}
+                      <CoinIcon coin={transfer.asset} />
                       <span>
                         {addSign(formatToken(transfer.quantity, transfer.asset.decimals, locale))}
                         {" " + (transfer.asset.ticker ?? transfer.asset.name)}

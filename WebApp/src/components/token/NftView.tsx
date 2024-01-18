@@ -73,9 +73,8 @@ const carouselData = [
 export default function SpacingGrid(props) {
 
   function ipfsToLink(stringIpfs) {
-    const baseUrl = "https://ipfs.io/ipfs/";
     const ipfsId = stringIpfs.slice(7);
-    return (baseUrl + ipfsId);
+    return (process.env.IPFS_GATEWAY + ipfsId);
   }
 
   const trendingData = props.trending;
