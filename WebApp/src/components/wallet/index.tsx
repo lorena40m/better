@@ -46,10 +46,12 @@ const Wallet = ({ address, miscResponse }: Props) => {
       .catch(error => console.error('Error fetching data:', error));
   }, [address]);
 
+  const name = tokens.domains[0]?.Metadata?.name || t('AccountDefaultName.user')
+
   return (
     <main>
       <Head>
-        <title>{tokens.domains[0]?.Metadata?.name || 'User'} | BetterScan</title>
+        <title>{name} | {t('App.Title')}</title>
       </Head>
       <Header hideSearch={true} />
       <Box className="pageTemplate WalletOprationCard">
@@ -70,11 +72,11 @@ const Wallet = ({ address, miscResponse }: Props) => {
               <MainInfos
                 icon={<AccountIcon account={{
                   address,
-                  name: tokens.domains[0]?.Metadata?.name ?? 'User',
+                  name,
                   image: null,
                   accountType: 'user',
                 }} />}
-                name={tokens.domains[0]?.Metadata?.name ?? 'User'}
+                name={name}
                 address={address}
                 var={t('Wallet.TotalValue')}
                 value={

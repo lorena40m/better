@@ -4,7 +4,9 @@ import * as tzkt from '@/endpoints/providers/tzkt'
 
 /*
  * Get aliases from the TzKT API for a set of addresses.
- * Note: addresses that don't have an alias will not be included in the returned object.
+ * Note: alias will be null if there is none for the address
+ * Note: alias will not be included if there is a communication error with TzKT (limit reached)
+ *   -> retry later
  */
 export default async function handler(
   req: NextApiRequest,
@@ -14,8 +16,9 @@ export default async function handler(
 
   try {
     const aliases = await Promise.all(addresses.map(tzkt.getAlias))
+
     res.status(200).json({
-      aliases: addresses.reduce((acc, key, index) => {
+      names: addresses.reduce((acc, key, index) => {
         acc[key] = aliases[index]
         return acc
       }, {})

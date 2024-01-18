@@ -53,13 +53,31 @@ export async function fetchContractInfos(address) {
 		creatorAddress: response.Address
 	});
 }
+
 export function fetchAccountHistory(address, limit) {
-	const history$ = fetchApi(`/account-history?address=${address}&limit=${limit}`)
+	const history$ = fetchApi(`account-history?address=${address}&limit=${limit}`)
 		.then(response => response.history)
 	const aliases$ = history$.then(history => {
 		const addresses = history.flat(1).map(operation => operation.counterparty.address)
-		return fetchApi(`/account-names?addresses=${addresses.join(',')}`)
-			.then(response => response.aliases)
+		return fetchNames(addresses)
 	})
 	return [history$, aliases$];
+}
+
+const NAME_STORAGE_KEY = 'NAMES_v0'
+
+export async function fetchNames(addresses) {
+	const cache = window[NAME_STORAGE_KEY] ?? JSON.parse(localStorage.getItem(NAME_STORAGE_KEY)) ?? {}
+	const nonCachedAddresses = addresses.filter(address => !(address in cache))
+
+	if (nonCachedAddresses.length === 0) return cache
+
+	const names = (await fetchApi(`names?addresses=${nonCachedAddresses.join(',')}`)).names
+
+	Object.assign(cache, names)
+
+	window[NAME_STORAGE_KEY] = cache
+	localStorage.setItem(NAME_STORAGE_KEY, JSON.stringify(cache))
+
+	return cache
 }

@@ -7,13 +7,13 @@ import GeneralInfos from "@/components/common/GeneralInfos";
 import OtherInfos from "@/components/smart-contract/OtherInfos";
 import ConfirmModal from "@/components/wallet/ConfirmModal";
 import TezosIcon from "../../assets/images/tezos.svg";
-
 import Image from "next/image";
 import Operations from "@/components/common/Operations";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { formatPrice, formatNumber, formatToken, formatDate } from "@/utils/format";
 import { fetchContractInfos, fetchAccountTokens, fetchAccountHistory } from '@/utils/apiClient';
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 const 	Contract = ({ address, miscResponse }) => {
   const { t } = useTranslation("common");
@@ -36,6 +36,9 @@ const 	Contract = ({ address, miscResponse }) => {
   }, [address]);
   return (
     <main>
+      <Head>
+        <title>{null || 'Contract'} | {t('App.Title')}</title>
+      </Head>
       <Header hideSearch={false} />
       <Box className="pageTemplate">
         <Container maxWidth="xl">

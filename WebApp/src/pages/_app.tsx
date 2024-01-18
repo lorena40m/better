@@ -4,13 +4,14 @@ import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import {appWithTranslation} from "next-i18next";
 import Head from "next/head";
+import { useTranslation } from "next-i18next";
 
 const publicPages = [
   "/",
 ];
 
 function App({ Component, pageProps }: AppProps) {
-
+  const { t } = useTranslation("common");
   const { pathname } = useRouter();
   // console.log(a, 'THIS IS IMPORT FROM I18')
   // Check if the current route matches a public page
@@ -19,7 +20,7 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>BetterScan</title>
+        <title>{t('App.Title')}</title>
         <meta name="description" content="The Blockchain Explorer" />
       </Head>
       {

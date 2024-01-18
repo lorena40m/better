@@ -148,5 +148,9 @@ export async function getBlockTimestamp(blockLevel) {
 }
 
 export async function getAlias(address) {
-  return (await fetch(`v1/accounts/${address}`)).alias as string | null
+  const account = await fetch(`v1/accounts/${address}`)
+  if (account === null) {
+    return // there was an error, return undefined
+  }
+  return (account?.alias ?? null) as string | null // alias can be null if no alias
 }
