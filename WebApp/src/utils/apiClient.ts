@@ -42,16 +42,10 @@ export function fetchUserInfos(address: string) {
  return { infos$, alias$ }
 }
 
-export async function fetchContractInfos(address) {
-	const response = await fetchApi(`contract-infos?address=${address}`);
-	return ({
-		balance: response.Balance,
-		transactionsCount: response.TransactionsCount,
-		id: response.Id,
-		creatorAddress: response.Address,
-		creatorDomain: response.Name,
-		creationDate: response.Timestamp
-	});
+import { Contract } from '@/pages/api/contract-infos';
+export async function fetchContractInfos(address: string) {
+	const infos = await fetchApi(`contract-infos?address=${address}`).then(response => response.infos as Contract);
+	return (infos);
 }
 
 import { History } from '@/pages/api/account-history'

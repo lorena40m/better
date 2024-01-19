@@ -14,19 +14,20 @@ import { formatPrice, formatNumber, formatToken, formatDate } from "@/utils/form
 import { fetchContractInfos, fetchAccountTokens, fetchAccountHistory } from '@/utils/apiClient';
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { Contract } from "@/pages/api/contract-infos";
 
 const 	Contract = ({ address, miscResponse }) => {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
   const [tokens, setTokens] = useState({domains: [], nfts: [], coins: [], othersTokens: []});
-  const [account, setAccount] = useState({balance: 0, transactionsCount: 0, id: 0, creatorAddress: '', creatorDomain: '', creationDate: ''});
+  const [account, setAccount] = useState({balance: '0', operationCount: 0, id: '0', creatorAddress: '', creatorDomain: '', creationDate: ''} as Contract);
   const [history, setHistory] = useState([]);
   const [coinsInfos, setCoinsInfos] = useState(null);
 
   useEffect(() => {
-		fetchAccountTokens(address).then((data) => {
-			setTokens(data);
-	  });
+	fetchAccountTokens(address).then((data) => {
+		setTokens(data);
+	});
     fetchContractInfos(address).then((data) => {
       setAccount(data);
     });
@@ -62,12 +63,12 @@ const 	Contract = ({ address, miscResponse }) => {
 						title={'Contract'}
 						address={address}
 						var1="Uses"
-						value1={formatNumber(account?.transactionsCount, locale)}
+						value1={formatNumber(account?.operationCount, locale)}
 						var2="Average fee"
 						value2={'0'}
 						var3="Treasury"
 						value3={formatPrice(
-							(account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
+							(+account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
 							tokens.coins.reduce(
 							  (total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
 							  0
@@ -82,7 +83,7 @@ const 	Contract = ({ address, miscResponse }) => {
 					/>
 				</Grid>
 				<Grid sm={12} md={6} paddingLeft={"10px"} paddingRight={"10px"}>
-					<Operations address={address} operationCount={account?.transactionsCount} />
+					<Operations address={address} operationCount={account?.operationCount} />
 				</Grid>
 			</Grid>
         </Container>
