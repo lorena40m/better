@@ -42,9 +42,10 @@ function sum(numbers: number[] | BigInt[]) {
 import { TokenDecimals, UrlString, DateString } from '@/pages/api/_apiTypes'
 import { Account, Asset } from '@/pages/api/_apiTypes'
 export type History = Array<OperationBatch>
-export type OperationBatch = Array<Operation>
+export type OperationBatch = Array<Operation> // ordered ASC
 export type Operation = {
   id: string,
+  nonce: number,
   operationType: 'transferGroup' | 'transfer' | 'call' | 'contractCreation' | 'stakingOperation',
   stakingType: '',
   status: 'waiting' | 'success' | 'failure',
@@ -65,6 +66,9 @@ export default async function handler(
   const limit = +req.query.limit;
 
   try {
+    const addressQuery = `SELECT "Id" FROM "Accounts" WHERE "Address" = $1`
+    const addressId = (await query('ADDRESS', addressQuery, [address]))[0].Id
+
     /// 1. On récupère les dernières opérations où User est impliqué
     /// groupés par batch limités aux X derniers batch
 
@@ -74,41 +78,32 @@ export default async function handler(
     // TODO: Discover why it takes time with "TargetId"
     const operationsQuery = `
       (
-        SELECT a."Id" as "AddressId", "OpHash", o."Id", o."InitiatorId", o."Amount"
-        FROM "Accounts" as a
-        INNER JOIN "TransactionOps" as o ON o."SenderId" = a."Id"
-        WHERE a."Address" = $1
+        SELECT "OpHash", o."Id", o."InitiatorId", o."Amount", "Nonce"
+        FROM "TransactionOps" as o
+        WHERE o."SenderId" = $1 or o."TargetId" = $1
         ORDER BY o."Id" DESC
         LIMIT 1000
       )
       UNION
       (
-        SELECT a."Id" as "AddressId", "OpHash", o."Id", o."InitiatorId", o."Balance" as "Amount"
-        FROM "Accounts" as a
-        INNER JOIN "OriginationOps" as o ON o."SenderId" = a."Id"
-        WHERE a."Address" = $1
+        SELECT "OpHash", o."Id", o."InitiatorId", o."Balance" as "Amount", "Nonce"
+        FROM "OriginationOps" as o
+        WHERE o."SenderId" = $1 or o."ContractId" = $1
         ORDER BY o."Id" DESC
         LIMIT 1000
       )
     `;
 
     const batchesQuery = `
-      SELECT o."OpHash",
-        min(o."AddressId") as "AddressId",
-        array_agg(o."Id") as "Ids",
-        array_agg(o."InitiatorId") as "InitiatorIds",
-        array_agg(o."Amount") as "Amounts"
+      SELECT "OpHash", jsonb_agg(o.*) as operations
       FROM (${operationsQuery}) as o
-      GROUP BY o."OpHash"
-      ORDER BY min(o."Id") DESC
+      GROUP BY "OpHash"
       LIMIT $2
     `;
 
-    const batchRows = await query('BATCHES', batchesQuery, [address, limit])
-    const operationRows = batchRows.flatMap(b => b.Ids.map((id, i) => ({
-      Id: id, InitiatorIds: b.InitiatorIds[i], Amount: b.Amounts[i]
-    })))
-    const addressId = batchRows[0].AddressId
+    const batchRows = await query('BATCHES', batchesQuery, [addressId, limit])
+    // sort operations in a batch ASC
+    const operationRows = batchRows.flatMap(batch => batch.operations.sort((o1, o2) => o1.Id - o2.Id))
 
     /// 2. On récupère les tokens transfers où User est impliqué
     /// qui sont plus récents que le batch le plus vieux
@@ -166,6 +161,7 @@ export default async function handler(
           'TransactionOps' AS "OperationType",
           root."Id",
           root."OpHash",
+          root."Nonce",
           root."Entrypoint",
           root."Status",
           root."Timestamp",
@@ -198,7 +194,7 @@ export default async function handler(
       GROUP BY root."Id"
     `;
     const rootRows = (await Promise.all(
-      idsForSearchingRoot.map((id,i) => query('ROOTS.' + i, rootQuery, [id]))
+      idsForSearchingRoot.map((id, i) => query('ROOTS.' + i, rootQuery, [id]))
     )).flat()
       // unduplicate root
       .map(({ root, SenderDomains, SenderDomainData }) => ({ ...root[0], SenderDomains, SenderDomainData }))
@@ -228,6 +224,7 @@ export default async function handler(
 
       return {
         id: root.OpHash,
+        nonce: root.Nonce,
         operationType,
         stakingType: '',
         status: root.Status === 1 ? 'success' : 'failure',
