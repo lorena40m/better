@@ -20,7 +20,7 @@ const 	Contract = ({ address, miscResponse }) => {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
   const [tokens, setTokens] = useState({domains: [], nfts: [], coins: [], othersTokens: []});
-  const [account, setAccount] = useState({balance: '0', operationCount: 0, id: '0', creatorAddress: '', creatorDomain: '', creationDate: ''} as Contract);
+  const [account, setAccount] = useState({balance: '0', operationCount: 0, id: '0', creatorAddress: '', creatorDomain: '', creationDate: '', averageFee: 0} as Contract);
   const [history, setHistory] = useState([]);
   const [coinsInfos, setCoinsInfos] = useState(null);
 
@@ -65,7 +65,7 @@ const 	Contract = ({ address, miscResponse }) => {
 						var1="Uses"
 						value1={formatNumber(account?.operationCount, locale)}
 						var2="Average fee"
-						value2={'0'}
+						value2={formatPrice(account.averageFee / 10**6 * miscResponse?.xtzPrice ?? 0, locale, miscResponse.rates)}
 						var3="Treasury"
 						value3={formatPrice(
 							(+account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
