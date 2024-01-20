@@ -2,15 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { query } from '@/endpoints/providers/db'
 import * as tzkt from '@/endpoints/providers/tzkt'
 
-export const config = {
-  api: {
-    queryParams: {
-      sizeLimit: '100mb',
-    },
-  },
-  // Specifies the maximum allowed duration for this function to execute (in seconds)
-  maxDuration: 5,
-}
+const REQUEST_LIMIT = 40
 
 /*
  * Get aliases from the TzKT API for a set of addresses.
@@ -22,8 +14,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const addresses = (<string> req.query.addresses).split(',')
+  const addresses = req.body.addresses
 
+  if (addresses.length > REQUEST_LIMIT)
+    return res.status(500).json({ error: `Exceeded the limit of ${REQUEST_LIMIT} addresses.` })
 
   try {
     const aliases = await Promise.all(addresses.map(tzkt.getAlias))

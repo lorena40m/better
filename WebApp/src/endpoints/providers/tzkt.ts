@@ -12,7 +12,7 @@ async function fetch(urn: string) {
       console.error('Failed to fetch external data. Status code:', response.status);
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error(`Error on request '${'https://api.tzkt.io/' + urn}':`, error.toString());
   }
 
   return null

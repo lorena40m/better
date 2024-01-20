@@ -1,8 +1,8 @@
 import axios from "axios";
 
-async function fetchApi(url) {
+async function fetchApi(url, data = null) {
   try {
-    const response = await axios.get(`/api/${url}`);
+    const response = await axios.post(`/api/${url}`, data);
     return (response.data);
   } catch (err) {
     console.error(`Error on /api/${url}:`, err);
@@ -53,7 +53,7 @@ export function fetchAccountHistory(address, limit) {
   const history$ = fetchApi(`account-history?address=${address}&limit=${limit}`)
     .then(response => response.history as History)
   const aliases$ = history$.then(history => {
-    const addresses = history.flat(1).map(operation => operation.counterparty.address)
+    const addresses = history.flatMap(batch => batch.slice(0, 4)).map(operation => operation.counterparty.address)
     return fetchNames(addresses)
   })
   return { history$, aliases$ };
@@ -62,12 +62,13 @@ export function fetchAccountHistory(address, limit) {
 const NAME_STORAGE_KEY = 'NAMES_v0'
 
 export async function fetchNames(addresses: string[]): Promise<Record<string, string>> {
+  addresses = Array.from(new Set(addresses))
   const cache = window[NAME_STORAGE_KEY] ?? JSON.parse(localStorage.getItem(NAME_STORAGE_KEY)) ?? {}
   const nonCachedAddresses = addresses.filter(address => !(address in cache))
 
   if (nonCachedAddresses.length === 0) return cache
 
-  const names = (await fetchApi(`names?addresses=${nonCachedAddresses.join(',')}`)).names
+  const names = (await fetchApi(`names`, { addresses: nonCachedAddresses })).names
 
   Object.assign(cache, names)
 
