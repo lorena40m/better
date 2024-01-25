@@ -1,4 +1,8 @@
 import axios from "axios";
+import { DbAccounts, Shorts } from '@/pages/api/account-history-shorts'
+import { Account } from '@/pages/api/_apiTypes'
+import { eliminateDuplicates } from '@/utils/arrays'
+import { getCache, setCache, NAME_CACHE_KEY } from '@/utils/caches'
 
 async function fetchApi(url, data = null) {
   try {
@@ -37,9 +41,35 @@ export async function fetchAccountTokens(address) {
 
 import { Infos } from '@/pages/api/user-infos'
 export function fetchUserInfos(address: string) {
- const infos$ = fetchApi(`user-infos?address=${address}`).then(response => response.infos as Infos)
- const alias$ = fetchNames([address]).then(aliases => aliases[address])
- return { infos$, alias$ }
+  const cache: Shorts = getCache(NAME_CACHE_KEY) ?? {}
+
+  const infos0$ = fetchApi(`user-infos?address=${address}`).then(response => response.infos as Infos)
+    .then(infos => {
+      if (address in cache) infos.account.name = cache[address].name
+      return infos
+    })
+
+  const infos1$ = new Promise<Infos>(resolve => {
+    if (!(address in cache)) {
+      fetchApi(`tzkt-names`, { addresses: [address] }).then(response => {
+        const name = response.names[address] as string
+
+        if (name) infos0$.then(infos => {
+          infos.account.name = name
+
+          cache[address] = {
+            name: name,
+            image: infos.account.image,
+          }
+          setCache(NAME_CACHE_KEY, cache)
+
+          resolve(infos)
+        })
+      })
+    }
+  })
+
+  return { infos0$, infos1$ }
 }
 
 import { Contract } from '@/pages/api/contract-infos';
@@ -49,31 +79,72 @@ export async function fetchContractInfos(address: string) {
 }
 
 import { History } from '@/pages/api/account-history'
-export function fetchAccountHistory(address, limit) {
-  const history$ = fetchApi(`account-history?address=${address}&limit=${limit}`)
+export function fetchAccountHistory(address: string, limit: number) {
+  function updateHistoryWith(history: History, shorts: Shorts): History {
+    return history.map(batch =>
+      batch.map(operation => ({
+        ...operation,
+        counterparty: {
+          ...operation.counterparty,
+          ...shorts[operation.counterparty.address],
+        }
+      }))
+    )
+  }
+
+  const cachedShorts: Shorts = getCache(NAME_CACHE_KEY)
+
+  const history0$ = fetchApi(`account-history?address=${address}&limit=${limit}`)
     .then(response => response.history as History)
-  const aliases$ = history$.then(history => {
-    const addresses = history.flatMap(batch => batch.slice(0, 4)).map(operation => operation.counterparty.address)
-    return fetchNames(addresses)
+    .then(history => cachedShorts ? updateHistoryWith(history, cachedShorts) : history)
+
+  const history1$ = history0$.then(async history => {
+    const accounts = history.flatMap(batch =>
+      batch.slice(0, 4)
+        .filter(operation => !operation.counterparty.name)
+        .map(operation => operation.counterpartyDbAccount)
+    )
+    const shorts = await fetchAccountShorts(accounts)
+    return updateHistoryWith(history, shorts)
   })
-  return { history$, aliases$ };
+
+  return { history0$, history1$ };
 }
 
-const NAME_STORAGE_KEY = 'NAMES_v0'
+export async function fetchAccountShorts(accounts: DbAccounts): Promise<Shorts> {
+  accounts = eliminateDuplicates(accounts, 'Id')
+  const cache: Shorts = getCache(NAME_CACHE_KEY) ?? {}
+  const nonCached: DbAccounts = accounts.filter(a => !(a.Address in cache))
 
-export async function fetchNames(addresses: string[]): Promise<Record<string, string>> {
-  addresses = Array.from(new Set(addresses))
-  const cache = window[NAME_STORAGE_KEY] ?? JSON.parse(localStorage.getItem(NAME_STORAGE_KEY)) ?? {}
-  const nonCachedAddresses = addresses.filter(address => !(address in cache))
+  if (nonCached.length === 0) return cache
 
-  if (nonCachedAddresses.length === 0) return cache
+  const shorts = (await fetchApi(`account-history-shorts`, { accounts: nonCached })).shorts as Shorts
 
-  const names = (await fetchApi(`names`, { addresses: nonCachedAddresses })).names
+  Object.assign(cache, shorts)
+  setCache(NAME_CACHE_KEY, cache)
 
-  Object.assign(cache, names)
+  return cache
+}
 
-  window[NAME_STORAGE_KEY] = cache
-  localStorage.setItem(NAME_STORAGE_KEY, JSON.stringify(cache))
+export async function fetchTzktNames(accounts: Account[]): Promise<Shorts> {
+  accounts = eliminateDuplicates(accounts, 'address')
+  const cache: Shorts = getCache(NAME_CACHE_KEY) ?? {}
+  const nonCached = accounts.filter(a => !(a.address in cache))
+
+  if (nonCached.length === 0) return cache
+
+  const names = (await fetchApi(`tzkt-names`, {
+    addresses: nonCached.map(a => a.address)
+  })).names as Record<string, string>
+
+  for (const address in names) {
+    cache[address] = {
+      name: names[address],
+      image: accounts.find(a => a.address === address).image,
+    }
+  }
+
+  setCache(NAME_CACHE_KEY, cache)
 
   return cache
 }

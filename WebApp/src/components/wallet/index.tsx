@@ -42,22 +42,21 @@ const Wallet = ({ address, miscResponse }: Props) => {
     }
   } as Infos);
   const [coinsInfos, setCoinsInfos] = useState(null);
-  const [alias, setAlias] = useState(null);
 
   useEffect(() => {
     fetchAccountTokens(address).then((data) => {
       setTokens(data);
     });
-    const { infos$, alias$ } = fetchUserInfos(address)
-    infos$.then(setInfos)
-    alias$.then(setAlias)
+    const { infos0$, infos1$ } = fetchUserInfos(address)
+    infos0$.then(setInfos)
+    infos1$.then(setInfos)
     fetch('/api/coins-infos')
       .then(response => response.json())
       .then(data => setCoinsInfos(data))
       .catch(error => console.error('Error fetching data:', error));
   }, [address]);
 
-  const name = infos.account.name ?? alias ?? t('AccountDefaultName.user')
+  const name = infos.account.name ?? t('AccountDefaultName.user')
 
   return (
     <main>

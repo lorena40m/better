@@ -8,6 +8,7 @@ import { useTranslation } from "next-i18next";
 import { addSign, formatToken, formatDate, formatEntiereDate, formatNumber, formatInteger, formatTokenWithExactAllDecimals } from '../../utils/format'
 import { useRouter } from "next/router";
 import { History } from '@/pages/api/account-history'
+import { Shorts } from '@/pages/api/account-history-shorts'
 import { AccountIcon, CoinIcon } from '@/components/common/ArtifactIcon'
 import { fetchAccountHistory } from '@/utils/apiClient';
 import { useState, useEffect } from 'react'
@@ -24,13 +25,13 @@ type Props = {
 const Operations = (props: Props) => {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
-  const [history, setHistory] = useState([])
-  const [aliases, setAliases] = useState(null)
+  const [history, setHistory] = useState<History>([])
+  const [shorts, setShorts] = useState<Shorts>(null)
 
   useEffect(() => {
-    const { history$, aliases$ } = fetchAccountHistory(props.address, LIMIT_HISTORY)
-    history$.then(setHistory)
-    aliases$.then(setAliases)
+    const { history0$, history1$ } = fetchAccountHistory(props.address, LIMIT_HISTORY)
+    history0$.then(setHistory)
+    history1$.then(setHistory)
   }, [props.address])
 
   return (
@@ -56,7 +57,6 @@ const Operations = (props: Props) => {
                     <p className="operationsBox__batch__operation__start__name">
                       {
                         operation.counterparty.name ??
-                        aliases?.[operation.counterparty.address] ??
                         t('AccountDefaultName.' + (operation.counterparty?.accountType ?? 'userGroup'))
                       }
                     </p>
