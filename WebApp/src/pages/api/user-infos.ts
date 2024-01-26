@@ -2,11 +2,13 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { query } from '@/endpoints/providers/db'
 import { solveAccountType, solveAddressName, solveAddressImage } from '@/pages/api/_solve'
 import { Account } from '@/pages/api/_apiTypes'
+import { DbAccount } from '@/pages/api/account-history-shorts'
 
 export type Infos = {
   account: Account,
   balance: string,
   operationCount: number,
+  userDbAccount: DbAccount,
 }
 
 export default async function handler(
@@ -18,6 +20,7 @@ export default async function handler(
   try {
     const user = await query('ACCOUNT INFOS', `
       SELECT
+        a."Id",
         a."Balance",
         a."TransactionsCount",
         a."Type",
@@ -39,6 +42,11 @@ export default async function handler(
         },
         balance: user[0].Balance,
         operationCount: user[0].TransactionsCount,
+        userDbAccount: {
+          Address: address,
+          Id: user[0].Id,
+          Kind: null,
+        }
       } as Infos
     })
   } catch (err) {
