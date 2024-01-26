@@ -77,3 +77,9 @@ export async function fetchNames(addresses: string[]): Promise<Record<string, st
 
   return cache
 }
+
+import { OperationBatch } from "@/pages/api/_apiTypes";
+export async function fetchOperation(hash: string) {
+  const infos = await fetchApi(`operation-batch-infos?hash=${hash}`).then(response => response as OperationBatch);
+	return (infos);
+}

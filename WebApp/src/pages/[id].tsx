@@ -44,28 +44,8 @@ export async function getServerSideProps({ params, locale }: any) {
   });
 }
 
-const pages = {
-  Wallet,
-  Call,
-  Nft,
-  Operation,
-  Contract,
-  Token
-};
-
 const Artifact = (props) => {
   const { t } = useTranslation("common");
-  /*ArtifactResponse = JSON.parse(ArtifactResponse);
-  const artifactType = ArtifactResponse.artifactType ?? null;
-  const componentName = artifactType[0].toUpperCase() + artifactType.slice(1);
-
-  const ComponentToRender = pages[componentName];
-
-  return (
-	  <>
-      <ComponentToRender ArtifactResponse={ArtifactResponse} address="tz1YQqEDkFQCTHz5pRLLsKt9532ELtc8FcpX" miscResponse={miscResponse} />
-	  </>
-  )*/
   if (props.hash.substring(0, 2) === "tz") {
     return (
       <Wallet address={props.hash} miscResponse={props.miscResponse} />
@@ -73,6 +53,10 @@ const Artifact = (props) => {
   } else if (props.hash.substring(0, 2) === "KT") {
     return (
       <Contract address={props.hash} miscResponse={props.miscResponse} />
+    );
+  } else if (props.hash.substring(0, 1) === "o") {
+    return (
+      <Operation hash={props.hash} miscResponse={props.miscResponse} />
     );
   }
 };

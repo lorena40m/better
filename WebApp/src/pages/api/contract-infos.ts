@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { query } from '@/endpoints/providers/db';
 import { TokenDecimals, UrlString, DateString } from '@/pages/api/_apiTypes';
-/*import { TezosToolkit } from '@taquito/taquito';
+import { TezosToolkit } from '@taquito/taquito';
 import { InMemorySigner } from '@taquito/signer';
-const bip39 = require('bip39');*/
+const bip39 = require('bip39');
 
 export type Contract = {
   id: string,
@@ -13,10 +13,10 @@ export type Contract = {
   creatorAddress: string,
   creatorDomain: string,
   averageFee: number,
-  /*entrypoints: Array<{
+  entrypoints: Array<{
     name: string,
     fee: number
-  }>*/
+  }>
 }
 
 /*function randomInt(min, max) {
@@ -41,83 +41,47 @@ function randomTimestamp() {
 }
 
 function randomAddress() {
-  return 'tz1' + randomString(33); // Simplified
+  return 'tz1' + randomString(33);
 }
 
 function randomMutez() {
-  return randomInt(1, 1000000); // Simplified representation of Tez
+  return randomInt(1, 1000000);
 }
 
 function randomChainId() {
-  return 'Net' + randomString(15); // Simplified
+  return 'Net' + randomString(15);
 }
 
 function randomLambda() {
-  // Very basic lambda representation
   return "(parameter int) (storage int) (code (PUSH int 1) (ADD))";
 }
 
 function randomOperation() {
-  // Simplified operation representation
   return "operation";
 }
 
+function randomBytes(length) {
+  let result = '';
+  let characters = '0123456789ABCDEF';
+  for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
 function generateMichelsonValue(typeObj) {
-  if (!typeObj || typeof typeObj !== 'object') {
-      throw new Error('Invalid type object');
+  let objReturn: any = {};
+  switch (typeObj.prim) {
+    case 'pair':
+      objReturn = { prim: 'Pair', args: [] };
+      typeObj.args.forEach(arg => {
+        objReturn.args.push(generateMichelsonValue(arg));
+      });
+      return (objReturn);
+    case 'or':
+      objReturn = { prim: 'Or', }
   }
-
-  if (Array.isArray(typeObj)) {
-      return typeObj.map(generateMichelsonValue);
-  }
-
-  if (typeObj.prim) {
-      switch (typeObj.prim) {
-          case 'int':
-              return randomInt(-1000, 1000);
-          case 'nat':
-              return randomInt(0, 1000);
-          case 'string':
-              return randomString(10);
-          case 'bool':
-              return randomBool();
-          case 'timestamp':
-              return randomTimestamp();
-          case 'address':
-              return randomAddress();
-          case 'mutez':
-              return randomMutez();
-          case 'chain_id':
-              return randomChainId();
-          case 'lambda':
-              return randomLambda();
-          case 'operation':
-              return randomOperation();
-          case 'pair':
-          case 'or':
-              if (Array.isArray(typeObj.args)) {
-                  return typeObj.args.map(generateMichelsonValue);
-              }
-              break;
-          case 'list':
-              return Array.from({ length: randomInt(1, 5) }, () => generateMichelsonValue(typeObj.args[0]));
-          case 'map':
-              let mapLength = randomInt(1, 5);
-              let map = [];
-              for (let i = 0; i < mapLength; i++) {
-                  map.push({
-                      key: generateMichelsonValue(typeObj.args[0]),
-                      value: generateMichelsonValue(typeObj.args[1])
-                  });
-              }
-              return map;
-          // Add more case statements for other Michelson primitives as needed
-      }
-  }
-
-  throw new Error(`Unsupported or missing prim type in object: ${JSON.stringify(typeObj)}`);
 }*/
-
 
 export default async function handler(
   req: NextApiRequest,
@@ -158,15 +122,15 @@ export default async function handler(
       contract."Address" = $1
     LIMIT
       100
-    `, [address]);
+    `, [address], 'long');
     let totalFee = 0;
     feeHistory.forEach(fee => {
       totalFee += +fee?.BakerFee + +fee?.StorageFee + +fee?.AllocationFee;
     });
     const averageFee = totalFee / feeHistory.length;
 
-    /*const taquitoRpc = new TezosToolkit('https://mainnet.ecadinfra.com/');
-    const entrypoints = [];
+    /*const taquitoRpc = new TezosToolkit('http://91.163.75.179:8732/');
+    let entrypoints = [];
 
     taquitoRpc.setProvider({ signer: await InMemorySigner.fromSecretKey('edsk2rKA8YEExg9Zo2qNPiQnnYheF1DhqjLVmfKdxiFfu5GyGRZRnb') });
 
@@ -174,10 +138,11 @@ export default async function handler(
       const taquitoContract = await taquitoRpc.contract.at(address);
       const contractEntrypoints = taquitoContract.entrypoints;
       const entrypointNames = Object.keys(contractEntrypoints.entrypoints);
-  
-      for (const entrypoint of entrypointNames) {
+
+      entrypoints = await Promise.all(entrypointNames.map(entrypoint => {
         try {
           const entrypointType = contractEntrypoints.entrypoints[entrypoint];
+          console.log(entrypointType);
           const dummyData = generateMichelsonValue(entrypointType);
           console.log("YO");
           console.log(dummyData);
@@ -192,15 +157,14 @@ export default async function handler(
               }
           };
 
-          const estimate = await taquitoRpc.estimate.transfer(operation);
-          entrypoints.push({
-              name: entrypoint,
-              fee: estimate.suggestedFeeMutez
-          });
+          return taquitoRpc.estimate.transfer(operation).then(estimate => ({
+            name: entrypoint,
+            fee: estimate.suggestedFeeMutez
+          }))
         } catch (estimateError) {
             console.error(`Error estimating fees for entrypoint ${entrypoint}:`, estimateError);
         }
-      }
+      }))
     } catch (err) {
       console.error(err);
     }
@@ -215,7 +179,7 @@ export default async function handler(
         creatorAddress: contract[0].Address,
         creatorDomain: contract[0].Name,
         averageFee: averageFee,
-        /*entrypoints: entrypoints*/
+        entrypoints: []
       } as Contract
     });
   } catch (err) {

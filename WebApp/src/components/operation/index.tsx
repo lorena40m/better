@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import {
   Typography,
@@ -16,11 +16,21 @@ import Operations from "../../components/operation/Operations";
 import Tezos from "../../assets/images/tezos.svg";
 import PlayCircle from "../../assets/images/PlayCircle.svg";
 import { appWithTranslation, useTranslation } from "next-i18next";
+import { fetchOperation } from "@/utils/apiClient";
+import { OperationBatch } from "@/pages/api/_apiTypes";
+import { OperationExecutions } from "./OperationExecutions";
 
 import Image from "next/image";
 
-const Operation = () => {
+const Operation = ({ hash, miscResponse }) => {
   const { t } = useTranslation("common");
+  const [operation, setOperation] = useState({} as OperationBatch);
+
+  useEffect(() => {
+    fetchOperation(hash).then((data) => {
+      setOperation(data);
+    });
+  }, [hash]);
 
   return (
     <main  >
@@ -46,31 +56,23 @@ const Operation = () => {
             <Grid item md={6}>
               <Grid container spacing={4}>
                 <Grid item xs={12}>
-                  <Transfert />
+                  <Transfert hash={hash} operation={operation} miscResponse={miscResponse} />
                 </Grid>
                 <Grid item xs={12}>
-                  <Transaction />
+                  {/*<Transaction />*/}
+                </Grid>
+                <Grid item xs={12}>
+                  {/*<OperationExecutions operation={operation} />*/}
                 </Grid>
               </Grid>
             </Grid>
             <Grid item md={6}>
-              <Operations />
+              <OperationExecutions operation={operation} />
             </Grid>
           </Grid>
-          <Box className="pageTemplate__PlayBtnText">
-            <a href="#">
-              <Image
-                priority
-                src={PlayCircle}
-                height={24}
-                width={24}
-                alt="PlayCircle"
-              />
-              {t("bottomLink")}
-            </a>
-          </Box>
         </Container>
       </Box>
+
     </main>
   );
 };
