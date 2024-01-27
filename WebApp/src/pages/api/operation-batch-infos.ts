@@ -2,7 +2,7 @@ import { Operation } from './../../endpoints/API';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { query } from '@/endpoints/providers/db';
 import { OperationBatch } from './_apiTypes';
-import { solveAccountType } from '@/pages/api/_solve';
+import { solveAccountType, solveAddressName2 } from '@/pages/api/_solve';
 import { ipfsToHttps } from '@/endpoints/providers/utils';
 
 /*export type Operation = {
@@ -32,7 +32,7 @@ export default async function handler(
   try {
     const response = await query('OPERATION BATCH', `
         SELECT
-        op."Id",
+          op."Id",
           op."Amount",
           op."Entrypoint",
           op."Timestamp",
@@ -48,12 +48,28 @@ export default async function handler(
           Sender."Kind" as "SenderKind",
           Sender."Address" as "SenderAddress",
           Sender."Metadata" as "SenderMetadata",
+          jsonb_agg(jsonb_build_object(
+            'name', SenderDomain."Name",
+            'lastLevel', SenderDomain."LastLevel",
+            'data', SenderDomain."Data",
+            'id', SenderDomain."Id"
+          )) as "SenderDomains",
+          jsonb_agg(SenderToken."Metadata") as "SenderTokenMetadata",
           Target."Type" as "TargetType",
           Target."Kind" as "TargetKind",
           Target."Address" as "TargetAddress",
           Target."Metadata" as "TargetMetadata",
-          "TokenTransfers"."Amount" as "TokenAmount",
-          "Tokens"."Metadata"
+          jsonb_agg(jsonb_build_object(
+            'name', TargetDomain."Name",
+            'lastLevel', TargetDomain."LastLevel",
+            'data', TargetDomain."Data",
+            'id', TargetDomain."Id"
+          )) as "TargetDomains",
+          jsonb_agg(TargetToken."Metadata") as "TargetTokenMetadata",
+          jsonb_agg(jsonb_build_object(
+            'Amount', "TokenTransfers"."Amount",
+            'Metadata', "Tokens"."Metadata"
+          )) FILTER (WHERE "TokenTransfers"."Amount" IS NOT NULL) AS "Tokens"
         FROM
           "TransactionOps" as op
         LEFT JOIN
@@ -61,16 +77,47 @@ export default async function handler(
         LEFT JOIN
           "Accounts" as Target ON Target."Id" = op."TargetId"
         LEFT JOIN
+          "Domains" as SenderDomain ON SenderDomain."Address" = Sender."Address"
+        LEFT JOIN
+          "Domains" as TargetDomain ON TargetDomain."Address" = Target."Address"
+        LEFT JOIN
+          "Tokens" as SenderToken ON SenderToken."ContractId" = Sender."Id" and SenderToken."TokenId" = '0'
+        LEFT JOIN
+          "Tokens" as TargetToken ON TargetToken."ContractId" = Sender."Id" and TargetToken."TokenId" = '0'
+        LEFT JOIN
           "TokenTransfers" on "TokenTransfers"."TransactionId" = op."Id"
         LEFT JOIN
 			    "Tokens" ON "Tokens"."Id" = "TokenTransfers"."TokenId"
         WHERE
           op."OpHash" = $1
+        GROUP BY
+          op."Id",
+          op."Amount",
+          op."Entrypoint",
+          op."Timestamp",
+          op."Level",
+          op."BakerFee",
+          op."StorageFee",
+          op."AllocationFee",
+          op."GasUsed",
+          op."Status",
+          op."SenderCodeHash",
+          op."TargetCodeHash",
+          Sender."Type",
+          Sender."Kind",
+          Sender."Address",
+          Sender."Metadata",
+          Target."Type",
+          Target."Kind",
+          Target."Address",
+          Target."Metadata"
         ORDER BY
           op."Id" ASC
     `, [hash]);
 
     const operationGroupList = [];
+
+
 
     response.forEach((operation) => {
       if (!operation.SenderCodeHash) {
@@ -83,45 +130,54 @@ export default async function handler(
             from: {
               accountType: solveAccountType(operation.SenderType, operation.SenderKind),
               address: operation.SenderAddress,
-              name: operation.SenderMetadata?.name,
+              name: solveAddressName2(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
               image: ipfsToHttps(operation.SenderMetadata?.imageUri),
             },
             to: {
               accountType: solveAccountType(operation.TargetType, operation.TargetKind),
               address: operation.TargetAddress,
-              name: operation.TargetMetadata?.name,
+              name: solveAddressName2(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
               image: ipfsToHttps(operation.TargetMetadata?.imageUri),
             },
-            quantity: operation.TokenAmount ?? operation.Amount,
-            asset: (!operation.Entrypoint || operation.Entrypoint === 'transfer' ? (operation.Amount != '0' ? {
-              assetType: 'coin',
-              id: 'tezos',
-              name: 'Tezos',
-              ticker: 'XTZ',
-              decimals: 6,
-              image: null,
-            } : (operation.Metadata.decimals == '0' ? {
-              assetType: 'nft',
-              id: '',
-              name: operation.Metadata.name,
-              ticker: null,
-              decimals: '0',
-              image: ipfsToHttps(operation.Metadata.thumbnailUri),
-            } : {
-              assetType: 'coin',
-              id: '',
-              name: operation.Metadata.name,
-              ticker: operation.Metadata.symbol,
-              decimals: operation.Metadata.decimals,
-              image: ipfsToHttps(operation.Metadata.thumbnailUri ?? operation.Metadata.icon ?? null),
-            })) : null),
+            assets: (operation.Amount != "0" ? [{
+              quantity: operation.Amount.toString(),
+              asset: {
+                assetType: 'coin',
+                id: 'tezos',
+                name: 'Tezos',
+                ticker: 'XTZ',
+                decimals: 6,
+                image: null,
+              },
+            }] : []).concat(operation.Tokens?.map((token) => (
+              (token.Metadata.decimals == '0' ? {
+                quantity: token.Amount,
+                asset: {
+                  assetType: 'nft',
+                  id: '',
+                  name: token.Metadata.name,
+                  ticker: null,
+                  decimals: '0',
+                  image: ipfsToHttps(token.Metadata.thumbnailUri)
+                }
+              } : {
+                quantity: token.Amount,
+                asset: {
+                  assetType: 'coin',
+                  id: '',
+                  name: token.Metadata.name,
+                  ticker: token.Metadata.symbol,
+                  decimals: token.Metadata.decimals,
+                  image: ipfsToHttps(token.Metadata.thumbnailUri ?? token.Metadata.icon ?? null)
+                }
+              }))
+            ) ?? []),
             entrypoint: operation.Entrypoint,
             fees: +operation.BakerFee + +operation.StorageFee + +operation.AllocationFee
           }]
         });
       }
     });
-
     response.forEach((operation) => {
       if (operation.SenderCodeHash) {
         operationGroupList.forEach((rootOp) => {
@@ -132,38 +188,48 @@ export default async function handler(
               from: {
                 accountType: solveAccountType(operation.SenderType, operation.SenderKind),
                 address: operation.SenderAddress,
-                name: operation.SenderMetadata?.name,
+                name: solveAddressName2(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
                 image: ipfsToHttps(operation.SenderMetadata?.imageUri),
               },
               to: {
                 accountType: solveAccountType(operation.TargetType, operation.TargetKind),
                 address: operation.TargetAddress,
-                name: operation.TargetMetadata?.name,
+                name: solveAddressName2(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
                 image: ipfsToHttps(operation.TargetMetadata?.imageUri),
               },
-              quantity: operation.TokenAmount ?? operation.Amount,
-              asset: (!operation.Entrypoint || operation.Entrypoint === 'transfer' ? (operation.Amount != '0' ? {
-                assetType: 'coin',
-                id: 'tezos',
-                name: 'Tezos',
-                ticker: 'XTZ',
-                decimals: '6',
-                image: null,
-              } : (operation.Metadata.decimals == '0' ? {
-                assetType: 'nft',
-                id: '',
-                name: operation.Metadata.name,
-                ticker: null,
-                decimals: '0',
-                image: ipfsToHttps(operation.Metadata.thumbnailUri),
-              } : {
-                assetType: 'coin',
-                id: '',
-                name: operation.Metadata.name,
-                ticker: operation.Metadata.symbol,
-                decimals: operation.Metadata.decimals,
-                image: ipfsToHttps(operation.Metadata.thumbnailUri ?? operation.Metadata.icon ?? null),
-              })) : null),
+              assets: (operation.Amount != "0" ? [{
+                quantity: operation.Amount.toString(),
+                asset: {
+                  assetType: 'coin',
+                  id: 'tezos',
+                  name: 'Tezos',
+                  ticker: 'XTZ',
+                  decimals: 6,
+                  image: null,
+                },
+              }] : []).concat(operation.Tokens?.map((token) => (
+                (token.Metadata.decimals == '0' ? {
+                  quantity: token.Amount,
+                  asset: {
+                    assetType: 'nft',
+                    id: '',
+                    name: token.Metadata.name,
+                    ticker: null,
+                    decimals: '0',
+                    image: ipfsToHttps(token.Metadata.thumbnailUri)
+                  }
+                } : {
+                  quantity: token.Amount,
+                  asset: {
+                    assetType: 'coin',
+                    id: '',
+                    name: token.Metadata.name,
+                    ticker: token.Metadata.symbol,
+                    decimals: token.Metadata.decimals,
+                    image: ipfsToHttps(token.Metadata.thumbnailUri ?? token.Metadata.icon ?? null)
+                  }
+                })
+              )) ?? []),
               entrypoint: operation.Entrypoint,
               fees: +operation.BakerFee + +operation.StorageFee + +operation.AllocationFee
             });

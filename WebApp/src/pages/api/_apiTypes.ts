@@ -13,7 +13,7 @@ export type Account = {
 }
 
 export type AssetOp = {
-  assetType: 'nft',
+  assetType: string,
   id: string,
   name: string,
   image: UrlString,
@@ -52,10 +52,12 @@ export type OperationGroup = {
   fees: number,
   operationList: Array<{
     operationType: OperationType,
-    quantity: TokenDecimals,
     from: Account,
     to: Account,
-    asset: AssetOp,
+    assets: Array<{
+      quantity: TokenDecimals,
+      asset: AssetOp
+    }>,
     entrypoint: string, // = functionName
     fees: number,
   }>,

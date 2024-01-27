@@ -21,6 +21,12 @@ export function solveAddressName(domains, domainData, accountMetadata, tokenMeta
     accountMetadata?.name || tokenMetadata?.name
 }
 
+export function solveAddressName2(domains, accountMetadata, tokenMetadata) {
+  domains.sort((a, b) => (b.id - a.id)).sort((a, b) => (b.lastLevel - a.lastLevel));
+  return domains && (domains.map(d => d.data?.['openid:name']).find(d => d) ?? domains?.[0].name) ||
+    accountMetadata?.name || tokenMetadata?.name
+}
+
 export function solveAddressImage(domainData, accountMetadata, tokenMetadata) {
   const gravatarHash = domainData?.map(d => d?.['gravatar:hash'])?.find(d => d)
   return gravatarHash && `https://www.gravatar.com/avatar/${gravatarHash}` ||

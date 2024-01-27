@@ -122,7 +122,7 @@ export default async function handler(
       contract."Address" = $1
     LIMIT
       100
-    `, [address], 'long');
+    `, [address]);
     let totalFee = 0;
     feeHistory.forEach(fee => {
       totalFee += +fee?.BakerFee + +fee?.StorageFee + +fee?.AllocationFee;

@@ -1904,6 +1904,9 @@ Project: less intrusive search button
     justify-content: center;
     text-align: center;
     color: #2A3B51;
+    &:nth-last-child(-n+4) {
+      border-bottom: none;
+    }
   }
   &__title {
     font-size: 20px;
