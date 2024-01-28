@@ -56,7 +56,7 @@ export type OperationGroup = {
     to: Account,
     assets: Array<{
       quantity: TokenDecimals,
-      asset: AssetOp
+      asset: AssetOp,
     }>,
     entrypoint: string, // = functionName
     fees: number,

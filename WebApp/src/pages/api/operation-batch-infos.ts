@@ -2,7 +2,7 @@ import { Operation } from './../../endpoints/API';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { query } from '@/endpoints/providers/db';
 import { OperationBatch } from './_apiTypes';
-import { solveAccountType, solveAddressName2 } from '@/pages/api/_solve';
+import { solveAccountType, solveAddressName } from '@/pages/api/_solve';
 import { ipfsToHttps } from '@/endpoints/providers/utils';
 
 /*export type Operation = {
@@ -130,13 +130,13 @@ export default async function handler(
             from: {
               accountType: solveAccountType(operation.SenderType, operation.SenderKind),
               address: operation.SenderAddress,
-              name: solveAddressName2(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
+              name: solveAddressName(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
               image: ipfsToHttps(operation.SenderMetadata?.imageUri),
             },
             to: {
               accountType: solveAccountType(operation.TargetType, operation.TargetKind),
               address: operation.TargetAddress,
-              name: solveAddressName2(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
+              name: solveAddressName(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
               image: ipfsToHttps(operation.TargetMetadata?.imageUri),
             },
             assets: (operation.Amount != "0" ? [{
@@ -188,13 +188,13 @@ export default async function handler(
               from: {
                 accountType: solveAccountType(operation.SenderType, operation.SenderKind),
                 address: operation.SenderAddress,
-                name: solveAddressName2(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
+                name: solveAddressName(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
                 image: ipfsToHttps(operation.SenderMetadata?.imageUri),
               },
               to: {
                 accountType: solveAccountType(operation.TargetType, operation.TargetKind),
                 address: operation.TargetAddress,
-                name: solveAddressName2(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
+                name: solveAddressName(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
                 image: ipfsToHttps(operation.TargetMetadata?.imageUri),
               },
               assets: (operation.Amount != "0" ? [{

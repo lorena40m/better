@@ -25,8 +25,12 @@ export default async function handler(
         a."TransactionsCount",
         a."Type",
         a."Kind",
-        array_agg(d."Name") as "Domains",
-        array_agg(d."Data") as "DomainData"
+        jsonb_agg(jsonb_build_object(
+          'name', d."Name",
+          'lastLevel', d."LastLevel",
+          'data', d."Data",
+          'id', d."Id"
+        )) as "Domains"
       FROM "Accounts" as a
       LEFT JOIN "Domains" as d ON d."Address" = $1
       WHERE a."Address" = $1
@@ -37,8 +41,8 @@ export default async function handler(
         account: {
           accountType: solveAccountType(user[0].Type, user[0].Kind),
           address,
-          name: solveAddressName(user[0].Domains, user[0].DomainData, null, null),
-          image: solveAddressImage(user[0].DomainData, null, null),
+          name: solveAddressName(user[0].Domains, null, null),
+          image: solveAddressImage(user[0].Domains, null, null),
         },
         balance: user[0].Balance,
         operationCount: user[0].TransactionsCount,

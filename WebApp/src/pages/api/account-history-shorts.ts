@@ -58,23 +58,27 @@ export default async function handler(
     const domainsQuery = accounts.map((a, i) => `(
       SELECT
         d1."Address",
-        array_agg(d1."Name") as "DomainNames",
-        array_agg(d1."Data") as "DomainData",
-        array_agg(t1."Metadata") as "TokenMetadata"
+        jsonb_agg(jsonb_build_object(
+          'name', d1."Name",
+          'lastLevel', d1."LastLevel",
+          'data', d1."Data",
+          'id', d1."Id"
+        )) as "Domains",
+        t1."Metadata" as "TokenMetadata"
       FROM "Domains" as d1
       FULL JOIN "Tokens" as t1 ON $${3*i+3} and t1."ContractId" = $${3*i+1} and t1."TokenId" = '0'
       WHERE d1."Address" = $${3*i+2}
-      GROUP BY d1."Address"
+      GROUP BY d1."Address", t1."Metadata"
     )`).join(' UNION ')
     const data: Array<{
-      Address: string, DomainNames: string[], DomainData: any[], TokenMetadata: any[]
+      Address: string, Domains: any[], TokenMetadata: any
     }> = await query('DOMAINS', domainsQuery, accounts.flatMap(a => [a.Id, a.Address, a.Kind === 2]))
 
     const shorts: Array<[string, Short]> = accounts.map(account => {
       const accountData = data.find(d => d.Address === account.Address)
       return [account.Address, {
-        name: solveAddressName(accountData?.DomainNames, accountData?.DomainData, null, accountData?.TokenMetadata),
-        image: solveAddressImage(accountData?.DomainData, null, accountData?.TokenMetadata),
+        name: solveAddressName(accountData?.Domains, null, accountData?.TokenMetadata),
+        image: solveAddressImage(accountData?.Domains, null, accountData?.TokenMetadata),
       }]
     })
 

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { query } from '@/endpoints/providers/db';
-import { solveAddressName, solveAddressImage, solveAccountType } from '@/pages/api/_solve'
+import { solveAccountType } from '@/pages/api/_solve'
 import { ipfsToHttps } from '@/endpoints/providers/utils'
 import { eliminateDuplicates, groupBy, sum } from '@/utils/arrays'
 import { DbAccount } from '@/pages/api/account-history-shorts'

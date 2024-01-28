@@ -1,5 +1,7 @@
 import { ipfsToHttps } from '@/endpoints/providers/utils'
 
+// Utils
+
 const accountTypes = {
   0: 'user',
   1: 'baker',
@@ -12,23 +14,31 @@ const contractTypes = {
   2: 'asset',
 } // kind
 
+export type Metadata = Record<string, string>
+export type Domain = { id: number, lastLevel: number, name: string, data: Metadata }
+function findDomainsMetadata(domains: Array<Domain>, key: string) {
+  return domains?.map(d => d.data?.[key])?.find(d => d)
+}
+
+// Functions
+
 export function solveAccountType(accountType, accountKind) {
   return accountType == 2 ? contractTypes[accountKind] : accountTypes[accountType]
 }
 
-export function solveAddressName(domains, domainData, accountMetadata, tokenMetadata) {
-  return domains && (domainData.map(d => d?.['openid:name']).find(d => d) ?? domains?.[0]) ||
-    accountMetadata?.name || tokenMetadata?.name
-}
-
-export function solveAddressName2(domains, accountMetadata, tokenMetadata) {
+export function solveAddressName(domains: Array<Domain>, accountMetadata: Metadata, tokenMetadata: Metadata) {
   domains.sort((a, b) => (b.id - a.id)).sort((a, b) => (b.lastLevel - a.lastLevel));
-  return domains && (domains.map(d => d.data?.['openid:name']).find(d => d) ?? domains?.[0].name) ||
-    accountMetadata?.name || tokenMetadata?.name
+  return accountMetadata?.name ||
+    (findDomainsMetadata(domains, 'openid:name') ?? domains?.[0].name) ||
+    tokenMetadata?.name
 }
 
-export function solveAddressImage(domainData, accountMetadata, tokenMetadata) {
-  const gravatarHash = domainData?.map(d => d?.['gravatar:hash'])?.find(d => d)
+export function solveAddressImage(
+  domains: Array<Domain>,
+  accountMetadata: Metadata,
+  tokenMetadata: Metadata
+) {
+  const gravatarHash = findDomainsMetadata(domains, 'gravatar:hash')
   return gravatarHash && `https://www.gravatar.com/avatar/${gravatarHash}` ||
     ipfsToHttps(accountMetadata?.imageUri) || ipfsToHttps(tokenMetadata?.imageUri)
 }
