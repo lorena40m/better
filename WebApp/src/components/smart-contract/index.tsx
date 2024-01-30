@@ -41,7 +41,7 @@ const 	Contract = ({ address, miscResponse }) => {
       <Head>
         <title>{null || 'Contract'} | {t('App.Title')}</title>
       </Head>
-      <Header hideSearch={false} />
+      <Header hideSearch={true} />
       <Box className="pageTemplate">
         <Container maxWidth="xl">
 			<div className="pageTemplate__head">

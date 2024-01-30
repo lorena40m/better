@@ -26,11 +26,20 @@ export function OperationExecutions(props: Props) {
 									<p className="operationExecutionsBox__gridItem1">{j === 0 ? (i + 1).toString() : ""}</p>
 									<p className="operationExecutionsBox__gridItem2 operationExecutionsBox__link" title={operation.from.address}><Link href={'/' + operation.from.address}>{operation.from.name ?? operation.from.address.slice(0, 8) + "..."}</Link></p>
 									<p className="operationExecutionsBox__gridItem3 operationExecutionsBox__link" title={operation.to.address}><Link href={'/' + operation.to.address}>{operation.to.name ?? operation.to.address.slice(0, 8) + "..."}</Link></p>
-									<p className="operationExecutionsBox__gridItem4">{(operation.entrypoint !== 'transfer' && operation.entrypoint !== null) ? `Call ${operation.entrypoint}` :
-										(operation.assets.every(asset => asset?.asset.name === operation.assets[0].asset.name) ?
-											`Transfer ${formatNumber(+operation.assets.reduce((total, asset) => { return (total + +asset.quantity / 10**+asset.asset.decimals) }, 0), locale)} ${operation.assets[0].asset.assetType === 'nft' ? operation.assets[0].asset.name : operation.assets[0].asset.ticker}` :
-											`${operation.assets.length} transfers of differents tokens`
-										)}
+									<p className="operationExecutionsBox__gridItem4">
+										{(operation.entrypoint !== 'transfer' && operation.entrypoint !== null) ?
+											<>Call {operation.entrypoint}<br />
+											{operation.assets.length > 0 ? (operation.assets.every(asset => asset?.asset.name === operation.assets[0].asset.name) ?
+												`Transfer ${+formatNumber(+operation.assets.reduce((total, asset) => { return (total + +asset.quantity / 10**+asset.asset.decimals) }, 0), locale)} ${operation.assets[0].asset.assetType === 'nft' ? operation.assets[0].asset.name : operation.assets[0].asset.ticker}` :
+												`${operation.assets.length} transfers of differents tokens`
+											) : null}
+											</>
+											:
+											(operation.assets.every(asset => asset?.asset.name === operation.assets[0].asset.name) ?
+												`Transfer ${+formatNumber(+operation.assets.reduce((total, asset) => { return (total + +asset.quantity / 10**+asset.asset.decimals) }, 0), locale)} ${operation.assets[0].asset.assetType === 'nft' ? operation.assets[0].asset.name : operation.assets[0].asset.ticker}` :
+												`${operation.assets.length} transfers of differents tokens`
+											)
+										}
 									</p>
 								</>
 							);

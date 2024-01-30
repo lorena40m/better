@@ -1,27 +1,8 @@
-import { Operation } from './../../endpoints/API';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { query } from '@/endpoints/providers/db';
 import { OperationBatch } from './_apiTypes';
 import { solveAccountType, solveAddressName } from '@/pages/api/_solve';
 import { ipfsToHttps } from '@/endpoints/providers/utils';
-
-/*export type Operation = {
-  id : string,
-  operationType: OperationType,
-  stakingType: StakingType,
-  status : StatusType,
-  from : Account,
-  to : Account,
-  functionName: string,
-  executions : Array<Execution>,
-  fees: Dollars,
-  transferedAssets: Array<{
-    quantity: TokenDecimals,
-    from : Account,
-    to : Account,
-    asset : Asset,
-  }>,
-}*/
 
 export default async function handler(
   req: NextApiRequest,
@@ -68,7 +49,30 @@ export default async function handler(
           jsonb_agg(TargetToken."Metadata") as "TargetTokenMetadata",
           jsonb_agg(jsonb_build_object(
             'Amount', "TokenTransfers"."Amount",
-            'Metadata', "Tokens"."Metadata"
+            'Metadata', "Tokens"."Metadata",
+            'Id', "Tokens"."TokenId",
+            'From', jsonb_build_object(
+              'address', TokenTransferSender."Address",
+              'domains', (
+                SELECT jsonb_agg(jsonb_build_object(
+                  'name', "Domains"."Name",
+                  'lastLevel', "Domains"."LastLevel",
+                  'data', "Domains"."Data",
+                  'id', "Domains"."Id"
+                )) FROM "Domains" WHERE "Domains"."Address" = TokenTransferSender."Address"
+              )
+            ),
+            'To', jsonb_build_object(
+              'address', TokenTransferTarget."Address",
+              'domains', (
+                SELECT jsonb_agg(jsonb_build_object(
+                  'name', "Domains"."Name",
+                  'lastLevel', "Domains"."LastLevel",
+                  'data', "Domains"."Data",
+                  'id', "Domains"."Id"
+                )) FROM "Domains" WHERE "Domains"."Address" = TokenTransferTarget."Address"
+              )
+            )
           )) FILTER (WHERE "TokenTransfers"."Amount" IS NOT NULL) AS "Tokens"
         FROM
           "TransactionOps" as op
@@ -83,9 +87,13 @@ export default async function handler(
         LEFT JOIN
           "Tokens" as SenderToken ON SenderToken."ContractId" = Sender."Id" and SenderToken."TokenId" = '0'
         LEFT JOIN
-          "Tokens" as TargetToken ON TargetToken."ContractId" = Sender."Id" and TargetToken."TokenId" = '0'
+          "Tokens" as TargetToken ON TargetToken."ContractId" = Target."Id" and TargetToken."TokenId" = '0'
         LEFT JOIN
-          "TokenTransfers" on "TokenTransfers"."TransactionId" = op."Id"
+          "TokenTransfers" ON "TokenTransfers"."TransactionId" = op."Id"
+        LEFT JOIN
+          "Accounts" as TokenTransferSender ON TokenTransferSender."Id" = "TokenTransfers"."FromId"
+        LEFT JOIN
+          "Accounts" as TokenTransferTarget ON TokenTransferTarget."Id" = "TokenTransfers"."ToId"
         LEFT JOIN
 			    "Tokens" ON "Tokens"."Id" = "TokenTransfers"."TokenId"
         WHERE
@@ -117,8 +125,6 @@ export default async function handler(
 
     const operationGroupList = [];
 
-
-
     response.forEach((operation) => {
       if (!operation.SenderCodeHash) {
         operationGroupList.push({
@@ -147,28 +153,52 @@ export default async function handler(
                 name: 'Tezos',
                 ticker: 'XTZ',
                 decimals: 6,
-                image: null,
+                image: null
               },
+              from: {
+                address: operation.SenderAddress,
+                name: solveAddressName(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata)
+              },
+              to: {
+                address: operation.TargetAddress,
+                name: solveAddressName(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata)
+              }
             }] : []).concat(operation.Tokens?.map((token) => (
               (token.Metadata.decimals == '0' ? {
                 quantity: token.Amount,
                 asset: {
                   assetType: 'nft',
-                  id: '',
+                  id: token.Id,
                   name: token.Metadata.name,
                   ticker: null,
                   decimals: '0',
                   image: ipfsToHttps(token.Metadata.thumbnailUri)
+                },
+                from: {
+                  address: token.From.address ?? operation.SenderAddress,
+                  name: solveAddressName(token.From.domains, null, null),
+                },
+                to: {
+                  address: token.To.address,
+                  name: solveAddressName(token.To.domains, null, null),
                 }
               } : {
                 quantity: token.Amount,
                 asset: {
                   assetType: 'coin',
-                  id: '',
+                  id: token.Id,
                   name: token.Metadata.name,
                   ticker: token.Metadata.symbol,
                   decimals: token.Metadata.decimals,
                   image: ipfsToHttps(token.Metadata.thumbnailUri ?? token.Metadata.icon ?? null)
+                },
+                from: {
+                  address: token.From.address ?? operation.SenderAddress,
+                  name: solveAddressName(token.From.domains, null, null),
+                },
+                to: {
+                  address: token.To.address,
+                  name: solveAddressName(token.To.domains, null, null),
                 }
               }))
             ) ?? []),
@@ -207,26 +237,50 @@ export default async function handler(
                   decimals: 6,
                   image: null,
                 },
+                from: {
+                  address: operation.SenderAddress,
+                  name: solveAddressName(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata)
+                },
+                to: {
+                  address: operation.TargetAddress,
+                  name: solveAddressName(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata)
+                }
               }] : []).concat(operation.Tokens?.map((token) => (
                 (token.Metadata.decimals == '0' ? {
                   quantity: token.Amount,
                   asset: {
                     assetType: 'nft',
-                    id: '',
+                    id: token.Id,
                     name: token.Metadata.name,
                     ticker: null,
                     decimals: '0',
                     image: ipfsToHttps(token.Metadata.thumbnailUri)
+                  },
+                  from: {
+                    address: token.From.address ?? operation.SenderAddress,
+                    name: solveAddressName(token.From.domains, null, null),
+                  },
+                  to: {
+                    address: token.To.address,
+                    name: solveAddressName(token.To.domains, null, null),
                   }
                 } : {
                   quantity: token.Amount,
                   asset: {
                     assetType: 'coin',
-                    id: '',
+                    id: token.Id,
                     name: token.Metadata.name,
                     ticker: token.Metadata.symbol,
                     decimals: token.Metadata.decimals,
                     image: ipfsToHttps(token.Metadata.thumbnailUri ?? token.Metadata.icon ?? null)
+                  },
+                  from: {
+                    address: token.From.address ?? operation.SenderAddress,
+                    name: solveAddressName(token.From.domains, null, null),
+                  },
+                  to: {
+                    address: token.To.address,
+                    name: solveAddressName(token.To.domains, null, null),
                   }
                 })
               )) ?? []),

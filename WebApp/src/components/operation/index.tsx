@@ -34,7 +34,7 @@ const Operation = ({ hash, miscResponse }) => {
 
   return (
     <main  >
-      <Header hideSearch={false} />
+      <Header hideSearch={true} />
       <Box className="pageTemplate">
         <Container maxWidth="xl">
           <div className="pageTemplate__head">
@@ -59,7 +59,7 @@ const Operation = ({ hash, miscResponse }) => {
                   <Transfert hash={hash} operation={operation} miscResponse={miscResponse} />
                 </Grid>
                 <Grid item xs={12}>
-                  {/*<Transaction />*/}
+                  <Transaction operation={operation} />
                 </Grid>
                 <Grid item xs={12}>
                   {/*<OperationExecutions operation={operation} />*/}
