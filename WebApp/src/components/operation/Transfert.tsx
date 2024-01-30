@@ -21,7 +21,7 @@ import Wallet from "@/assets/iconSvg/Wallet.svg";
 import { useTranslation } from "next-i18next";
 import { CopyHashButton } from "../common/CopyHashButton";
 import { OperationBatch } from "@/pages/api/_apiTypes";
-import { formatDate, formatPrice } from "@/utils/format";
+import { formatDate, formatPrice, formatEntiereDate } from "@/utils/format";
 import { useRouter } from "next/router";
 import { AccountIcon } from "../common/ArtifactIcon";
 import Link from "next/link";
@@ -40,10 +40,10 @@ export default function Transfert(props: Props) {
     <div className="transferBox box">
       <div className="transferBox__top">
         <div className="transferBox__top__left">
-          <Image src={DollarIcon} alt="Operation icon" className="transferBox__top__left__image" height={50} width={50}></Image>
+          <Image src={(props.operation.operationGroupList?.[0].operationList[0].operationType === 'call' ? DollarIcon : DollarIcon)} alt="Operation icon" className="transferBox__top__left__image" height={50} width={50}></Image>
           <div>
-            <h1>{props.operation.operationGroupList?.length === 1 && props.operation.operationGroupList?.[0].operationList.length === 1 ? props.operation.operationGroupList?.[0].operationList[0].entrypoint ?? 'transfer' : 'Operation Group'}</h1>
-            <p className="transferBox__top__left__green">{formatDate(props.operation?.date, locale)}</p>
+            <h1>{props.operation.operationGroupList?.length === 1 ? (props.operation.operationGroupList?.[0].operationList[0].operationType[0].toUpperCase() + props.operation.operationGroupList?.[0].operationList[0].operationType.slice(1)) : 'Operation Group'}</h1>
+            <p className="transferBox__top__left__green" title={formatEntiereDate(props.operation?.date, locale)}>{formatDate(props.operation?.date, locale)}</p>
             {null === 'call' ? <p>test</p> : <></>}
           </div>
         </div>

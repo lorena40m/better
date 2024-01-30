@@ -45,7 +45,7 @@ const Operations = (props: Props) => {
         const operationLimit = batch.length > LIMIT_OPERATIONS_BY_BATCH && LIMIT_OPERATIONS_BY_BATCH - 1
 
         return (
-          <Link href={'/' + batch[0].id} key={batch[0].id}>
+          <Link href={'/' + batch[0].id} key={batch[0].id} title={batch[0].id}>
           <div className="operationsBox__batch hoverItem">
             {batch.slice(0, operationLimit || batch.length).map((operation, i) => {
               const transferLimit = operation.transferedAssets.length > LIMIT_TRANSFERS_BY_OPERATION && LIMIT_TRANSFERS_BY_OPERATION - 1
@@ -54,12 +54,12 @@ const Operations = (props: Props) => {
                 <div className="operationsBox__batch__operation__start">
                   <AccountIcon account={operation.counterparty} />
                   <div>
-                    <p className="operationsBox__batch__operation__start__name">
+                    <Link href={'/' + operation.counterparty.address}><p className="operationsBox__batch__operation__start__name" title={operation.counterparty.address}>
                       {
                         operation.counterparty.name ??
                         t('AccountDefaultName.' + (operation.counterparty?.accountType ?? 'userGroup'))
                       }
-                    </p>
+                    </p></Link>
                     {i == 0 && <p className="operationsBox__batch__operation__start__date"
                       title={t('History.Status.' + operation.status) + formatEntiereDate(operation.date, locale)}
                       style={{ color: { success: 'green', failure: 'red', waiting: '#808080' }[operation.status] }}>

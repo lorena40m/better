@@ -1306,6 +1306,15 @@ Project: less intrusive search button
       height: 100%;
       display: flex;
       align-items: center;
+      &__link {
+        display: flex;
+        &__litlelogo {
+          transition: transform 0.3s;
+        }
+        &:hover &__litlelogo {
+          transform: rotate(180deg) !important;
+        }
+      }
       a {
         height: 80%;
       }
@@ -1645,6 +1654,9 @@ Project: less intrusive search button
           font-weight: 700;
           color: #2a3b51;
           line-height: 25px;
+          &:hover {
+            text-decoration: underline;
+          }
         }
 
         &__date {

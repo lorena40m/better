@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import Select from "@/components/common/Select";
 import { useTranslation } from "next-i18next";
+import { fetchAddressFromDomain } from "@/utils/apiClient";
 
 type Props = {
   hideSearch: boolean
@@ -50,7 +51,15 @@ export default function Header({ hideSearch }: Props) {
       setSearchActive(true);
     }
     else if (search && search[0]) {
-      router.push(`/${encodeURIComponent(search)}`);
+      if (search.length > 6 && search.slice(-4) === ".tez") {
+        fetchAddressFromDomain(search).then((data) => {
+          if (data) {
+            router.push(`/${encodeURIComponent(data)}`);
+          }
+        });
+      } else {
+        router.push(`/${encodeURIComponent(search)}`);
+      }
     }
   }
 
@@ -59,7 +68,7 @@ export default function Header({ hideSearch }: Props) {
       <div className={"main-header__container " + (searchActive ? "main-header__container__search-active" : "")}>
         <div className="main-header__container__black-overlay" onClick={() => {setSearchActive(false)}}></div>
         <div className="main-header__container__left">
-          <Link href="/" style={{display: "flex"}}>
+          <Link href="/" className="main-header__container__left__link" title="Home">
             <Image
               priority
               src={LogoIcon}
@@ -67,6 +76,7 @@ export default function Header({ hideSearch }: Props) {
               width={36}
               alt="LogoIcon"
               style={{marginRight: "10px"}}
+              className="main-header__container__left__link__litlelogo"
             />
             <Image
               priority

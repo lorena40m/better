@@ -78,6 +78,11 @@ export async function fetchContractInfos(address: string) {
 	return (infos);
 }
 
+export async function fetchAddressFromDomain(domain: string) {
+	const address = await fetchApi(`address-from-domain?domain=${domain}`).then(response => response);
+	return (address);
+}
+
 import { History } from '@/pages/api/account-history'
 export function fetchAccountHistory(address: string, limit: number) {
   function updateHistoryWith(history: History, shorts: Shorts): History {
