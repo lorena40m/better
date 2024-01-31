@@ -17,7 +17,7 @@ export function CopyHashButton(props: Props) {
 	return (
 	<>
 		<Toaster/>
-		<div className="copyHashButton" onClick={() => {copy(props.hash)}}>
+		<div className="copyHashButton" title={props.hash} onClick={() => {copy(props.hash)}}>
 			<p>{props.hash.slice(0, 8)}...</p>
 			<Image src={CopyPastIcon} alt="copy past icon"/>
 		</div>

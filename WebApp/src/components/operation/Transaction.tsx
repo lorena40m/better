@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { OperationBatch } from "@/pages/api/_apiTypes";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import Link from "next/link";
@@ -10,12 +10,13 @@ type Props = {
 const Transaction = (props: Props) => {
   const [openList, setOpenList] = useState(true);
   const { t } = useTranslation("common");
+  const [transfers, setTransfers] = useState([]);
 
-  const transfers = [];
+  const newTransfers = [];
 
   function pushInTransfer(assetTransfer) {
-    for (let i = 0; i < transfers.length; i++) {
-      const transfer = transfers[i];
+    for (let i = 0; i < newTransfers.length; i++) {
+      const transfer = newTransfers[i];
       if (transfer.from.address === assetTransfer.from.address && transfer.to.address === assetTransfer.to.address) {
         for (let j = 0; j < transfer.assets.length; j++) {
           const asset = transfer.assets[j];
@@ -31,7 +32,7 @@ const Transaction = (props: Props) => {
         return ;
       }
     }
-    transfers.push({
+    newTransfers.push({
       from: assetTransfer.from,
       to: assetTransfer.to,
       assets: [{
@@ -39,25 +40,31 @@ const Transaction = (props: Props) => {
         asset: assetTransfer.asset
       }]
     });
-  }  
+  };
+
+  useEffect(() => {
+    props.operation?.operationGroupList?.map((operationGroup) => {
+      return (
+        operationGroup.operationList?.map((operation) => {
+          return (
+            operation.assets.map((assetTransfer) => {
+              pushInTransfer(assetTransfer);
+              return (
+                null
+              );
+            })
+          );
+        })
+      );
+    });
+  
+    setTransfers(newTransfers);
+  }, [props.operation]);
 
   return (
-    <div className="operationTransfersBox box">
+    (transfers.length > 0 ? <div className="operationTransfersBox box">
       <h2>Transfers</h2>
-      {props.operation?.operationGroupList?.map((operationGroup) => {
-        return (
-          operationGroup.operationList?.map((operation) => {
-            return (
-              operation.assets.map((assetTransfer) => {
-                pushInTransfer(assetTransfer);
-                return (
-                  null
-                );
-              })
-            );
-          })
-        );
-      })}
+      {}
       {transfers.map((transfer, i) => {
         return (
           <div key={i} className="operationTransfersBox__transfer">
@@ -81,7 +88,7 @@ const Transaction = (props: Props) => {
           </div>
         );
       })}
-    </div>
+    </div> : null)
   );
 };
 
