@@ -53,7 +53,7 @@ const Operation = ({ hash, miscResponse }) => {
                   <Transfert hash={hash} operation={operation} miscResponse={miscResponse} />
                 </Grid>
                 <Grid item xs={12}>
-                  <Transaction operation={operation} />
+                  <OperationExecutions operation={operation} />
                 </Grid>
                 <Grid item xs={12}>
                   {/*<OperationExecutions operation={operation} />*/}
@@ -61,7 +61,7 @@ const Operation = ({ hash, miscResponse }) => {
               </Grid>
             </Grid>
             <Grid item md={6}>
-              <OperationExecutions operation={operation} />
+              <Transaction operation={operation} />
             </Grid>
           </Grid>
         </Container>

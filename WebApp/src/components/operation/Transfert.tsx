@@ -21,7 +21,7 @@ export default function Transfert(props: Props) {
   const { locale } = useRouter();
 
   return (
-    <div className="transferBox box">
+    <div className="transferBox box" style={props.operation.operationGroupList?.some(operationGroup => operationGroup.status === 'success') ? {borderColor: 'green'} : props.operation.operationGroupList?.some(operationGroup => operationGroup.status === 'failure') ? {borderColor: 'red'} : {borderColor: 'grey'}}>
       <div className="transferBox__top">
         <div className="transferBox__top__left">
           <Image src={(props.operation.operationGroupList?.length > 1 ? OperationGroupIcon : (props.operation.operationGroupList?.[0].operationList[0].operationType === 'transfer' ? TransferIcon : CallContractIcon))} alt="Operation icon" className="transferBox__top__left__image" height={50} width={50}></Image>
@@ -43,7 +43,7 @@ export default function Transfert(props: Props) {
         </div>
   </div> : <></>*/}
       {<div className="transferBox__bot">
-        <p>Frais : {formatPrice(/*(+props.operation?.fees / 10**6 ?? 0 * +props.miscResponse?.xtzPrice ?? 1)*/1, locale, props.miscResponse?.rates ?? { 'EUR/USD': 0 })}</p>
+        <p>Fees : {formatPrice(/*(+props.operation?.fees / 10**6 ?? 0 * +props.miscResponse?.xtzPrice ?? 1)*/1, locale, props.miscResponse?.rates ?? { 'EUR/USD': 0 })}</p>
         <p>Block Number: {props.operation.block}</p>
       </div>}
     </div>

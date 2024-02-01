@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { OperationBatch } from "@/pages/api/_apiTypes";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import Link from "next/link";
+import { AccountIcon } from "../common/ArtifactIcon";
 
 type Props = {
 	operation: OperationBatch,
@@ -69,19 +70,36 @@ const Transaction = (props: Props) => {
         return (
           <div key={i} className="operationTransfersBox__transfer">
             <div className="operationTransfersBox__transfer__head">
-              <Link href={'/' + transfer.from.address}><p title={transfer.from.address}>{transfer.from.name ?? (transfer.from.address.slice(0, 8) + "...")}</p></Link>
+              <Link href={'/' + transfer.from.address}>
+                <div className="operationTransfersBox__transfer__head__user">
+                  <AccountIcon account={transfer.from} />
+                  <p title={transfer.from.address}>{transfer.from.name ?? (transfer.from.address.slice(0, 8) + "...")}</p>
+                </div>
+              </Link>
               <div className="operationTransfersBox__transfer__head__arrow">
                 <span></span>
                 <span></span>
                 <span></span>
               </div>
-              <Link href={'/' + transfer.to.address}><p title={transfer.to.address}>{transfer.to.name ?? (transfer.to.address.slice(0, 8) + "...")}</p></Link>
+              <Link href={'/' + transfer.to.address}>
+                <div className="operationTransfersBox__transfer__head__user">
+                  <AccountIcon account={transfer.to} />
+                  <p title={transfer.to.address}>{transfer.to.name ?? (transfer.to.address.slice(0, 8) + "...")}</p>
+                </div>
+              </Link>
             </div>
             {/*<p>Assets :</p>*/}
             <div className="operationTransfersBox__transfer__assets">
               {transfer.assets.map((asset, j) => {
                 return (
-                    <p key={j}>{asset.quantity / 10**asset.asset.decimals} {asset.asset.assetType === 'nft' ? asset.asset.name : asset.asset.ticker}</p>
+                  <>
+                    <p key={j}>
+                      {asset.quantity / 10**asset.asset.decimals} {asset.asset.assetType === 'nft' ? asset.asset.name : asset.asset.ticker}
+                    </p>
+                    {asset.asset.image ? <div className="operationTransfersBox__transfer__assets__imageBox">
+                      <img src={asset.asset.image} alt={asset.asset.name} />
+                    </div> : null}
+                  </>
                 );
               })}
             </div>

@@ -1831,7 +1831,6 @@ Project: less intrusive search button
 }
 
 .transferBox {
-  border-color: #21bc27;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -1843,13 +1842,14 @@ Project: less intrusive search button
       gap: 20px;
       color: #2A3B51;
       h1 {
-        font-size: 24px;
+        font-size: 28px;
+        font-weight: 600;
       }
       p {
         font-size: 16px;
       }
       &__green {
-        color: #21bc27;
+        color: green;
       }
     }
   }
@@ -1900,7 +1900,7 @@ Project: less intrusive search button
 
 .operationExecutionsBox {
   h2 {
-    font-size: 22px;
+    font-size: 26px;
     color: #2A3B51;
     margin-bottom: 20px;
   }
@@ -1921,7 +1921,7 @@ Project: less intrusive search button
     }
   }
   &__title {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 600;
   }
   &__link:hover {
@@ -1931,6 +1931,12 @@ Project: less intrusive search button
     grid-column: span 1;
     border-right: 1px solid #2A3B51AA;
     border-bottom: 1px solid #2A3B51AA;
+    font-size: 20px;
+    font-weight: 700;
+    img {
+      width: 60%;
+      height: 60%;
+    }
   }
   &__gridItem2 {
     grid-column: span 2;
@@ -1949,7 +1955,7 @@ Project: less intrusive search button
 }
 .operationTransfersBox {
   h2 {
-    font-size: 22px;
+    font-size: 26px;
     color: #2A3B51;
     margin-bottom: 20px;
   }
@@ -1988,14 +1994,46 @@ Project: less intrusive search button
           }
         }
       }
-      p:hover {
-        text-decoration: underline;
+      &__user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        img {
+          height: 60px;
+          width: 60px;
+          border: 1px solid #2A3B51;
+          border-radius: 4px;
+        }
+        p {
+          font-size: 16px;
+          font-weight: 700;
+          text-align: left;
+        }
+        &:hover {
+          p {
+            text-decoration: underline;
+          }
+        }
       }
     }
     &__assets {
       display: flex;
       flex-direction: column;
       align-items: center;
+      p {
+        text-align: center;
+      }
+      &__imageBox {
+        width: 50px;
+        height: 50px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        img {
+          object-fit: cover;
+        }
+      }
     }
   }
 }
