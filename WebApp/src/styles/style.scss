@@ -1642,6 +1642,9 @@ Project: less intrusive search button
         max-width: 50%;
         gap: 20px;
         margin-bottom: 10px;
+        a:hover + div .operationsBox__batch__operation__start__name {
+          text-decoration: underline;
+        }
 
         img.ArtifactIcon {
           height: 50px;
@@ -1910,14 +1913,19 @@ Project: less intrusive search button
     width: 100%;
   }
   p {
-    padding: 8px 0;
+    padding: 8px 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: #2A3B51;
+    width: 100%;
     &:nth-last-child(-n+4) {
       border-bottom: none;
+    }
+    a {
+      width: 100%;
+      overflow-wrap: break-word;
     }
   }
   &__title {
@@ -1967,10 +1975,11 @@ Project: less intrusive search button
     border-radius: 5px;
     &__head {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       text-align: center;
       margin-bottom: 10px;
       &__arrow {
+        grid-column: span 1;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1994,10 +2003,15 @@ Project: less intrusive search button
           }
         }
       }
+      a {
+        grid-column: span 2;
+      }
       &__user {
         display: flex;
+        flex-direction: row;
         align-items: center;
         gap: 10px;
+        width: 100%;
         img {
           height: 60px;
           width: 60px;
@@ -2008,6 +2022,9 @@ Project: less intrusive search button
           font-size: 16px;
           font-weight: 700;
           text-align: left;
+          overflow-wrap: break-word;
+          width: calc(100% - 70px);
+          hyphens: auto;
         }
         &:hover {
           p {
@@ -2035,6 +2052,13 @@ Project: less intrusive search button
         }
       }
     }
+  }
+}
+
+@media screen and (max-width: 1250px) {
+  .operationTransfersBox__transfer__head__user {
+    flex-direction: column;
+    gap: 5px;
   }
 }
 

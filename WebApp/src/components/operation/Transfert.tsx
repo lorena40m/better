@@ -43,7 +43,7 @@ export default function Transfert(props: Props) {
         </div>
   </div> : <></>*/}
       {<div className="transferBox__bot">
-        <p>Fees : {formatPrice(/*(+props.operation?.fees / 10**6 ?? 0 * +props.miscResponse?.xtzPrice ?? 1)*/1, locale, props.miscResponse?.rates ?? { 'EUR/USD': 0 })}</p>
+        <p>Fees : {formatPrice(((+props.operation?.fees / 10**6 || 0) * (+props.miscResponse?.xtzPrice || 1)), locale, props.miscResponse?.rates ?? { 'EUR/USD': 0 })}</p>
         <p>Block Number: {props.operation.block}</p>
       </div>}
     </div>

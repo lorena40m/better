@@ -78,7 +78,15 @@ function _formatNumber(quantity: string, decimals: number, significantDigits = 3
 }
 
 export function formatNumber(number: number, locale: string) {
-  return _formatNumber(BigInt(Math.round(number * 1e18)).toString(), 18, 3, locale)
+  let returnValue = _formatNumber(BigInt(Math.round(number * 1e18)).toString(), 18, 3, locale);
+  while (returnValue.length > 0) {
+    if (returnValue[returnValue.length - 1] === '0' || returnValue[returnValue.length - 1] === ',' || returnValue[returnValue.length - 1] === '.') {
+      returnValue = returnValue.slice(0, -1);
+    } else {
+      break ;
+    }
+  }
+  return (returnValue);
 }
 
 export function formatInteger(number: number, locale: string) {

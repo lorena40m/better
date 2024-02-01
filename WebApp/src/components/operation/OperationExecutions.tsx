@@ -32,13 +32,13 @@ export function OperationExecutions(props: Props) {
 										{(operation.entrypoint !== null) ?
 											<>Call {operation.entrypoint}<br />
 											{operation.assets.length > 0 ? (operation.assets.every(asset => asset?.asset.name === operation.assets[0].asset.name) ?
-												`Transfer ${+formatNumber(+operation.assets.reduce((total, asset) => { return (total + +asset.quantity / 10**+asset.asset.decimals) }, 0), locale)} ${operation.assets[0].asset.assetType === 'nft' ? operation.assets[0].asset.name : operation.assets[0].asset.ticker}` :
+												`Transfer ${formatNumber(+operation.assets.reduce((total, asset) => { return (total + +asset.quantity / 10**+asset.asset.decimals) }, 0), locale)} ${operation.assets[0].asset.assetType === 'nft' ? operation.assets[0].asset.name : operation.assets[0].asset.ticker}` :
 												`${operation.assets.length} transfers of differents tokens`
 											) : null}
 											</>
 											:
 											(operation.assets.every(asset => asset?.asset.name === operation.assets[0].asset.name) ?
-												`Transfer ${+formatNumber(+operation.assets.reduce((total, asset) => { return (total + +asset.quantity / 10**+asset.asset.decimals) }, 0), locale)} ${operation.assets[0].asset.assetType === 'nft' ? operation.assets[0].asset.name : operation.assets[0].asset.ticker}` :
+												`Transfer ${formatNumber(+operation.assets.reduce((total, asset) => { return (total + +asset.quantity / 10**+asset.asset.decimals) }, 0), locale)} ${operation.assets[0].asset.assetType === 'nft' ? operation.assets[0].asset.name : operation.assets[0].asset.ticker}` :
 												`${operation.assets.length} transfers of differents tokens`
 											)
 										}

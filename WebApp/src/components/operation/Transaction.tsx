@@ -3,6 +3,8 @@ import { OperationBatch } from "@/pages/api/_apiTypes";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import Link from "next/link";
 import { AccountIcon } from "../common/ArtifactIcon";
+import { formatNumber } from "@/utils/format";
+import { useRouter } from "next/router";
 
 type Props = {
 	operation: OperationBatch,
@@ -12,6 +14,7 @@ const Transaction = (props: Props) => {
   const [openList, setOpenList] = useState(true);
   const { t } = useTranslation("common");
   const [transfers, setTransfers] = useState([]);
+  const { locale } = useRouter();
 
   const newTransfers = [];
 
@@ -94,7 +97,7 @@ const Transaction = (props: Props) => {
                 return (
                   <>
                     <p key={j}>
-                      {asset.quantity / 10**asset.asset.decimals} {asset.asset.assetType === 'nft' ? asset.asset.name : asset.asset.ticker}
+                      {formatNumber(asset.quantity / 10**asset.asset.decimals, locale)} {asset.asset.assetType === 'nft' ? asset.asset.name : asset.asset.ticker}
                     </p>
                     {asset.asset.image ? <div className="operationTransfersBox__transfer__assets__imageBox">
                       <img src={asset.asset.image} alt={asset.asset.name} />
