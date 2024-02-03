@@ -52,7 +52,7 @@ const Operations = (props: Props) => {
 
               return  <div className="operationsBox__batch__operation" key={i}>
                 <div className="operationsBox__batch__operation__start">
-                <Link href={'/' + operation.counterparty.address} title={operation.counterparty.address}><AccountIcon account={operation.counterparty} /></Link>
+                  <Link href={'/' + operation.counterparty.address} title={operation.counterparty.address}><AccountIcon account={operation.counterparty} /></Link>
                   <div>
                     <Link href={'/' + operation.counterparty.address}><p className="operationsBox__batch__operation__start__name" title={operation.counterparty.address}>
                       {

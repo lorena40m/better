@@ -19,8 +19,9 @@ import Head from "next/head";
 import { fetchUserInfos, fetchAccountTokens } from '@/utils/apiClient';
 import fetchCoinsInfos from '@/pages/api/coins-infos';
 import TezosIcon2 from "@/assets/images/tezos.png";
-import { AccountIcon } from '@/components/common/ArtifactIcon'
-import { Infos } from '@/pages/api/user-infos'
+import { AccountIcon } from '@/components/common/ArtifactIcon';
+import { Infos } from '@/pages/api/user-infos';
+import { Page } from "../common/page";
 
 type Props = {
   address: string,
@@ -57,78 +58,52 @@ const Wallet = ({ address, miscResponse }: Props) => {
   }, [address]);
 
   const name = infos.account.name ?? t('AccountDefaultName.user')
-
   return (
-    <main>
+    <Page title="Wallet on Tezos">
       <Head>
         <title>{name} | {t('App.Title')}</title>
       </Head>
-      <Header hideSearch={true} />
-      <Box className="pageTemplate WalletOprationCard">
-        <Container maxWidth="xl">
-          <div className="pageTemplate__head">
-            <Typography variant="h4" className="pageTemplate__title">
-              {t("WalletPage.Title")}
-              <Link href={'/'}>
-              <span className="pageTemplate__status hoverItem">
-                <Image src={TezosIcon} alt="" height={40} width={40} />
-                Tezos
-              </span>
-              </Link>
-            </Typography>
-          </div>
-          <Grid className="walletProfile" container>
-            <Grid item md={6} paddingRight={"15px"}>
-              <MainInfos
-                icon={<AccountIcon account={infos.account} />}
-                name={name}
-                address={address}
-                var={t('Wallet.TotalValue')}
-                value={
-                  formatPrice(
-                    (+infos.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
-                    tokens.coins.reduce(
-                      (total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
-                      0
-                    ),
-                    locale,
-                    miscResponse.rates
-                  )
-                }
-                title={null}
-              />
-              {/*{tokens.nfts[0] ? <h5 className="operationCard__title">{t("Wallet.Nfts")}</h5> : null}
-              <Carousel Slide={NftSlide} items={tokens.nfts} breakpoints={{
-                100: { slidesPerView: 1 },
-                640: { slidesPerView: 1 },
-                900: { slidesPerView: 2 },
-                1400: { slidesPerView: 2 },
-              }} delay={4000} rates={miscResponse.rates} />*/}
-              {
-                (tokens.coins[0] && coinsInfos || parseInt(infos.balance) > 0) &&
-                  <CoinBox coins={[{
-                    "TokenId": null,
-                    "asset": {
-                        "id": 'tezos',
-                        "logo": null,
-                        "name": "Tezos",
-                        "ticker": "XTZ",
-                        "address": 'tezos',
-                        "decimals": 6,
-                        "assetType": "coin",
-                        "lastPrice": 1
-                    },
-                    "quantity": infos.balance.toString()
-                  }].concat(tokens.coins)} coinsInfos={coinsInfos} rates={miscResponse.rates} xtzPrice={miscResponse.xtzPrice} />
-              }
-            </Grid>
-            <Grid item md={6} paddingLeft={"15px"}>
-              <Operations address={address} operationCount={infos?.operationCount} />
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
-    </main>
+      <div className="left">
+        <MainInfos
+          icon={<AccountIcon account={infos.account} />}
+          name={name}
+          address={address}
+          var={t('Wallet.TotalValue')}
+          value={
+            formatPrice(
+              (+infos.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
+              tokens.coins.reduce(
+                (total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
+                0
+              ),
+              locale,
+              miscResponse.rates
+            )
+          }
+          title={null}
+        />
+        {
+          (tokens.coins[0] && coinsInfos || parseInt(infos.balance) > 0) &&
+            <CoinBox coins={[{
+              "TokenId": null,
+              "asset": {
+                  "id": 'tezos',
+                  "logo": null,
+                  "name": "Tezos",
+                  "ticker": "XTZ",
+                  "address": 'tezos',
+                  "decimals": 6,
+                  "assetType": "coin",
+                  "lastPrice": 1
+              },
+              "quantity": infos.balance.toString()
+            }].concat(tokens.coins)} coinsInfos={coinsInfos} rates={miscResponse.rates} xtzPrice={miscResponse.xtzPrice} />
+        }
+      </div>
+      <div className="right">
+        <Operations address={address} operationCount={infos?.operationCount} />
+      </div>
+    </Page>
   );
 };
 

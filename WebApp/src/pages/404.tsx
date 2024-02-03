@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import { OperationBatch } from "@/pages/api/_apiTypes";
-import { appWithTranslation, useTranslation } from "next-i18next";
-import Link from "next/link";
+import React from "react";
+import { Page } from "@/components/common/page";
 
 type Props = {
 }
@@ -9,7 +7,9 @@ type Props = {
 const page404 = (props: Props) => {
 
   return (
-    <></>
+    <Page title="Error 404">
+      <></>
+    </Page>
   );
 };
 

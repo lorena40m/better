@@ -1275,6 +1275,41 @@ Project: less intrusive search button
 
 // NEW CODE BY ALBAN START
 
+.pageComponent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  &__center {
+    width: 100%;
+    max-width: 1300px;
+    padding: 30px 10px 0 10px;
+    h1 {
+      font-size: 30px;
+      font-weight: 600;
+      color: #2A3B51;
+    }
+    &__content {
+      margin-top: 30px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      .left, .right {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  }
+  @media screen and (max-width: 899px) {
+    &__center__content {
+      flex-direction: column;
+    }
+  }
+}
+
 .main-header {
   width: 100%;
   height: 100px;
