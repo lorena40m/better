@@ -117,10 +117,11 @@ export default async function handler(
       SELECT
         t."Id", t."Amount", t."TransactionId" as "OpId", t."FromId" as "SenderId", t."ToId" as "TargetId",
         tok."Id" as "AssetId", tok."Metadata", tok."ContractId", tok."TokenId",
-        tr."OpHash"
+        tr."OpHash", contract."Address" as "ContractAddress"
       FROM "TokenTransfers" as t
       INNER JOIN "Tokens" as tok ON tok."Id" = t."TokenId"
       LEFT JOIN "TransactionOps" as tr ON tr."Id" = t."TransactionId"
+      LEFT JOIN "Accounts" as contract ON contract."Id" = tok."ContractId"
       WHERE (t."FromId" = $1 OR t."ToId" = $1) AND t."Id" >= $2
       ORDER BY t."Id" DESC
     `;
@@ -143,6 +144,7 @@ export default async function handler(
       OpHash: string,
       SenderId: number,
       TargetId: number,
+      ContractAddress: string,
     }
     const transferRows: Array<DbTransfer> = await query('TRANSFERS', transfersQuery, [addressId, oldestId])
 
@@ -283,17 +285,17 @@ export default async function handler(
             Array.from(groupBy(transfersByRoot.get(root.Id) ?? [], t => t.AssetId))
             .map(([assetId, transfers]) => ({
               quantity: sum(transfers.map(t => BigInt(t.SenderId === addressId ? -1 : 1) * BigInt(t.Amount))).toString(),
-              asset: transfers[0].Metadata.decimals == 0 ? {
+              asset: transfers[0].Metadata?.decimals == 0 ? {
                 assetType: 'nft',
-                id: transfers[0].ContractId + '_' + transfers[0].TokenId,
-                name: transfers[0].Metadata.name,
-                image: ipfsToHttps(transfers[0].Metadata.thumbnailUri),
+                id: transfers[0].ContractAddress + '_' + transfers[0].TokenId,
+                name: transfers[0].Metadata?.name,
+                image: ipfsToHttps(transfers[0].Metadata?.thumbnailUri),
               } : {
                 assetType: 'coin',
-                id: transfers[0].ContractId + '_' + transfers[0].TokenId,
-                name: transfers[0].Metadata.name,
-                ticker: transfers[0].Metadata.symbol,
-                decimals: transfers[0].Metadata.decimals,
+                id: transfers[0].ContractAddress + '_' + transfers[0].TokenId,
+                name: transfers[0].Metadata?.name,
+                ticker: transfers[0].Metadata?.symbol,
+                decimals: transfers[0].Metadata?.decimals,
                 image: ipfsToHttps(transfers[0].Metadata?.thumbnailUri ?? transfers[0].Metadata?.icon ?? null),
               },
             }))

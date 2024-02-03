@@ -45,6 +45,14 @@ export function fetchUserInfos(address: string) {
 
   const infos0$ = fetchApi(`user-infos?address=${address}`).then(response => response.infos as Infos)
     .then(infos => {
+      if (infos.account.name) {
+        cache[address] = {
+          name: infos.account.name,
+          image: infos.account.image,
+        }
+        setCache(NAME_CACHE_KEY, cache)
+        return infos
+      }
       if (address in cache) infos.account.name = cache[address].name
       return infos
     })
@@ -55,10 +63,12 @@ export function fetchUserInfos(address: string) {
         const name = response.names[address] as string
 
         if (name) infos0$.then(infos => {
+          if (infos.account.name) return
+
           infos.account.name = name
 
           cache[address] = {
-            name: name,
+            name,
             image: infos.account.image,
           }
           setCache(NAME_CACHE_KEY, cache)
@@ -85,23 +95,51 @@ export async function fetchAddressFromDomain(domain: string) {
 
 import { History } from '@/pages/api/account-history'
 export function fetchAccountHistory(address: string, limit: number) {
-  function updateHistoryWith(history: History, shorts: Shorts): History {
-    return history.map(batch =>
-      batch.map(operation => ({
-        ...operation,
-        counterparty: {
-          ...operation.counterparty,
-          ...shorts[operation.counterparty.address],
+  const cachedShorts: Shorts = getCache(NAME_CACHE_KEY) ?? {}
+
+  function combineHistoryWithCache(history: History): History {
+    const newHistory = history.map(batch =>
+      batch.map(operation => {
+        const address = operation.counterparty.address
+
+        if (address in cachedShorts) return ({
+          ...operation,
+          counterparty: {
+            ...operation.counterparty,
+            ...cachedShorts[address],
+          }
+        })
+
+        if (operation.counterparty.name) {
+          cachedShorts[address] = {
+            name: operation.counterparty.name,
+            image: operation.counterparty.image,
+          }
         }
-      }))
+
+        return operation
+      })
     )
+
+    setCache(NAME_CACHE_KEY, cachedShorts)
+
+    return newHistory
   }
 
-  const cachedShorts: Shorts = getCache(NAME_CACHE_KEY)
+  function combineCacheWithNewShorts(newShorts: Shorts): void {
+    // data from newShorts is not prioritary: use it if we don't already have data
+    for (const address in newShorts) {
+      if (!(address in cachedShorts)) {
+        cachedShorts[address] = newShorts[address]
+      }
+    }
+    setCache(NAME_CACHE_KEY, cachedShorts)
+  }
 
+  // On récupère des données partielles mais prioritaires : on peut les mettre dans le cache
   const history0$ = fetchApi(`account-history?address=${address}&limit=${limit}`)
     .then(response => response.history as History)
-    .then(history => cachedShorts ? updateHistoryWith(history, cachedShorts) : history)
+    .then(combineHistoryWithCache)
 
   const history1$ = history0$.then(async history => {
     const accounts = history.flatMap(batch =>
@@ -109,49 +147,16 @@ export function fetchAccountHistory(address: string, limit: number) {
         .filter(operation => !operation.counterparty.name)
         .map(operation => operation.counterpartyDbAccount)
     )
-    const shorts = await fetchAccountShorts(accounts)
-    return updateHistoryWith(history, shorts)
+    const shorts = (await fetchApi(`account-history-shorts`, {
+      accounts: eliminateDuplicates(accounts, 'Id')
+    })).shorts as Shorts
+    combineCacheWithNewShorts(shorts)
+    const newHistory = combineHistoryWithCache(history)
+
+    return newHistory
   })
 
   return { history0$, history1$ };
-}
-
-export async function fetchAccountShorts(accounts: DbAccounts): Promise<Shorts> {
-  accounts = eliminateDuplicates(accounts, 'Id')
-  const cache: Shorts = getCache(NAME_CACHE_KEY) ?? {}
-  const nonCached: DbAccounts = accounts.filter(a => !(a.Address in cache))
-
-  if (nonCached.length === 0) return cache
-
-  const shorts = (await fetchApi(`account-history-shorts`, { accounts: nonCached })).shorts as Shorts
-
-  Object.assign(cache, shorts)
-  setCache(NAME_CACHE_KEY, cache)
-
-  return cache
-}
-
-export async function fetchTzktNames(accounts: Account[]): Promise<Shorts> {
-  accounts = eliminateDuplicates(accounts, 'address')
-  const cache: Shorts = getCache(NAME_CACHE_KEY) ?? {}
-  const nonCached = accounts.filter(a => !(a.address in cache))
-
-  if (nonCached.length === 0) return cache
-
-  const names = (await fetchApi(`tzkt-names`, {
-    addresses: nonCached.map(a => a.address)
-  })).names as Record<string, string>
-
-  for (const address in names) {
-    cache[address] = {
-      name: names[address],
-      image: accounts.find(a => a.address === address).image,
-    }
-  }
-
-  setCache(NAME_CACHE_KEY, cache)
-
-  return cache
 }
 
 import { OperationBatch } from "@/pages/api/_apiTypes";

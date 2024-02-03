@@ -1,4 +1,4 @@
-export const NAME_CACHE_KEY = 'NAMES_v1'
+export const NAME_CACHE_KEY = 'NAMES_v2'
 
 export function getCache(key: string): any | null {
   if (!process.env.ENABLE_CACHE) return

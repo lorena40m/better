@@ -30,8 +30,8 @@ const Operations = (props: Props) => {
 
   useEffect(() => {
     const { history0$, history1$ } = fetchAccountHistory(props.address, LIMIT_HISTORY)
-    history0$.then(setHistory)
-    history1$.then(setHistory)
+    history0$.then(setHistory).catch(console.error)
+    history1$.then(setHistory).catch(console.error)
   }, [props.address])
 
   return (
