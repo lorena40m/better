@@ -30,10 +30,11 @@ import { useRouter } from "next/router";
 import { HomeResponse, MiscellaneousResponse } from '@/endpoints/API';
 import HomeEndpoint from '@/endpoints/HomeEndpoint';
 import MiscellaneousEndpoint from '@/endpoints/MiscellaneousEndpoint';
-import { formatPrice, formatToken } from '@/utils/format'
-import useWindowSize from '@/hooks/useWindowSize'
-import ChainStats from '@/components/Home/ChainStats'
-import Head from 'next/head'
+import { formatPrice, formatToken } from '@/utils/format';
+import useWindowSize from '@/hooks/useWindowSize';
+import ChainStats from '@/components/Home/ChainStats';
+import Head from 'next/head';
+import { SearchInput } from '@/components/common/SearchInput';
 
 export async function getServerSideProps({ locale }: any) {
   const miscResponse = await MiscellaneousEndpoint({})

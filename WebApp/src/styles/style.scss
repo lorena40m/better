@@ -1624,6 +1624,16 @@ Project: less intrusive search button
       }
     }
   }
+  @media screen and (max-width: 700px) {
+    .__bottom {
+      &__var {
+        font-size: 16px;
+      }
+      &__value {
+        font-size: 18px;
+      }
+    }
+  }
 }
 
 .otherInfos {
@@ -1977,8 +1987,8 @@ Project: less intrusive search button
     font-size: 20px;
     font-weight: 700;
     img {
-      width: 60%;
-      height: 60%;
+      width: 50%;
+      height: 50%;
     }
   }
   &__gridItem2 {

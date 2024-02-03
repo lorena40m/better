@@ -185,13 +185,13 @@ export default async function handler(
                   image: ipfsToHttps(token.Metadata.thumbnailUri)
                 },
                 from: {
-                  accountType: solveAccountType(token.From.type, token.from.kind) ?? solveAccountType(operation.SenderType, operation.SenderKind),
+                  accountType: solveAccountType(token.From.type, token.From.kind) ?? solveAccountType(operation.SenderType, operation.SenderKind),
                   address: token.From.address ?? operation.SenderAddress,
                   name: solveAddressName(token.From.domains, null, null),
                   image: ipfsToHttps(token.From.metadata?.imageUri),
                 },
                 to: {
-                  accountType: solveAccountType(token.To.type, token.To.kind),
+                  accountType: solveAccountType(token.To.type, token.To?.kind),
                   address: token.To.address,
                   name: solveAddressName(token.To.domains, null, null),
                   image: ipfsToHttps(token.To.metadata?.imageUri),

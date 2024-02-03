@@ -80,6 +80,10 @@ const Wallet = ({ address, miscResponse }: Props) => {
               miscResponse.rates
             )
           }
+          var2={null}
+          value2={null}
+          var3={null}
+          value3={null}
           title={null}
         />
         {

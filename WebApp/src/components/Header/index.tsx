@@ -8,60 +8,22 @@ import Link from "next/link";
 import Select from "@/components/common/Select";
 import { useTranslation } from "next-i18next";
 import { fetchAddressFromDomain } from "@/utils/apiClient";
+import { SearchInput } from "../common/SearchInput";
 
 type Props = {
   hideSearch: boolean
 }
 
 export default function Header({ hideSearch }: Props) {
-  const { t } = useTranslation("common");
   const router = useRouter();
-  const [search, setSearch] = useState("");
   const [language, setLanguage] = useState(router.locale);
   const [searchActive, setSearchActive] = useState(false);
-  const [searchHistory, setSearchHistory] = useState([]);
-
-  useEffect(() => {
-    let encodedStoredHistory = localStorage.getItem("searchHistory");
-    let storedHistory: string[] = encodedStoredHistory ? JSON.parse(encodedStoredHistory) : [];
-    if (!storedHistory.includes(router.query.id as string)) {
-      if (storedHistory.length >= 10) {
-        storedHistory.pop();
-      }
-      if (router.query.id) {
-        storedHistory.unshift(router.query.id as string);
-      }
-    } else {
-      const index = storedHistory.indexOf(router.query.id as string);
-      storedHistory.splice(index, 1);
-      storedHistory.unshift(router.query.id as string);
-    }
-    localStorage.setItem("searchHistory", JSON.stringify(storedHistory));
-    setSearchHistory(storedHistory);
-  }, [router.query.id]);
 
   const onToggleLanguageClick = (newLocale: any) => {
     const { pathname, query } = router;
     router.push({ pathname, query }, router.asPath, { locale: newLocale });
   };
   const changeTo = router.locale === "en" ? "fr" : "en";
-
-  function searchEvent() {
-    if (window.innerWidth < 800 && !searchActive) {
-      setSearchActive(true);
-    }
-    else if (search && search[0]) {
-      if (search.length > 6 && search.slice(-4) === ".tez") {
-        fetchAddressFromDomain(search).then((data) => {
-          if (data) {
-            router.push(`/${encodeURIComponent(data)}`);
-          }
-        });
-      } else {
-        router.push(`/${encodeURIComponent(search)}`);
-      }
-    }
-  }
 
   return (
     <header className="main-header">
@@ -88,18 +50,7 @@ export default function Header({ hideSearch }: Props) {
             />
           </Link>
         </div>
-        {hideSearch && <div className="main-header__container__center">
-          <div className="main-header__container__center__input">
-            <input type="text" placeholder={t('Header.Search.Placeholder')}
-              value={search}
-              onChange={(e) => {setSearch(e.target.value)}}
-              onKeyDown={(e) => {e.key === 'Enter' ? searchEvent() : null}}
-            />
-            <div onClick={searchEvent}>
-              <Image src={searchIcon} alt="search icon" />
-            </div>
-          </div>
-        </div>}
+        {hideSearch && <SearchInput />}
         <div className="main-header__container__right">
           <Select
             onChange={value => {onToggleLanguageClick(changeTo); setLanguage(value)}}

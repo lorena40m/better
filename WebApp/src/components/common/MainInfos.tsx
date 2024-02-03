@@ -21,6 +21,10 @@ type Props = {
   var: Element | string,
   value: Element | string,
   title: string | undefined,
+  var2: Element | string,
+  value2: Element | string,
+  var3: Element | string,
+  value3: Element | string,
 }
 
 export default function MainInfos(props: Props) {
@@ -41,6 +45,18 @@ export default function MainInfos(props: Props) {
           <span className="divider"></span>
           <p className="__bottom__value">{props.value}</p>
         </div>
+        {props.var2 &&
+          <div>
+            <p className="__bottom__var">{props.var2}</p>
+            <span className="divider"></span>
+            <p className="__bottom__value">{props.value2}</p>
+          </div>}
+        {props.var3 &&
+          <div>
+            <p className="__bottom__var">{props.var3}</p>
+            <span className="divider"></span>
+            <p className="__bottom__value">{props.value3}</p>
+          </div>}
       </div>
     </div>
   );

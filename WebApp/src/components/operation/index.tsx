@@ -18,7 +18,7 @@ const Operation = ({ hash, miscResponse }) => {
   }, [hash]);
 
   return (
-    <Page title="Wallet on Tezos">
+    <Page title="Operation on Tezos">
       <div className="left">
         <Transfert hash={hash} operation={operation} miscResponse={miscResponse} />
         <OperationExecutions operation={operation} />
