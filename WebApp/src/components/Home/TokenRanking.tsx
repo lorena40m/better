@@ -13,7 +13,7 @@ import "swiper/css/navigation"
 import "swiper/css/bundle"
 
 export default function TokenRanking({ coins, rates }) {
-  const { t } =   useTranslation("common")
+  const { t } = useTranslation("common")
   const { locale } = useRouter()
 
   return (

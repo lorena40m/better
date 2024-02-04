@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import * as React from 'react';
-import LazyVideo from "@/components/wallet/LazyVideo";
+import LazyVideo from "./LazyVideo";
 
 async function getMediaType(url) {
   const response = await fetch(url, { method: 'HEAD' });
@@ -13,7 +13,7 @@ async function getMediaType(url) {
   return null;
 }
 
-function IpfsMedia({ src }) {
+function Media({ src }) {
   const [mediaType, setMediaType] = React.useState(null);
 
   React.useEffect(() => {
@@ -56,4 +56,4 @@ function IpfsMedia({ src }) {
   }
 }
 
-export default IpfsMedia;
+export default Media;

@@ -73,6 +73,7 @@
   "Wallet.Balance": "Solde",
   "Coins.Title": "Cryptomonnaies",
   "Coins.TokensFound": "jetons",
+  "Nfts.NftFound": "nfts",
   "History.Title": "Opérations récentes",
   "History.OperationsFound": "opérations",
   "AccountDefaultName.user": "Utilisateur",

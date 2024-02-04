@@ -13,11 +13,12 @@ import { Page } from "../common/page";
 import { Infos } from "@/pages/api/user-infos";
 import { AccountIcon } from "../common/ArtifactIcon";
 import { Treasury } from "./Treasury";
+import { AccountTokens } from '@/pages/api/account-tokens'
 
-const 	Contract = ({ address, miscResponse }) => {
+const Contract = ({ address, miscResponse }) => {
 	const { t } = useTranslation("common");
 	const { locale } = useRouter();
-	const [tokens, setTokens] = useState({domains: [], nfts: [], coins: [], othersTokens: []});
+	const [tokens, setTokens] = useState({domains: [], nfts: [], coins: []} as AccountTokens);
 	const [account, setAccount] = useState({balance: '0', operationCount: 0, id: '0', creatorAddress: '', creatorDomain: '', creationDate: '', averageFee: 0, entrypoints: []} as Contract);
 	const [history, setHistory] = useState([]);
 	const [infos, setInfos] = useState({
@@ -33,9 +34,7 @@ const 	Contract = ({ address, miscResponse }) => {
 	const [coinsInfos, setCoinsInfos] = useState(null);
 
 	useEffect(() => {
-		fetchAccountTokens(address).then((data) => {
-			setTokens(data);
-		});
+		fetchAccountTokens(address).then(setTokens);
 		const { infos0$, infos1$ } = fetchUserInfos(address)
 		infos0$.then(setInfos)
 		infos1$.then(setInfos)
@@ -67,7 +66,7 @@ const 	Contract = ({ address, miscResponse }) => {
 					var2={"Average fee"}
 					value2={formatPrice(account.averageFee / 10**6 * miscResponse?.xtzPrice ?? 0, locale, miscResponse.rates)}
 					var3={"Tresury"}
-					value3={formatPrice(((+infos.balance / 10**6) * miscResponse.xtzPrice + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.asset.address)?.exchangeRate ?? 0) * (coin.quantity / 10**coin.asset.decimals)), 0)), locale, miscResponse.rates)}
+					value3={formatPrice(((+infos.balance / 10**6) * miscResponse.xtzPrice + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * (+coin.quantity / 10**coin.asset.decimals)), 0)), locale, miscResponse.rates)}
 					title={null}
 				/>
 				<OtherInfos

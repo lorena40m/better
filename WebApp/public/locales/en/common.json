@@ -74,6 +74,7 @@
   "Wallet.Balance": "Balance",
   "Coins.Title": "Coins",
   "Coins.TokensFound": "tokens",
+  "Nfts.NftFound": "nfts",
   "History.Title": "Lastest Operations",
   "History.OperationsFound": "operations",
   "AccountDefaultName.user": "User",

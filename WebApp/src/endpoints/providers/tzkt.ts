@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Holding, Coin, Holder } from '../API'
-import { ipfsToHttps } from './utils'
+import { ipfsToHttps } from '@/utils/link'
 
 async function fetch(urn: string) {
   try {
@@ -60,7 +60,7 @@ export async function getTransactionAssets(tzktIds) {
         },
         asset: {
           id: tokenData?.token.contract.address,
-          logo: ipfsToHttps(tokenData?.token.metadata.thumbnailUri),
+          logo: ipfsToHttps(tokenData?.token.metadata.thumbnailUri), // TODO: give array
           name: tokenData?.token.metadata.name,
           ticker: tokenData?.token.metadata.symbol,
           decimals: tokenData?.token.metadata.decimals.toString(),
@@ -92,7 +92,7 @@ export async function getCoin(contractHash, tokenId, lastPrice) {
   const coin = data.find(c => c.tokenId === tokenId)
   return {
     id: contractHash,
-    logo: ipfsToHttps(coin?.metadata?.thumbnailUri),
+    logo: [ipfsToHttps(coin?.metadata?.thumbnailUri)],
     name: coin?.contract.alias,
     ticker: coin?.metadata?.symbol,
     decimals: Number(coin?.metadata?.decimals),

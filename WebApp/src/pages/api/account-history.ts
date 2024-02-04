@@ -13,8 +13,25 @@ import { DbAccount } from '@/pages/api/account-history-shorts'
   and attaches only token changes pertaining to the user.
 */
 
+// TODO: Don't use the naïve way of loading asset images
+export type Nft = {
+  assetType: 'nft',
+  id: string,
+  name: string,
+  image: UrlString,
+}
+export type Coin = {
+  assetType: 'coin',
+  id: string | 'tezos',
+  name: string,
+  image: UrlString, // image is null when id = 'tezos'
+  ticker: string,
+  decimals: number,
+}
+export type Asset = Nft | Coin
+
 import { TokenDecimals, UrlString, DateString } from '@/pages/api/_apiTypes'
-import { Account, Asset } from '@/pages/api/_apiTypes'
+import { Account } from '@/pages/api/_apiTypes'
 // output
 export type History = Array<OperationBatch>
 export type OperationBatch = Array<Operation> // ordered ASC

@@ -1,16 +1,13 @@
 import Image from "next/image"
 import Link from 'next/link'
-import Typography from "@mui/material/Typography"
-import Grid from "@mui/material/Grid"
-import Box from "@mui/material/Box"
 import { useTranslation } from "next-i18next"
 import { useRouter } from "next/router"
-import { Holding, Nft } from "@/endpoints/API"
 import { formatPrice } from '@/utils/format'
+import { Holding, Nft } from '@/pages/api/account-tokens'
 
 type Props = {
-  item: any,
-  rates: any,
+  item: Holding<Nft>,
+  rates: object,
 }
 
 export default function CollectionSlide({ item, rates }: Props) {
@@ -24,30 +21,21 @@ export default function CollectionSlide({ item, rates }: Props) {
     const ipfsId = stringIpfs.slice(7);
     return (process.env.IPFS_GATEWAY + ipfsId);
   }
+  console.log(item?.asset?.image)
 
   return (
-    <Link href={'/' /* + id du token ou de la collection */}>
-      <Box className="CarouselSlide"
-        style={{ backgroundImage: `url(${ipfsToLink(item.Metadata.artifactUri)})` }}
+    <Link href={'/' + item.Address}>
+      <div className="CarouselSlide"
+        style={{ backgroundImage: item?.asset?.image?.map(source => `url(${source})`)?.join(',') }}
       >
-        <Box className="CarouselSlide-title-floating">
-          <Typography
-            gutterBottom
-            variant="h5"
-            className="CarouselSlide-title"
-          >
-            {item.Metadata.name}
-          </Typography>
-          <Typography
-            gutterBottom
-            variant="h5"
-            className="CarouselSlide-subTitle"
-          >
-            {/*t('Carousel.Nft.Collection', { collectionName: `${item.asset.collection.name} # ${item.asset.tokenId}` })*/}
-            <br/>{/*t('Carousel.Nft.LastSale', { lastSalePrice: formatPrice(item.asset.lastSalePrice, locale, rates) })*/}
-          </Typography>
-        </Box>
-      </Box>
+        <div className="CarouselSlide-title-floating">
+          <h5 className="CarouselSlide-title">{item.asset.name}</h5>
+          <h5 className="CarouselSlide-subTitle">
+            {t('Carousel.Nft.Collection', { collectionName: `${item.asset.collection.name} # ${item.TokenId}` })}
+            {/*<br/>{t('Carousel.Nft.lastPrice', { lastPrice: formatPrice(item.asset.lastPrice, locale, rates) })}*/}
+          </h5>
+        </div>
+      </div>
     </Link>
   )
 }

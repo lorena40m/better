@@ -13,30 +13,9 @@ async function fetchApi(url, data = null) {
   }
 }
 
-export async function fetchAccountTokens(address) {
-  const response = await fetchApi(`account-tokens?address=${address}`);
-  const domains = [];
-  const nfts = [];
-  const coins = [];
-  const othersTokens = [];
-  response.map((token) => {
-    if (token.asset?.assetType === 'coin') {
-      coins.push(token);
-    } else if (token.asset?.assetType === 'nft') {
-      nfts.push(token);
-    } else if (token.asset?.id === 1262424) {
-      domains.push(token);
-    } else {
-      othersTokens.push(token);
-    }
-  });
-
-  return({
-    domains: domains,
-    nfts: nfts,
-    coins: coins,
-    othersTokens: othersTokens,
-  });
+import { AccountTokens } from '@/pages/api/account-tokens'
+export async function fetchAccountTokens(address): Promise<AccountTokens> {
+  return await fetchApi(`account-tokens?address=${address}`);
 };
 
 import { Infos } from '@/pages/api/user-infos'

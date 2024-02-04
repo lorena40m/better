@@ -1488,7 +1488,7 @@ export default (async ({ pageSize }) => {
         name: token["Full name"] || token["Alias"],
         ticker: token["ModalCell_joinRow__sUQiU"],
         decimals: token["decimals"], // NB: decimals from the scrapping are not reliable
-        logo: token["token-logo_image__g2g-4 src"],
+        logo: [token["token-logo_image__g2g-4 src"]],
         lastPrice: token["Price"],
         circulatingSupplyOnChain: BigInt(Math.round(token["total supply"])).toString(),
         holders: BigInt(Math.round(token["holdersCount"])).toString(),

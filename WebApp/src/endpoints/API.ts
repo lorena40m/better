@@ -75,7 +75,7 @@ export type LoadMoreCollectionItems = (params: {
 export type Collection = {
   id: string,
   name: string,
-  image: UrlString,
+  image: UrlString[],
   floorPrice: Dollars,
 }
 
@@ -89,7 +89,7 @@ export type Nft = {
   assetType: 'nft',
   id: string,
   tokenId: string,
-  image: UrlString,
+  image: UrlString[],
   name: string,
   lastSalePrice: Dollars,
   collection: Collection,
@@ -101,7 +101,7 @@ export type Coin = {
   name: string,
   ticker: string,
   decimals: number,
-  logo: UrlString,
+  logo: UrlString[],
   lastPrice: number,
 }
 

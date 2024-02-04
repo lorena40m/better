@@ -21,19 +21,23 @@ export type AssetOp = {
   ticker: string
 }
 
-export type Asset = {
+export type Nft = {
   assetType: 'nft',
   id: string,
   name: string,
-  image: UrlString,
-} | {
+  image: UrlString[],
+}
+
+export type Coin = {
   assetType: 'coin',
   id: string | 'tezos',
   name: string,
+  image: UrlString, // image is null when id = 'tezos'
   ticker: string,
   decimals: number,
-  image: UrlString, // image is null when id = 'tezos'
 }
+
+export type Asset = Nft | Coin
 
 export type OperationType =  'operationGroup' | 'transfer' | 'call' | 'contractCreation' | 'stakingOperation'
 export type StakingType = ''

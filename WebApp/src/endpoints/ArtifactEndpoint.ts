@@ -203,11 +203,11 @@ export default (async ({
     const NUMBER_OF_TXS = 5
     return {
       artifactType: 'collection',
-      collection : await objkt.getCollection(id),
+      collection: await objkt.getCollection(id),
       // items,
       // saleHistory,
       history: await listLastOperations(id, NUMBER_OF_TXS),
-      contract : contract,
+      contract: contract,
     } as CollectionResponse
   }
 

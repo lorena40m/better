@@ -6,9 +6,10 @@ import CoinBox from "../wallet/CoinBox";
 import { CoinIcon } from "../common/ArtifactIcon";
 import { formatTokenWithExactAllDecimals, formatToken } from "@/utils/format";
 import Link from "next/link";
+import { AccountTokens } from '@/pages/api/account-tokens'
 
 type Props = {
-	tokens: {domains: any[], nfts: any[], coins: any[], othersTokens: any[]},
+	tokens: AccountTokens,
 	infos: Infos,
 	miscResponse: any,
 	coinsInfos: any
@@ -35,7 +36,7 @@ export function Treasury(props: Props) {
 			<div className="treasuryBox__head" onClick={() => {setOpen(!open)}}>
 				<h2>Treasury</h2>
 				<div>
-					<p>{formatPrice(((+props.infos.balance / 10**6) * props.miscResponse.xtzPrice + props.tokens.coins.reduce((total, coin) => total + ((props.coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.asset.address)?.exchangeRate ?? 0) * (coin.quantity / 10**coin.asset.decimals)), 0)), locale, props.miscResponse.rates)}</p>
+					<p>{formatPrice(((+props.infos.balance / 10**6) * props.miscResponse.xtzPrice + props.tokens.coins.reduce((total, coin) => total + ((props.coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * (+coin.quantity / 10**coin.asset.decimals)), 0)), locale, props.miscResponse.rates)}</p>
 					<div className={open ? "treasuryBox__head__arrow treasuryBox__head__arrow__open" : "treasuryBox__head__arrow"}>
 						<span></span>
 						<span></span>
@@ -57,35 +58,35 @@ export function Treasury(props: Props) {
 					<div className="coinBox__coin-container">
           {[{
               "TokenId": null,
+              "ContractId": null,
+              "Address": 'tezos',
               "asset": {
-                  "id": 'tezos',
-                  "logo": null,
-                  "name": "Tezos",
-                  "ticker": "XTZ",
-                  "address": 'tezos',
-                  "decimals": 6,
-                  "assetType": "coin",
-                  "lastPrice": 1
+                "id": 'tezos',
+                "image": null,
+                "name": "Tezos",
+                "ticker": "XTZ",
+                "decimals": 6,
+                "assetType": 'coin' as 'coin'
               },
               "quantity": props.infos.balance.toString()
             }].concat(props.tokens.coins).map((coin) => {
             let coinValue
-            if (coin.asset.address === 'tezos') {
+            if (coin.asset.id === 'tezos') {
               coinValue = +props.miscResponse.xtzPrice;
             } else {
-              const coinInfos = props.coinsInfos?.find(coinInfos => coinInfos.tokenAddress === coin.asset.address);
+              const coinInfos = props.coinsInfos?.find(coinInfos => coinInfos.tokenAddress === coin.Address);
               coinValue = coinInfos?.exchangeRate ?? 0;
             }
             return (
               <div key={coin.TokenId} className="coinBox__coin"
-                style={coin.asset.logo ? {order: "1"} : {order: "1"}}
+                style={coin.asset.image?.length ? {order: "1"} : {order: "1"}}
               >
                 <div className="coinBox__coin__left">
-                  {coin.asset.address === 'tezos' ?
-                    <CoinIcon coin={{ image: ipfsToLink(coin.asset.logo), ticker: coin.asset.ticker, id: coin.asset.address }} />
+                  {coin.asset.id === 'tezos' ?
+                    <CoinIcon coin={{ image: ipfsToLink(coin.asset.image), ticker: coin.asset.ticker, id: coin.Address }} />
                     :
-                    <Link href={'/' + coin.asset.address}>
-                      <CoinIcon coin={{ image: ipfsToLink(coin.asset.logo), ticker: coin.asset.ticker, id: coin.asset.address }} />
+                    <Link href={'/' + coin.asset.id}>
+                      <CoinIcon coin={{ image: ipfsToLink(coin.asset.image), ticker: coin.asset.ticker, id: coin.Address }} />
                     </Link>
                   }
                   <div>
@@ -94,10 +95,10 @@ export function Treasury(props: Props) {
                       formatTokenWithExactAllDecimals(coin.quantity, Number(coin.asset.decimals), locale) + ' ' + coin.asset.ticker
                     }>
                       {formatToken(coin.quantity, Number(coin.asset.decimals), locale)}
-                      {coin.asset.address === 'tezos' ?
+                      {coin.Address === 'tezos' ?
                         <strong className="ticker">{coin.asset.ticker}</strong>
                         :
-                        <Link href={'/' + coin.asset.address}>
+                        <Link href={'/' + coin.Address}>
                           <strong className="ticker hoverItem">{coin.asset.ticker}</strong>
                         </Link>
                       }

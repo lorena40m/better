@@ -370,6 +370,12 @@ body {
     font-weight: 700 !important;
     font-size: 20px !important;
     margin: 0 !important;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-wrap: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
   }
 
   &-subTitle {
@@ -391,6 +397,17 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+  }
+}
+
+.WalletNfts {
+  .Carousel {
+    margin: 0 !important;
+  }
+
+  h3 {
+    margin-bottom: 20px;
+    margin-left: 35px;
   }
 }
 
@@ -1261,7 +1278,7 @@ Project: less intrusive search button
       justify-content: center;
       gap: 20px;
       .left, .right {
-        width: 100%;
+        width: 50%;
         display: flex;
         flex-direction: column;
         gap: 20px;
@@ -1323,7 +1340,6 @@ Project: less intrusive search button
   }
   &__body {
     width: 100%;
-    height: 100px;
     display: none;
     margin-top: 20px;
     &__open {
@@ -1331,9 +1347,11 @@ Project: less intrusive search button
     }
     &__selector {
       width: 100%;
+      margin-bottom: 10px;
       h3 {
         font-weight: 400 !important;
         font-size: 22px !important;
+        padding: 10px 0;
       }
       &__both {
         display: flex;
@@ -1885,7 +1903,9 @@ Project: less intrusive search button
   border: 2px solid #0000002b;
   padding: 25px;
   border-radius: 20px;
+}
 
+.box, .boxWithoutBorder {
   h3 {
     font-size: 24px;
     font-weight: 700;

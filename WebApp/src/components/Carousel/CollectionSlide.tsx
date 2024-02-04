@@ -1,38 +1,32 @@
-import { formatToken } from '@/utils/format'
 import Image from "next/image"
 import Link from 'next/link'
-import Typography from "@mui/material/Typography"
-import Grid from "@mui/material/Grid"
-import Box from "@mui/material/Box"
 import { useTranslation } from "next-i18next"
 import { useRouter } from "next/router"
+import { formatToken } from '@/utils/format'
+import Media from './Media'
+import { ExtendedCollection } from '@/endpoints/API'
 
-export default function CollectionSlide({ item }) {
+type Props = {
+  item: ExtendedCollection,
+}
+
+export default function CollectionSlide({ item }: Props) {
   const { t } = useTranslation("common")
   const { locale } = useRouter()
 
   return (
     <Link href={'/' + item.id}>
-      <Box className="CarouselSlide"
-        style={{ backgroundImage: `url(${item.image})` }}
+      <div className="CarouselSlide"
+        style={{ backgroundImage: item?.image?.map(source => `url(${source})`)?.join(',') }}
       >
-        <Box className="CarouselSlide-title-floating">
-          <Typography
-            gutterBottom
-            variant="h5"
-            className="CarouselSlide-title"
-          >
-            {item.name}
-          </Typography>
-          <Typography
-            gutterBottom
-            variant="h5"
-            className="CarouselSlide-subTitle"
-          >
+        <div className="CarouselSlide-title-floating">
+          {/*<Media src={item?.image?.map(source => `url(${source})`)?.join(',')} />*/}
+          <h5 className="CarouselSlide-title">{item.name}</h5>
+          <h5 className="CarouselSlide-subTitle">
             {t('collectionSupply', { supply: formatToken(item.supply, 0, locale) })}
-          </Typography>
-        </Box>
-      </Box>
+          </h5>
+        </div>
+      </div>
     </Link>
   )
 }

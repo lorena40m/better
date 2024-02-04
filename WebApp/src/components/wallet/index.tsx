@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/Header/index";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import Profile from "@/components/wallet/Profile";
-import NftView from "@/components/wallet/NftView";
 import CoinBox from "@/components/wallet/CoinBox";
 import ConfirmModal from "@/components/wallet/ConfirmModal";
 import TezosIcon from "../../assets/images/tezos.svg";
@@ -13,7 +12,7 @@ import { useTranslation } from "next-i18next";
 import Carousel from "@/components/Carousel/Carousel";
 import NftSlide from "@/components/Carousel/NftSlide";
 import MainInfos from "@/components/common/MainInfos";
-import { formatPrice, formatNumber, formatToken, formatDate, formatTokenWithExactAllDecimals } from "@/utils/format";
+import { formatPrice, formatNumber, formatToken, formatDate, formatTokenWithExactAllDecimals, formatInteger } from "@/utils/format";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { fetchUserInfos, fetchAccountTokens } from '@/utils/apiClient';
@@ -22,7 +21,7 @@ import TezosIcon2 from "@/assets/images/tezos.png";
 import { AccountIcon } from '@/components/common/ArtifactIcon';
 import { Infos } from '@/pages/api/user-infos';
 import { Page } from "../common/page";
-import { forEach } from "cypress/types/lodash";
+import { AccountTokens } from '@/pages/api/account-tokens'
 
 type Props = {
   address: string,
@@ -32,7 +31,7 @@ type Props = {
 const Wallet = ({ address, miscResponse }: Props) => {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
-  const [tokens, setTokens] = useState({domains: [], nfts: [], coins: [], othersTokens: []});
+  const [tokens, setTokens] = useState({domains: [], nfts: [], coins: []} as AccountTokens);
   const [infos, setInfos] = useState({
     balance: '0',
     operationCount: 0,
@@ -46,9 +45,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
   const [coinsInfos, setCoinsInfos] = useState(null);
 
   useEffect(() => {
-    fetchAccountTokens(address).then((data) => {
-      setTokens(data);
-    });
+    fetchAccountTokens(address).then(setTokens)
     const { infos0$, infos1$ } = fetchUserInfos(address)
     infos0$.then(setInfos)
     infos1$.then(setInfos)
@@ -70,26 +67,38 @@ const Wallet = ({ address, miscResponse }: Props) => {
           name={name}
           address={address}
           var={t('Wallet.TotalValue')}
-          value={formatPrice(((+infos.balance / 10**6) * miscResponse.xtzPrice + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.asset.address)?.exchangeRate ?? 0) * (coin.quantity / 10**coin.asset.decimals)), 0)), locale, miscResponse.rates)}
+          value={formatPrice(((+infos.balance / 10**6) * miscResponse.xtzPrice + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * (+coin.quantity / 10**coin.asset.decimals)), 0)), locale, miscResponse.rates)}
           var2={null}
           value2={null}
           var3={null}
           value3={null}
           title={null}
         />
+        <div className="WalletNfts boxWithoutBorder">
+          <div className="header">
+            <h3>{t("Wallet.Nfts")}</h3>
+            <span className="headerInfo">{formatInteger(tokens.nfts.length, locale)} {t('Nfts.NftFound')}</span>
+          </div>
+          <Carousel Slide={NftSlide} items={tokens.nfts} breakpoints={{
+            100: { slidesPerView: 1 },
+            640: { slidesPerView: 1 },
+            900: { slidesPerView: 2 },
+            1400: { slidesPerView: 2 },
+          }} delay={4000} rates={miscResponse.rates} />
+        </div>
         {
           (tokens.coins[0] && coinsInfos || parseInt(infos.balance) > 0) &&
             <CoinBox coins={[{
               "TokenId": null,
+              "ContractId": null,
+              "Address": 'tezos',
               "asset": {
-                  "id": 'tezos',
-                  "logo": null,
-                  "name": "Tezos",
-                  "ticker": "XTZ",
-                  "address": 'tezos',
-                  "decimals": 6,
-                  "assetType": "coin",
-                  "lastPrice": 1
+                "id": 'tezos',
+                "image": null,
+                "name": "Tezos",
+                "ticker": "XTZ",
+                "decimals": 6,
+                "assetType": 'coin' as 'coin'
               },
               "quantity": infos.balance.toString()
             }].concat(tokens.coins)} coinsInfos={coinsInfos} rates={miscResponse.rates} xtzPrice={miscResponse.xtzPrice} />

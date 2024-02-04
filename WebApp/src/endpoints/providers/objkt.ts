@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ExtendedCollection, Collection, Nft, Holding } from '../API'
-import { ipfsToHttps } from './utils'
+import { getAssetSources, getCollectionSources } from '@/utils/link'
 
 async function fetch(query) {
   const url = 'https://data.objkt.com/v3/graphql'
@@ -38,7 +38,7 @@ export async function getTopNftCollection(pageSize, criteria: 'top' | 'trending'
   }
   `))?.fa?.map((collection) => ({
     id: collection?.contract,
-    image: ipfsToHttps(collection?.logo),
+    image: getCollectionSources(collection?.logo),
     name: collection?.short_name || collection?.name,
     supply: collection?.items?.toString(),
     floorPrice: collection?.floor_price ?? null,
@@ -63,26 +63,24 @@ export async function getAddressDomain(address: string) {
 
 export async function getCollection(address: string) {
   const queryResult = await fetch(`query collection_by_id {
-  fa(where: {contract: {_eq: ${address}}}) {
-    name
-    logo
-    floor_price
-    items
-    path
-  }
-}
-`)
+    fa(where: {contract: {_eq: ${address}}}) {
+      name
+      logo
+      floor_price
+      items
+      path
+    }
+  }`)
   const collection = queryResult.fa[0]
-  const collectionObject = {
+  return {
     id: address,
-    name: collection?.name,
-    image: ipfsToHttps(collection?.logo),
+    name: collection?.short_name || collection?.name,
+    image: getCollectionSources(collection?.logo),
     supply: collection?.items.toString(),
     floorPrice: collection?.floor_price,
     topSale: null,
-    marketplaceLink: 'https://objkt.com/collection/' + collection?.path, // TODO : request marketplaceLink
+    marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? address),
   }
-  return collectionObject
 }
 
 // NB: Could be extended to get tokens also!
@@ -131,12 +129,12 @@ export async function getWalletNfts(address: string, xtzPrice: number) {
         asset: {
           id: collection?.contract + '_' + token?.token?.token_id,
           tokenId: token?.token?.token_id?.toString(),
-          image: ipfsToHttps(token?.token?.artifact_uri),
+          image: getAssetSources(token?.token?.artifact_uri, address, token?.token?.token_id),
           name: token?.token?.name,
           lastSalePrice,
           collection: ({
             id: collection?.contract,
-            image: ipfsToHttps(collection?.logo),
+            image: getCollectionSources(collection?.logo),
             name: collection?.short_name || collection?.name,
             floorPrice: collection?.floor_price ?? null,
           } as Collection),

@@ -7,7 +7,7 @@ import "swiper/css/pagination"
 import "swiper/css/navigation"
 import "swiper/css/bundle"
 
-export default function Carousel({ items, Slide, breakpoints, delay = 1000, rates }) {
+export default function Carousel({ items, Slide, breakpoints, delay = 1000, rates, ...attr }) {
   const swiperRef = useRef(null)
 
   // Reset slides when sorting changes
@@ -32,6 +32,7 @@ export default function Carousel({ items, Slide, breakpoints, delay = 1000, rate
         clickable: true,
       }}
       breakpoints={breakpoints}
+      {...attr}
     >
       {items.map(item => (
         <SwiperSlide key={item.id}>

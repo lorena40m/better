@@ -38,7 +38,7 @@ import { SearchInput } from '@/components/common/SearchInput';
 
 export async function getServerSideProps({ locale }: any) {
   const miscResponse = await MiscellaneousEndpoint({})
-  const homeResponse = await HomeEndpoint({ pageSize: 30 })
+  const homeResponse = await HomeEndpoint({ pageSize: 10 })
 
   return {
     props: {
@@ -59,6 +59,10 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
   const windowWidth = useWindowSize().width;
   const [collectionCriteria, setCollectionCriteria] = useState('trending');
   const [tokenCriteria, setTokenCriteria] = useState('byCap');
+
+  useEffect(() => {
+    console.log({ homeResponse, miscResponse })
+  }, [homeResponse, miscResponse])
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
@@ -126,7 +130,8 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                 900: { slidesPerView: 3 },
                 1400: { slidesPerView: 4 },
               }}
-            rates={miscResponse.rates} />
+              rates={miscResponse.rates}
+            />
           </Container>
         </Box>
         <Box className="listTableBlock">
