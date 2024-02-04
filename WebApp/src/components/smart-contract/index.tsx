@@ -12,6 +12,7 @@ import { Contract } from "@/pages/api/contract-infos";
 import { Page } from "../common/page";
 import { Infos } from "@/pages/api/user-infos";
 import { AccountIcon } from "../common/ArtifactIcon";
+import { Treasury } from "./Treasury";
 
 const 	Contract = ({ address, miscResponse }) => {
 	const { t } = useTranslation("common");
@@ -69,32 +70,11 @@ const 	Contract = ({ address, miscResponse }) => {
 					value3={formatPrice(((+infos.balance / 10**6) * miscResponse.xtzPrice + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.asset.address)?.exchangeRate ?? 0) * (coin.quantity / 10**coin.asset.decimals)), 0)), locale, miscResponse.rates)}
 					title={null}
 				/>
-				{/*<GeneralInfos
-					icon={null}
-					title1={null}
-					title2={null}
-					title3={null}
-					title={'Contract'}
-					address={address}
-					var1="Uses"
-					value1={formatNumber(account?.operationCount ?? 0, locale)}
-					var2="Average fee"
-					value2={formatPrice(account.averageFee / 10**6 * miscResponse?.xtzPrice ?? 0, locale, miscResponse.rates)}
-					var3="Treasury"
-					value3={formatPrice(
-						(+account.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
-						tokens.coins.reduce(
-						(total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
-						0
-						),
-						locale,
-						miscResponse.rates
-					)}
-				/>*/}
 				<OtherInfos
 					creator={{domain: account?.creatorDomain || null, address: account?.creatorAddress}}
 					date={account?.creationDate}
 				/>
+				<Treasury tokens={tokens} infos={infos} miscResponse={miscResponse} coinsInfos={coinsInfos}  />
 			</div>
 			<div className="right">
 				<Operations address={address} operationCount={account?.operationCount} />

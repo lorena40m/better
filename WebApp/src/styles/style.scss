@@ -816,41 +816,6 @@ Project: less intrusive search button
     margin: 0 0 5px !important;
   }
 }
-.treasuryBox {
-  margin: 40px 0 0 0;
-  background: #ffffff;
-  border: 1px solid rgba(181, 195, 214, 0.4);
-  border-radius: 10px;
-  box-sizing: border-box;
-  padding: 35px 32px;
-  &__title {
-    font-weight: 700 !important;
-    font-size: 21px !important;
-    line-height: 28px !important;
-    color: #000000;
-    margin: 0 0 25px !important;
-  }
-  &__gradient {
-    display: inline-block;
-  }
-}
-.treasuryBox_generalinfo{
-  background: #ffffff;
-  border: 1px solid rgba(181, 195, 214, 0.4);
-  border-radius: 10px;
-  box-sizing: border-box;
-  padding: 35px 32px;
-  &__title {
-    font-weight: 700 !important;
-    font-size: 21px !important;
-    line-height: 28px !important;
-    color: #000000;
-    margin: 0 0 25px !important;
-  }
-  &__gradient {
-    display: inline-block;
-  }
-}
 
 .tokenInfo {
   background: #ffffff;
@@ -1310,6 +1275,89 @@ Project: less intrusive search button
   }
 }
 
+.treasuryBox {
+  border: 1px solid rgba(181, 195, 214, 0.4);
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2A3B51;
+    }
+    p {
+      color: #2A3B51;
+      font-size: 24px;
+    }
+    div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      .treasuryBox__head__arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 50px;
+        transform: rotate(90deg);
+        transition: transform 0.3s ease;
+        span {
+          position: absolute;
+          width: 40%;
+          height: 2px;
+          background-color: #000000;
+          &:nth-child(1) {
+            transform: translateX(-6.5px) rotate(45deg);
+          }
+          &:nth-child(2) {
+            transform: translateX(6.5px) rotate(-45deg);
+          }
+        }
+        &__open {
+          transform: rotate(0deg);
+        }
+      }
+    }
+  }
+  &__body {
+    width: 100%;
+    height: 100px;
+    display: none;
+    margin-top: 20px;
+    &__open {
+      display: block;
+    }
+    &__selector {
+      width: 100%;
+      h3 {
+        font-weight: 400 !important;
+        font-size: 22px !important;
+      }
+      &__both {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        h3 {
+          width: 50%;
+          text-align: center;
+          margin: 0 10px !important;
+          transition: border-bottom 0.2s;
+          border-bottom: 2px solid transparent;
+        }
+        &__selected {
+          border-bottom: 2px solid #2A3B51 !important;
+        }
+        &__notselected {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
 .main-header {
   width: 100%;
   height: 100px;
@@ -1567,7 +1615,6 @@ Project: less intrusive search button
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-bottom: 20px;
   .__top {
     width: 100%;
     display: flex;

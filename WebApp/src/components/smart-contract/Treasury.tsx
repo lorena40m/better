@@ -1,0 +1,119 @@
+import React, { useState } from "react";
+import { Infos } from "@/pages/api/user-infos";
+import { useRouter } from "next/router";
+import { formatPrice } from "@/utils/format";
+import CoinBox from "../wallet/CoinBox";
+import { CoinIcon } from "../common/ArtifactIcon";
+import { formatTokenWithExactAllDecimals, formatToken } from "@/utils/format";
+import Link from "next/link";
+
+type Props = {
+	tokens: {domains: any[], nfts: any[], coins: any[], othersTokens: any[]},
+	infos: Infos,
+	miscResponse: any,
+	coinsInfos: any
+}
+
+export function Treasury(props: Props) {
+	const { locale } = useRouter();
+	const [open, setOpen] = useState(false);
+	const [coinsSelected, setCoinsSelected] = useState(true);
+
+	function ipfsToLink(stringIpfs: string): string {
+		if (!stringIpfs) {
+		  return ("");
+		}
+		if (stringIpfs.substring(0, 7) !== "ipfs://") {
+		  return (stringIpfs);
+		}
+		const ipfsId = stringIpfs.slice(7);
+		return (process.env.IPFS_GATEWAY + ipfsId);
+	  }
+
+	return (
+		<div className="box treasuryBox">
+			<div className="treasuryBox__head" onClick={() => {setOpen(!open)}}>
+				<h2>Treasury</h2>
+				<div>
+					<p>{formatPrice(((+props.infos.balance / 10**6) * props.miscResponse.xtzPrice + props.tokens.coins.reduce((total, coin) => total + ((props.coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.asset.address)?.exchangeRate ?? 0) * (coin.quantity / 10**coin.asset.decimals)), 0)), locale, props.miscResponse.rates)}</p>
+					<div className={open ? "treasuryBox__head__arrow treasuryBox__head__arrow__open" : "treasuryBox__head__arrow"}>
+						<span></span>
+						<span></span>
+					</div>
+				</div>
+			</div>
+			<div className={open ? "treasuryBox__body treasuryBox__body__open" : "treasuryBox__body"}>
+				<div className="treasuryBox__body__selector">
+					{props.tokens.nfts.length ? 
+						<div className="treasuryBox__body__selector__both">
+							<h3 className={coinsSelected ? "treasuryBox__body__selector__both__selected" : "treasuryBox__body__selector__both__notselected"} onClick={() => {setCoinsSelected(true)}}>Coins</h3>
+							<h3 className={!coinsSelected ? "treasuryBox__body__selector__both__selected" : "treasuryBox__body__selector__both__notselected"} onClick={() => {setCoinsSelected(false)}}>NFTs</h3>
+						</div> :
+						<h3>Coins :</h3>
+					}
+				</div>
+				{
+					coinsSelected ?
+					<div className="coinBox__coin-container">
+          {[{
+              "TokenId": null,
+              "asset": {
+                  "id": 'tezos',
+                  "logo": null,
+                  "name": "Tezos",
+                  "ticker": "XTZ",
+                  "address": 'tezos',
+                  "decimals": 6,
+                  "assetType": "coin",
+                  "lastPrice": 1
+              },
+              "quantity": props.infos.balance.toString()
+            }].concat(props.tokens.coins).map((coin) => {
+            let coinValue
+            if (coin.asset.address === 'tezos') {
+              coinValue = +props.miscResponse.xtzPrice;
+            } else {
+              const coinInfos = props.coinsInfos?.find(coinInfos => coinInfos.tokenAddress === coin.asset.address);
+              coinValue = coinInfos?.exchangeRate ?? 0;
+            }
+            return (
+              <div key={coin.TokenId} className="coinBox__coin"
+                style={coin.asset.logo ? {order: "1"} : {order: "1"}}
+              >
+                <div className="coinBox__coin__left">
+                  {coin.asset.address === 'tezos' ?
+                    <CoinIcon coin={{ image: ipfsToLink(coin.asset.logo), ticker: coin.asset.ticker, id: coin.asset.address }} />
+                    :
+                    <Link href={'/' + coin.asset.address}>
+                      <CoinIcon coin={{ image: ipfsToLink(coin.asset.logo), ticker: coin.asset.ticker, id: coin.asset.address }} />
+                    </Link>
+                  }
+                  <div>
+                    <p className="coinBox__coin__left__title" title={
+                      coin.asset.name + '\n' +
+                      formatTokenWithExactAllDecimals(coin.quantity, Number(coin.asset.decimals), locale) + ' ' + coin.asset.ticker
+                    }>
+                      {formatToken(coin.quantity, Number(coin.asset.decimals), locale)}
+                      {coin.asset.address === 'tezos' ?
+                        <strong className="ticker">{coin.asset.ticker}</strong>
+                        :
+                        <Link href={'/' + coin.asset.address}>
+                          <strong className="ticker hoverItem">{coin.asset.ticker}</strong>
+                        </Link>
+                      }
+                    </p>
+                  </div>
+                </div>
+                <div className="coinBox__coin__right"
+                  title={formatPrice(coinValue, locale, props.miscResponse.rates) + '/' + coin.asset.ticker}>
+                  <p>{formatPrice(+coin.quantity / 10**coin.asset.decimals * coinValue, locale, props.miscResponse.rates)}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div> : <p>En attente du module de Rémi</p>
+				}
+			</div>
+		</div>
+	);
+}
