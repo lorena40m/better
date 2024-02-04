@@ -66,17 +66,7 @@ const 	Contract = ({ address, miscResponse }) => {
 					var2={"Average fee"}
 					value2={formatPrice(account.averageFee / 10**6 * miscResponse?.xtzPrice ?? 0, locale, miscResponse.rates)}
 					var3={"Tresury"}
-					value3={
-						formatPrice(
-							(+infos.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
-							tokens.coins.reduce(
-								(total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
-								0
-							),
-							locale,
-							miscResponse.rates
-						)
-					}
+					value3={formatPrice(((+infos.balance / 10**6) * miscResponse.xtzPrice + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.asset.address)?.exchangeRate ?? 0) * (coin.quantity / 10**coin.asset.decimals)), 0)), locale, miscResponse.rates)}
 					title={null}
 				/>
 				{/*<GeneralInfos

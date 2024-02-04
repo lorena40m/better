@@ -5,7 +5,7 @@ import Wallet from "../components/wallet/index";
 import Operation from "../components/operation/index";
 import Contract from "../components/smart-contract/index";
 import MiscellaneousEndpoint from '../endpoints/MiscellaneousEndpoint';
-import Page404 from './404';
+import Page404 from '../components/common/404';
 
 export async function getServerSideProps({ params, locale }: any) {
   const miscResponse = await MiscellaneousEndpoint({});
@@ -20,15 +20,15 @@ export async function getServerSideProps({ params, locale }: any) {
 
 const Artifact = (props) => {
   const { t } = useTranslation("common");
-  if (props.hash.substring(0, 2) === "tz") {
+  if (props.hash.substring(0, 2) === "tz" && props.hash.length === 36) {
     return (
       <Wallet address={props.hash} miscResponse={props.miscResponse} />
     );
-  } else if (props.hash.substring(0, 2) === "KT") {
+  } else if (props.hash.substring(0, 2) === "KT" && props.hash.length === 36) {
     return (
       <Contract address={props.hash} miscResponse={props.miscResponse} />
     );
-  } else if (props.hash.substring(0, 1) === "o") {
+  } else if (props.hash.substring(0, 1) === "o" && props.hash.length === 51) {
     return (
       <Operation hash={props.hash} miscResponse={props.miscResponse} />
     );

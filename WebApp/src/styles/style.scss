@@ -1374,6 +1374,7 @@ Project: less intrusive search button
         border: 1px solid #b3b3b3;
         width: 600px;
         max-width: 80%;
+        transition: border-color 0.3s, outline-color 0.3s;
         input {
           background: transparent;
           border-radius: 100px 0 0 100px;
@@ -1398,6 +1399,47 @@ Project: less intrusive search button
         img {
           height: 60%;
           padding: 0;
+        }
+      }
+      &__searchError {
+        border-color: red;
+        outline-color: red !important;
+        animation-name: searchError;
+        animation-duration: .5s;
+        animation-delay: 0.25s;
+        @keyframes searchError {
+          0% {
+            transform: translateX(0px);
+            timing-function: ease-in;
+          }
+          37% {
+            transform: translateX(10px);
+            timing-function: ease-out;
+          }
+          55% {
+            transform: translateX(-10px);
+            timing-function: ease-in;
+          }
+          73% {
+            transform: translateX(8px);
+            timing-function: ease-out;
+          }
+          82% {
+            transform: translateX(-8px);
+            timing-function: ease-in;
+          }
+          91% {
+            transform: translateX(4px);
+            timing-function: ease-out;
+          }
+          96% {
+            transform: translateX(-4px);
+            timing-function: ease-in;
+          }
+          100% {
+            transform: translateX(0px);
+            timing-function: ease-in;
+          }
         }
       }
       &__input:hover, &__input:focus-within {
@@ -1632,6 +1674,25 @@ Project: less intrusive search button
       &__value {
         font-size: 18px;
       }
+    }
+  }
+}
+
+.div404 {
+  display: flex;
+  width: 80%;
+  align-items: center;
+  div {
+    width: 50%;
+    h1 {
+      font-size: 80px;
+      font-weight: 600;
+      color: #2A3B51;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 30px;
+      color: #2A3B51;
     }
   }
 }

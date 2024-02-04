@@ -12,6 +12,7 @@ export function SearchInput(props: Props) {
 	const { t } = useTranslation("common");
 	const router = useRouter();
 	const [search, setSearch] = useState("");
+	const [animError, setAnimError] = useState(false);
 	const [searchActive, setSearchActive] = useState(false);
 	const [searchHistory, setSearchHistory] = useState([]);
 
@@ -43,17 +44,32 @@ export function SearchInput(props: Props) {
 				fetchAddressFromDomain(search).then((data) => {
 					if (data) {
 						router.push(`/${encodeURIComponent(data)}`);
+					} else {
+						setAnimError(true);
+						setTimeout(() => {
+							setAnimError(false);
+						}, 750);
 					}
 				});
-			} else {
+			} else if (((search.substring(0, 2) === "tz" || search.substring(0, 2) === "KT") && search.length === 36) || (search.substring(0, 1) === "o" && search.length === 51)) {
 				router.push(`/${encodeURIComponent(search)}`);
+			} else {
+				setAnimError(true);
+				setTimeout(() => {
+					setAnimError(false);
+				}, 750);
 			}
+		} else {
+			setAnimError(true);
+			setTimeout(() => {
+				setAnimError(false);
+			}, 750);
 		}
 	}
 
 	return (
 		<div className="main-header__container__center">
-			<div className="main-header__container__center__input">
+			<div className={animError ? "main-header__container__center__input main-header__container__center__searchError" : "main-header__container__center__input"}>
 				<input type="text" placeholder={t('Header.Search.Placeholder')}
 				value={search}
 				onChange={(e) => {setSearch(e.target.value)}}

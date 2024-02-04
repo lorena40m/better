@@ -48,7 +48,7 @@ const CoinBox = (props) => {
           {props.coins.map((coin) => {
             let coinValue
             if (coin.asset.address === 'tezos') {
-              coinValue = parseInt(props.xtzPrice)
+              coinValue = +props.xtzPrice;
             } else {
               const coinInfos = props.coinsInfos?.find(coinInfos => coinInfos.tokenAddress === coin.asset.address);
               coinValue = coinInfos?.exchangeRate ?? 0;

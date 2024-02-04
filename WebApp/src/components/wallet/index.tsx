@@ -22,6 +22,7 @@ import TezosIcon2 from "@/assets/images/tezos.png";
 import { AccountIcon } from '@/components/common/ArtifactIcon';
 import { Infos } from '@/pages/api/user-infos';
 import { Page } from "../common/page";
+import { forEach } from "cypress/types/lodash";
 
 type Props = {
   address: string,
@@ -69,17 +70,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
           name={name}
           address={address}
           var={t('Wallet.TotalValue')}
-          value={
-            formatPrice(
-              (+infos.balance / 10**6 * miscResponse?.xtzPrice ?? 0) +
-              tokens.coins.reduce(
-                (total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * coin.quantity / 10**coin.asset.decimals),
-                0
-              ),
-              locale,
-              miscResponse.rates
-            )
-          }
+          value={formatPrice(((+infos.balance / 10**6) * miscResponse.xtzPrice + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.asset.address)?.exchangeRate ?? 0) * (coin.quantity / 10**coin.asset.decimals)), 0)), locale, miscResponse.rates)}
           var2={null}
           value2={null}
           var3={null}
