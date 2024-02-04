@@ -1288,6 +1288,10 @@ Project: less intrusive search button
   @media screen and (max-width: 899px) {
     &__center__content {
       flex-direction: column;
+
+      .left, .right {
+        width: 100%;
+      }
     }
   }
 }
