@@ -7,6 +7,8 @@ import { CoinIcon } from "../common/ArtifactIcon";
 import { formatTokenWithExactAllDecimals, formatToken } from "@/utils/format";
 import Link from "next/link";
 import { AccountTokens } from '@/pages/api/account-tokens'
+import Carousel from "../Carousel/Carousel";
+import NftSlide from "@/components/Carousel/NftSlide";
 
 type Props = {
 	tokens: AccountTokens,
@@ -109,7 +111,13 @@ export function Treasury(props: Props) {
               </div>
             );
           })}
-        </div> : <p>{props.tokens.nfts.length ? "En attente du module de Rémi" : "Pas de nft sur ce contrat"}</p>
+        </div> : <p>{props.tokens.nfts.length ?
+          <Carousel Slide={NftSlide} items={props.tokens.nfts} breakpoints={{
+            100: { slidesPerView: 1 },
+            640: { slidesPerView: 1 },
+            900: { slidesPerView: 2 },
+            1400: { slidesPerView: 2 },
+          }} delay={4000} rates={props.miscResponse.rates} /> : "Pas de nft sur ce contrat"}</p>
 				}
 			</div>
 		</div>
