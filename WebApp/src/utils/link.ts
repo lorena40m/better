@@ -1,3 +1,5 @@
+const gateways = process.env.IPFS_GATEWAY.split(",");
+
 export const ipfsToHttps = (url: string | null) =>
   url?.slice(0, 4) === 'ipfs' ? process.env.IPFS_GATEWAY + url.split('://')[1] : url
 
@@ -17,7 +19,7 @@ export function getCollectionSources(url: string | null): string[] | null {
     const ipfsId = url.split('://')[1]
     return [
       `https://assets.objkt.media/file/assets-003/${ipfsId}/thumb288`,
-      process.env.IPFS_GATEWAY + ipfsId, // Defaults with gateway
+      ...gateways.map((gateway) => (gateway + ipfsId)), // Defaults with gateways
     ]
   }
 }
@@ -34,7 +36,7 @@ export function getAssetSources(url: string | null, contractHash: string, tokenI
     const ipfsId = url.split('://')[1]
     return [
       `https://assets.objkt.media/file/assets-003/${contractHash}/${tokenId}/thumb400`,
-      process.env.IPFS_GATEWAY + ipfsId, // Defaults with gateway
+      ...gateways.map((gateway) => (gateway + ipfsId)), // Defaults with gateways
     ]
   }
 }

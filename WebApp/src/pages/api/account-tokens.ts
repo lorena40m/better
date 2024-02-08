@@ -45,7 +45,7 @@ export default async function handler(
               'assetType', 'coin',
               'id', "Tokens"."ContractId",
               'name', "Tokens"."Metadata"->>'name',
-              'image', "Tokens"."Metadata"->>'thumbnailUri',
+              'image', COALESCE("Tokens"."Metadata"->>'thumbnailUri', "Tokens"."Metadata"->>'displayUri', "Tokens"."Metadata"->>'artifactUri'),
               'ticker', "Tokens"."Metadata"->>'symbol',
               'decimals', ("Tokens"."Metadata"->>'decimals')::INT
             )
@@ -54,7 +54,7 @@ export default async function handler(
               'assetType', 'nft',
               'id', "Tokens"."ContractId",
               'name', "Tokens"."Metadata"->>'name',
-              'image', "Tokens"."Metadata"->>'thumbnailUri',
+              'image', COALESCE("Tokens"."Metadata"->>'thumbnailUri', "Tokens"."Metadata"->>'displayUri', "Tokens"."Metadata"->>'artifactUri'),
               'collection', jsonb_build_object(
                 'name', contract."Metadata"->>'name'
               )
