@@ -15,9 +15,7 @@ export function Page(props: Props) {
 					<div>
 						<h1>{props.title}</h1>
 					</div>
-					<div className="pageComponent__center__content">
-						{props.children}
-					</div>
+					{props.children}
 				</div>
 			</main>
 		</>

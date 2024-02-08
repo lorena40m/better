@@ -34,7 +34,7 @@ export function Treasury(props: Props) {
 	  }
 
 	return (
-		<div className="box treasuryBox">
+		<div className="box treasuryBox shadow-box">
 			<div className="treasuryBox__head" onClick={() => {setOpen(!open)}}>
 				<h2>Treasury</h2>
 				<div>

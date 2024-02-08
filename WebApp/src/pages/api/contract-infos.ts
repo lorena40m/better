@@ -1,17 +1,30 @@
+import { Metadata } from './_solve';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { query } from '@/endpoints/providers/db';
 import { TokenDecimals, UrlString, DateString } from '@/pages/api/_apiTypes';
 import { TezosToolkit } from '@taquito/taquito';
 import { InMemorySigner } from '@taquito/signer';
-const bip39 = require('bip39');
+import { getAssetSources } from '@/utils/link';
+import { solveAccountType, solveAddressName } from './_solve';
+import { ipfsToHttps } from '@/endpoints/providers/utils';
+import { Account } from '@/pages/api/_apiTypes';
 
 export type Contract = {
+  contractType: string,
   id: string,
   creationDate: DateString,
   balance: string,
+  metadata: any,
   operationCount: number,
   creatorAddress: string,
   creatorDomain: string,
+  tokens: Array<{
+    id: string,
+    supply: string,
+    owner: Account,
+    metadata: any,
+    image: UrlString,
+  }>,
   averageFee: number,
   entrypoints: Array<{
     name: string,
@@ -95,9 +108,30 @@ export default async function handler(
       contract."Balance",
       contract."Id",
       contract."TransactionsCount",
+      contract."Metadata",
       creator."Address",
       creatorDomain."Name",
-      creationBlock."Timestamp"
+      creationBlock."Timestamp",
+      jsonb_agg(jsonb_build_object(
+        'id', token."TokenId",
+        'supply', token."TotalSupply",
+        'owner', jsonb_build_object(
+          'address', tokenOwner."Address",
+          'type', tokenOwner."Type",
+          'kind', tokenOwner."Kind",
+          'metadata', tokenOwner."Metadata",
+          'domains', (
+            SELECT jsonb_agg(jsonb_build_object(
+              'name', "Domains"."Name",
+              'lastLevel', "Domains"."LastLevel",
+              'data', "Domains"."Data",
+              'id', "Domains"."Id"
+            )) FROM "Domains" WHERE "Domains"."Address" = tokenOwner."Address"
+          )
+        ),
+        'metadata', token."Metadata",
+        'image', COALESCE(token."Metadata"->>'thumbnailUri', token."Metadata"->>'displayUri', token."Metadata"->>'artifactUri')
+      )) as "Tokens"
     FROM
       "Accounts" as contract
     INNER JOIN
@@ -106,8 +140,17 @@ export default async function handler(
       "Blocks" as creationBlock ON creationBlock."Level" = contract."FirstLevel"
     LEFT JOIN
       "Domains" as creatorDomain ON creatorDomain."Address" = creator."Address"
+    LEFT JOIN
+      "Tokens" as token ON token."ContractId" = contract."Id"
+    INNER JOIN
+      "Accounts" as tokenOwner ON tokenOwner."Id" = token."OwnerId"
     WHERE
       contract."Address" = $1
+    GROUP BY
+      contract."Id",
+      creator."Address",
+      creatorDomain."Name",
+      creationBlock."Timestamp"
     `, [address]);
     const feeHistory = await query('FEE HISTORY', `
     SELECT
@@ -129,52 +172,36 @@ export default async function handler(
     });
     const averageFee = totalFee / feeHistory.length;
 
-    /*const taquitoRpc = new TezosToolkit('http://91.163.75.179:8732/');
-    let entrypoints = [];
+    let contractType = 'smart_contract';
 
-    taquitoRpc.setProvider({ signer: await InMemorySigner.fromSecretKey('edsk2rKA8YEExg9Zo2qNPiQnnYheF1DhqjLVmfKdxiFfu5GyGRZRnb') });
-
-    try {
-      const taquitoContract = await taquitoRpc.contract.at(address);
-      const contractEntrypoints = taquitoContract.entrypoints;
-      const entrypointNames = Object.keys(contractEntrypoints.entrypoints);
-
-      entrypoints = await Promise.all(entrypointNames.map(entrypoint => {
-        try {
-          const entrypointType = contractEntrypoints.entrypoints[entrypoint];
-          console.log(entrypointType);
-          const dummyData = generateMichelsonValue(entrypointType);
-          console.log("YO");
-          console.log(dummyData);
-
-          const operation = {
-              to: taquitoContract.address,
-              amount: 0,
-              mutez: true,
-              parameter: {
-                  entrypoint: entrypoint,
-                  value: dummyData
-              }
-          };
-
-          return taquitoRpc.estimate.transfer(operation).then(estimate => ({
-            name: entrypoint,
-            fee: estimate.suggestedFeeMutez
-          }))
-        } catch (estimateError) {
-            console.error(`Error estimating fees for entrypoint ${entrypoint}:`, estimateError);
-        }
-      }))
-    } catch (err) {
-      console.error(err);
-    }
-    console.log(entrypoints);*/
+    if (contract[0].Tokens.length > 0) {
+      if (contract[0].Tokens.length === 1 && Number(contract[0].Tokens[0].metadata?.decimals) > 0) {
+        contractType = 'coin';
+      } else if (contract[0].Tokens.reduce((total, token) => total + (token.metadata?.decimals != '0' ? 1 : 0), 0) === 0) {
+        contractType = 'collection';
+      } else {
+        contractType = 'multiple_assets'
+      }
+    };
+    
+    contract[0].Tokens.forEach(token => {
+      token.image = getAssetSources(token.image, address, token.id);
+      token.owner = {
+        accountType: solveAccountType(token.owner.type, token.owner.kind),
+        address: token.owner.address,
+        name: solveAddressName(token.owner.domains, null, null),
+        image: ipfsToHttps(token.owner.metadata?.imageUri),
+      }
+    });
 
     res.status(200).json({
       infos: {
+        contractType: contractType,
         balance: contract[0].Balance,
         operationCount: contract[0].TransactionsCount,
+        metadata: contract[0].Metadata,
         id: contract[0].Id,
+        tokens: contract[0].Tokens,
         creationDate: contract[0].Timestamp,
         creatorAddress: contract[0].Address,
         creatorDomain: contract[0].Name,

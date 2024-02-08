@@ -35,7 +35,7 @@ const Operations = (props: Props) => {
   }, [props.address])
 
   return (
-    <div className="operationsBox box">
+    <div className="operationsBox box shadow-box">
       <div className="header">
         <h3>{t('History.Title')}</h3>
         <span className="headerInfo">{formatInteger(props.operationCount, locale)} {t('History.OperationsFound')}</span>

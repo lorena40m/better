@@ -19,12 +19,14 @@ const Operation = ({ hash, miscResponse }) => {
 
   return (
     <Page title="Operation on Tezos">
-      <div className="left">
-        <Transfert hash={hash} operation={operation} miscResponse={miscResponse} />
-        <OperationExecutions operation={operation} />
-      </div>
-      <div className="right">
-      <Transaction operation={operation} />
+      <div className="pageComponent__center__content">
+        <div className="left">
+          <Transfert hash={hash} operation={operation} miscResponse={miscResponse} />
+          <OperationExecutions operation={operation} />
+        </div>
+        <div className="right">
+          <Transaction operation={operation} />
+        </div>
       </div>
     </Page>
   );

@@ -31,7 +31,7 @@ export default function MainInfos(props: Props) {
   const { t } = useTranslation("common");
 
   return (
-    <div className="MainInfos">
+    <div className="MainInfos shadow-box">
       <div className="__top">
         <h2>
           {props.icon}

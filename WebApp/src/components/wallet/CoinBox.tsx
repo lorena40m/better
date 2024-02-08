@@ -46,7 +46,7 @@ const CoinBox = (props: Props) => {
   }
 
   return (
-    <div className="coinBox box">
+    <div className="coinBox box shadow-box">
       <div className="header">
         <h3>{t('Coins.Title')}</h3>
         <span className="headerInfo">{formatInteger(props.coins.length, locale)} {t('Coins.TokensFound')}</span>

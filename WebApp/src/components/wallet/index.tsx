@@ -61,51 +61,53 @@ const Wallet = ({ address, miscResponse }: Props) => {
       <Head>
         <title>{name} | {t('App.Title')}</title>
       </Head>
-      <div className="left">
-        <MainInfos
-          icon={<AccountIcon account={infos.account} />}
-          name={name}
-          address={address}
-          var={t('Wallet.TotalValue')}
-          value={formatPrice(((+infos.balance / 10**6) * miscResponse.xtzPrice + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * (+coin.quantity / 10**coin.asset.decimals)), 0)), locale, miscResponse.rates)}
-          var2={null}
-          value2={null}
-          var3={null}
-          value3={null}
-          title={null}
-        />
-        <div className="WalletNfts boxWithoutBorder">
-          <div className="header">
-            <h3>{t("Wallet.Nfts")}</h3>
-            <span className="headerInfo">{formatInteger(tokens.nfts.length, locale)} {t('Nfts.NftFound')}</span>
+      <div className="pageComponent__center__content">
+        <div className="left">
+          <MainInfos
+            icon={<AccountIcon account={infos.account} />}
+            name={name}
+            address={address}
+            var={t('Wallet.TotalValue')}
+            value={formatPrice(((+infos.balance / 10**6) * miscResponse.xtzPrice + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * (+coin.quantity / 10**coin.asset.decimals)), 0)), locale, miscResponse.rates)}
+            var2={null}
+            value2={null}
+            var3={null}
+            value3={null}
+            title={null}
+          />
+          <div className="WalletNfts boxWithoutBorder">
+            <div className="header">
+              <h3>{t("Wallet.Nfts")}</h3>
+              <span className="headerInfo">{formatInteger(tokens.nfts.length, locale)} {t('Nfts.NftFound')}</span>
+            </div>
+            <Carousel Slide={NftSlide} items={tokens.nfts} breakpoints={{
+              100: { slidesPerView: 1 },
+              640: { slidesPerView: 1 },
+              900: { slidesPerView: 2 },
+              1400: { slidesPerView: 2 },
+            }} delay={4000} rates={miscResponse.rates} />
           </div>
-          <Carousel Slide={NftSlide} items={tokens.nfts} breakpoints={{
-            100: { slidesPerView: 1 },
-            640: { slidesPerView: 1 },
-            900: { slidesPerView: 2 },
-            1400: { slidesPerView: 2 },
-          }} delay={4000} rates={miscResponse.rates} />
+          {
+            (tokens.coins[0] && coinsInfos || parseInt(infos.balance) > 0) &&
+              <CoinBox coins={[{
+                "TokenId": null,
+                "ContractId": null,
+                "Address": 'tezos',
+                "asset": {
+                  "id": 'tezos',
+                  "image": null,
+                  "name": "Tezos",
+                  "ticker": "XTZ",
+                  "decimals": 6,
+                  "assetType": 'coin' as 'coin'
+                },
+                "quantity": infos.balance.toString()
+              }].concat(tokens.coins)} coinsInfos={coinsInfos} rates={miscResponse.rates} xtzPrice={miscResponse.xtzPrice} />
+          }
         </div>
-        {
-          (tokens.coins[0] && coinsInfos || parseInt(infos.balance) > 0) &&
-            <CoinBox coins={[{
-              "TokenId": null,
-              "ContractId": null,
-              "Address": 'tezos',
-              "asset": {
-                "id": 'tezos',
-                "image": null,
-                "name": "Tezos",
-                "ticker": "XTZ",
-                "decimals": 6,
-                "assetType": 'coin' as 'coin'
-              },
-              "quantity": infos.balance.toString()
-            }].concat(tokens.coins)} coinsInfos={coinsInfos} rates={miscResponse.rates} xtzPrice={miscResponse.xtzPrice} />
-        }
-      </div>
-      <div className="right">
-        <Operations address={address} operationCount={infos?.operationCount} />
+        <div className="right">
+          <Operations address={address} operationCount={infos?.operationCount} />
+        </div>
       </div>
     </Page>
   );

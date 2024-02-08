@@ -13,7 +13,7 @@ type Props = {
 export function OperationExecutions(props: Props) {
 	const { locale } = useRouter();
 	return (
-		<div className="operationExecutionsBox box">
+		<div className="operationExecutionsBox box shadow-box">
 			<h2>Executions Order</h2>
 			<div>
 				<p className="operationExecutionsBox__gridItem1 operationExecutionsBox__title">N°</p>

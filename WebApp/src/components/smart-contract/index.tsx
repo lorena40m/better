@@ -14,12 +14,13 @@ import { Infos } from "@/pages/api/user-infos";
 import { AccountIcon } from "../common/ArtifactIcon";
 import { Treasury } from "./Treasury";
 import { AccountTokens } from '@/pages/api/account-tokens'
+import { Collection } from './collection';
 
 const Contract = ({ address, miscResponse }) => {
 	const { t } = useTranslation("common");
 	const { locale } = useRouter();
 	const [tokens, setTokens] = useState({domains: [], nfts: [], coins: []} as AccountTokens);
-	const [account, setAccount] = useState({balance: '0', operationCount: 0, id: '0', creatorAddress: '', creatorDomain: '', creationDate: '', averageFee: 0, entrypoints: []} as Contract);
+	const [account, setAccount] = useState({contractType: 'smart_contract', balance: '0', metadata: {}, operationCount: 0, id: '0', creatorAddress: '', creatorDomain: '', tokens: [], creationDate: '', averageFee: 0, entrypoints: []} as Contract);
 	const [history, setHistory] = useState([]);
 	const [infos, setInfos] = useState({
 		balance: '0',
@@ -52,31 +53,34 @@ const Contract = ({ address, miscResponse }) => {
 	}, [address]);
 
 	return (
-		<Page title="Contract on Tezos">
+		<Page title={account.contractType === 'collection' ? "Collection on Tezos" : "Contract on Tezos"}>
 			<Head>
 				<title>{null || 'Contract'} | {t('App.Title')}</title>
 			</Head>
-			<div className="left">
-				<MainInfos
-					icon={<AccountIcon account={infos.account} />}
-					name={infos.account.name}
-					address={address}
-					var={"Uses"}
-					value={formatNumber(account?.operationCount ?? 0, locale)}
-					var2={"Average fee"}
-					value2={formatPrice(account.averageFee / 10**6 * miscResponse?.xtzPrice ?? 0, locale, miscResponse.rates)}
-					var3={"Tresury"}
-					value3={formatPrice(((+infos.balance / 10**6) * miscResponse.xtzPrice + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * (+coin.quantity / 10**coin.asset.decimals)), 0)), locale, miscResponse.rates)}
-					title={null}
-				/>
-				<OtherInfos
-					creator={{domain: account?.creatorDomain || null, address: account?.creatorAddress}}
-					date={account?.creationDate}
-				/>
-				<Treasury tokens={tokens} infos={infos} miscResponse={miscResponse} coinsInfos={coinsInfos}  />
-			</div>
-			<div className="right">
-				<Operations address={address} operationCount={account?.operationCount} />
+			{account.contractType === 'collection' ? <Collection infos={account} /> : null}
+			<div className="pageComponent__center__content">
+				<div className="left">
+					<MainInfos
+						icon={<AccountIcon account={infos.account} />}
+						name={infos.account.name}
+						address={address}
+						var={"Uses"}
+						value={formatNumber(account?.operationCount ?? 0, locale)}
+						var2={"Average fee"}
+						value2={formatPrice(account.averageFee / 10**6 * miscResponse?.xtzPrice ?? 0, locale, miscResponse.rates)}
+						var3={"Tresury"}
+						value3={formatPrice(((+infos.balance / 10**6) * miscResponse.xtzPrice + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * (+coin.quantity / 10**coin.asset.decimals)), 0)), locale, miscResponse.rates)}
+						title={null}
+					/>
+					<OtherInfos
+						creator={{domain: account?.creatorDomain || null, address: account?.creatorAddress}}
+						date={account?.creationDate}
+					/>
+					<Treasury tokens={tokens} infos={infos} miscResponse={miscResponse} coinsInfos={coinsInfos}  />
+				</div>
+				<div className="right">
+					<Operations address={address} operationCount={account?.operationCount} />
+				</div>
 			</div>
 		</Page>
 	);

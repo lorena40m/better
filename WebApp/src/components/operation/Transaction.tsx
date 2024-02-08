@@ -66,7 +66,7 @@ const Transaction = (props: Props) => {
   }, [props.operation]);
 
   return (
-    (transfers.length > 0 ? <div className="operationTransfersBox box">
+    (transfers.length > 0 ? <div className="operationTransfersBox box shadow-box">
       <h2>Transfers</h2>
       {}
       {transfers.map((transfer, i) => {
