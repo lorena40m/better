@@ -50,7 +50,7 @@ export default function Header({ hideSearch }: Props) {
             />
           </Link>
         </div>
-        {hideSearch && <SearchInput />}
+        {hideSearch && <SearchInput searchActive={searchActive} setSearchActive={setSearchActive} />}
         <div className="main-header__container__right">
           <Select
             onChange={value => {onToggleLanguageClick(changeTo); setLanguage(value)}}

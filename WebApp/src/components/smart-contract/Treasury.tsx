@@ -45,13 +45,10 @@ export function Treasury(props: Props) {
 			</div>
 			<div className={open ? "treasuryBox__body treasuryBox__body__open" : "treasuryBox__body"}>
 				<div className="treasuryBox__body__selector">
-					{props.tokens.nfts.length ? 
-						<div className="treasuryBox__body__selector__both">
-							<h3 className={coinsSelected ? "treasuryBox__body__selector__both__selected" : "treasuryBox__body__selector__both__notselected"} onClick={() => {setCoinsSelected(true)}}>Coins</h3>
-							<h3 className={!coinsSelected ? "treasuryBox__body__selector__both__selected" : "treasuryBox__body__selector__both__notselected"} onClick={() => {setCoinsSelected(false)}}>NFTs</h3>
-						</div> :
-						<h3>Coins :</h3>
-					}
+					<div className="treasuryBox__body__selector__both">
+						<h3 className={coinsSelected ? "treasuryBox__body__selector__both__selected" : "treasuryBox__body__selector__both__notselected"} onClick={() => {setCoinsSelected(true)}}>Coins</h3>
+						<h3 className={!coinsSelected ? "treasuryBox__body__selector__both__selected" : "treasuryBox__body__selector__both__notselected"} onClick={() => {setCoinsSelected(false)}}>NFTs</h3>
+					</div>
 				</div>
 				{
 					coinsSelected ?
@@ -112,7 +109,7 @@ export function Treasury(props: Props) {
               </div>
             );
           })}
-        </div> : <p>En attente du module de Rémi</p>
+        </div> : <p>{props.tokens.nfts.length ? "En attente du module de Rémi" : "Pas de nft sur ce contrat"}</p>
 				}
 			</div>
 		</div>

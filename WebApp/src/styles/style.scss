@@ -2241,10 +2241,16 @@ Project: less intrusive search button
 
 @media screen and (max-width: 899px) {
   .main-header__container__left {
-    width: 5%;
+    width: 10%;
+    &__link {
+      height: 55% !important;
+      img {
+        width: auto;
+      }
+    }
   }
   .main-header__container__center {
-    width: 75%;
+    width: 70%;
   }
   .main-header__container__right {
     width: 20%;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { fetchAddressFromDomain } from "@/utils/apiClient";
@@ -6,6 +6,8 @@ import { useTranslation } from "next-i18next";
 import searchIcon from "../../assets/iconSvg/searchIconBlack.svg";
 
 type Props = {
+	searchActive: any,
+	setSearchActive: any
 }
 
 export function SearchInput(props: Props) {
@@ -13,8 +15,8 @@ export function SearchInput(props: Props) {
 	const router = useRouter();
 	const [search, setSearch] = useState("");
 	const [animError, setAnimError] = useState(false);
-	const [searchActive, setSearchActive] = useState(false);
 	const [searchHistory, setSearchHistory] = useState([]);
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		let encodedStoredHistory = localStorage.getItem("searchHistory");
@@ -35,9 +37,15 @@ export function SearchInput(props: Props) {
 		setSearchHistory(storedHistory);
 	}, [router.query.id]);
 
+	useEffect(() => {
+		if (props.searchActive && inputRef.current) {
+		  inputRef.current.focus();
+		}
+	  }, [props.searchActive]);
+
 	function searchEvent() {
-		if (window.innerWidth < 800 && !searchActive) {
-			setSearchActive(true);
+		if (window.innerWidth < 800 && !props.searchActive) {
+			props.setSearchActive(true);
 		}
 		else if (search && search[0]) {
 			if (search.length > 6 && search.slice(-4) === ".tez") {
@@ -71,9 +79,10 @@ export function SearchInput(props: Props) {
 		<div className="main-header__container__center">
 			<div className={animError ? "main-header__container__center__input main-header__container__center__searchError" : "main-header__container__center__input"}>
 				<input type="text" placeholder={t('Header.Search.Placeholder')}
-				value={search}
-				onChange={(e) => {setSearch(e.target.value)}}
-				onKeyDown={(e) => {e.key === 'Enter' ? searchEvent() : null}}
+					value={search}
+					onChange={(e) => {setSearch(e.target.value)}}
+					onKeyDown={(e) => {e.key === 'Enter' ? searchEvent() : null}}
+					ref={inputRef}
 				/>
 				<div onClick={searchEvent}>
 					<Image src={searchIcon} alt="search icon" />
