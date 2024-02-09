@@ -8,19 +8,23 @@ import { getAssetSources } from '@/utils/link';
 import { solveAccountType, solveAddressName } from './_solve';
 import { ipfsToHttps } from '@/endpoints/providers/utils';
 import { Account } from '@/pages/api/_apiTypes';
+import { getCollection } from '@/endpoints/providers/objkt';
 
 export type Contract = {
   contractType: string,
   id: string,
   creationDate: DateString,
+  floorPrice: any,
   balance: string,
   metadata: any,
   operationCount: number,
   creatorAddress: string,
   creatorDomain: string,
+  image: any,
   tokens: Array<{
     id: string,
     supply: string,
+    holderscount: number,
     owner: Account,
     metadata: any,
     image: UrlString,
@@ -111,27 +115,7 @@ export default async function handler(
       contract."Metadata",
       creator."Address",
       creatorDomain."Name",
-      creationBlock."Timestamp",
-      jsonb_agg(jsonb_build_object(
-        'id', token."TokenId",
-        'supply', token."TotalSupply",
-        'owner', jsonb_build_object(
-          'address', tokenOwner."Address",
-          'type', tokenOwner."Type",
-          'kind', tokenOwner."Kind",
-          'metadata', tokenOwner."Metadata",
-          'domains', (
-            SELECT jsonb_agg(jsonb_build_object(
-              'name', "Domains"."Name",
-              'lastLevel', "Domains"."LastLevel",
-              'data', "Domains"."Data",
-              'id', "Domains"."Id"
-            )) FROM "Domains" WHERE "Domains"."Address" = tokenOwner."Address"
-          )
-        ),
-        'metadata', token."Metadata",
-        'image', COALESCE(token."Metadata"->>'thumbnailUri', token."Metadata"->>'displayUri', token."Metadata"->>'artifactUri')
-      )) as "Tokens"
+      creationBlock."Timestamp"
     FROM
       "Accounts" as contract
     INNER JOIN
@@ -140,10 +124,6 @@ export default async function handler(
       "Blocks" as creationBlock ON creationBlock."Level" = contract."FirstLevel"
     LEFT JOIN
       "Domains" as creatorDomain ON creatorDomain."Address" = creator."Address"
-    LEFT JOIN
-      "Tokens" as token ON token."ContractId" = contract."Id"
-    INNER JOIN
-      "Accounts" as tokenOwner ON tokenOwner."Id" = token."OwnerId"
     WHERE
       contract."Address" = $1
     GROUP BY
@@ -174,17 +154,50 @@ export default async function handler(
 
     let contractType = 'smart_contract';
 
-    if (contract[0].Tokens.length > 0) {
-      if (contract[0].Tokens.length === 1 && Number(contract[0].Tokens[0].metadata?.decimals) > 0) {
+    const tokens = await query('COLLECTION TOKENS', `
+        SELECT
+          token."TokenId" as id,
+          token."TotalSupply" as supply,
+          token."HoldersCount" as holdersCount,
+          jsonb_build_object(
+            'address', tokenOwner."Address",
+            'type', tokenOwner."Type",
+            'kind', tokenOwner."Kind",
+            'metadata', tokenOwner."Metadata",
+            'domains', (
+              SELECT jsonb_agg(jsonb_build_object(
+                'name', "Domains"."Name",
+                'lastLevel', "Domains"."LastLevel",
+                'data', "Domains"."Data",
+                'id', "Domains"."Id"
+              )) FROM "Domains" WHERE "Domains"."Address" = tokenOwner."Address"
+            )
+          ) as owner,
+          token."Metadata" as metadata,
+          COALESCE(token."Metadata"->>'thumbnailUri', token."Metadata"->>'displayUri', token."Metadata"->>'artifactUri') as image
+        FROM
+          "Tokens" as token
+        LEFT JOIN
+          "Accounts" as tokenOwner ON tokenOwner."Id" = token."OwnerId"
+        WHERE
+          token."ContractId" = $1
+        ORDER BY
+          CAST(token."TokenId" AS INTEGER)
+        LIMIT $2
+        OFFSET $3
+    `, [contract[0].Id, 100, 0]);
+
+    if (tokens?.length > 0) {
+      if (tokens.length === 1 && Number(tokens[0].metadata?.decimals) > 0) {
         contractType = 'coin';
-      } else if (contract[0].Tokens.reduce((total, token) => total + (token.metadata?.decimals != '0' ? 1 : 0), 0) === 0) {
+      } else if (tokens.reduce((total, token) => total + (!token.metadata?.decimals ? 0 : token.metadata?.decimals != '0' ? 1 : 0), 0) === 0) {
         contractType = 'collection';
       } else {
         contractType = 'multiple_assets'
       }
     };
-    
-    contract[0].Tokens.forEach(token => {
+
+    tokens?.forEach(token => {
       token.image = getAssetSources(token.image, address, token.id);
       token.owner = {
         accountType: solveAccountType(token.owner.type, token.owner.kind),
@@ -194,14 +207,18 @@ export default async function handler(
       }
     });
 
+    let objktInfos = (await getCollection(address));
+
     res.status(200).json({
       infos: {
         contractType: contractType,
+        floorPrice: objktInfos.floorPrice,
         balance: contract[0].Balance,
         operationCount: contract[0].TransactionsCount,
         metadata: contract[0].Metadata,
+        image: objktInfos.image ?? getAssetSources(contract[0].Metadata?.thumbnailUri ?? contract[0].Metadata?.displayUri ?? contract[0].Metadata?.imageUri ?? contract[0].Metadata?.artifactUri, null, null) ?? tokens.find((token) => token.id == 0)?.image ?? tokens.find((token) => token.id == 1)?.image,
         id: contract[0].Id,
-        tokens: contract[0].Tokens,
+        tokens: tokens,
         creationDate: contract[0].Timestamp,
         creatorAddress: contract[0].Address,
         creatorDomain: contract[0].Name,

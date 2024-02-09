@@ -67,6 +67,11 @@ export async function fetchContractInfos(address: string) {
 	return (infos);
 }
 
+export async function fetchCollectionTokens(id: string, limit: number, offset: number, address: string) {
+  const tokens = await fetchApi(`collection-tokens?id=${id}&limit=${limit}&offset=${offset}&address=${address}`).then(response => response.tokens);
+  return (tokens);
+}
+
 export async function fetchAddressFromDomain(domain: string) {
 	const address = await fetchApi(`address-from-domain?domain=${domain}`).then(response => response);
 	return (address);

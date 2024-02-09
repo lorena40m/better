@@ -34,9 +34,15 @@ export function getAssetSources(url: string | null, contractHash: string, tokenI
   }
   if (url.startsWith('ipfs')) {
     const ipfsId = url.split('://')[1]
-    return [
-      `https://assets.objkt.media/file/assets-003/${contractHash}/${tokenId}/thumb400`,
-      ...gateways.map((gateway) => (gateway + ipfsId)), // Defaults with gateways
-    ]
+    if (contractHash && tokenId) {
+      return [
+        `https://assets.objkt.media/file/assets-003/${contractHash}/${tokenId}/thumb400`,
+        ...gateways.map((gateway) => (gateway + ipfsId)), // Defaults with gateways
+      ]
+    } else {
+      return [
+        ...gateways.map((gateway) => (gateway + ipfsId)),
+      ]
+    }
   }
 }

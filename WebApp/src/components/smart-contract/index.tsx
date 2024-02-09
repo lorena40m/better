@@ -57,7 +57,7 @@ const Contract = ({ address, miscResponse }) => {
 			<Head>
 				<title>{null || 'Contract'} | {t('App.Title')}</title>
 			</Head>
-			{account.contractType === 'collection' ? <Collection infos={account} /> : null}
+			{account.contractType === 'collection' ? <Collection infos={account} infos2={infos} /> : null}
 			<div className="pageComponent__center__content">
 				<div className="left">
 					<MainInfos
