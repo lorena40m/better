@@ -2267,7 +2267,7 @@ Project: less intrusive search button
     img {
       height: 150px;
       width: 150px;
-      border: 1px solid #19283b;
+      object-fit: cover;
       border-radius: 10px;
     }
     &__left {
@@ -2282,11 +2282,19 @@ Project: less intrusive search button
     }
     &__right {
       display: flex;
-      justify-content: space-between;
+      flex-wrap: wrap;
+      justify-content: flex-end;
       align-items: flex-end;
       width: 60%;
       font-size: 20px;
       color: #19283b;
+      gap: 5px;
+      &__div {
+        width: calc(25% - 5px);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+      }
       &__value {
         font-size: 22px;
         font-weight: 700;
@@ -2296,6 +2304,7 @@ Project: less intrusive search button
   &__nft {
     background-color: #ffffff;
     display: flex;
+    align-items: center;
     &__list {
       width: 35%;
       max-height: 380px;
@@ -2307,6 +2316,15 @@ Project: less intrusive search button
       margin: 30px 0 30px 30px;
       border-radius: 5px;
       padding: 5px;
+      &__loader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 60px;
+        img {
+          animation: infiniteRotate 1s linear infinite;
+        }
+      }
       &__nft {
         height: 70px;
         display: flex;
@@ -2346,14 +2364,18 @@ Project: less intrusive search button
       align-items: center;
       justify-content: space-between;
       margin: 30px;
+      height: 100%;
       gap: 10px;
-      &__animate img {
-        animation: 0.6s linear changeImage;
+      &__animate {
+        animation: 0.6s linear changeNft;
       }
       &__text {
         width: 50%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
         align-self: flex-start;
-        text-align: end;
+        text-align: start;
         padding: 15px 0;
         color: #19283b;
         a:hover {
@@ -2363,18 +2385,34 @@ Project: less intrusive search button
           font-size: 28px;
           font-weight: 700;
         }
+        &__description {
+          font-size: 16px;
+          font-style: italic;
+          color: #19283bd0;
+          strong {
+            font-style: normal;
+          }
+        }
       }
       img {
         max-width: 50%;
-        max-height: 95%;
+        max-height: 380px;
         border-radius: 5px;
       }
     }
   }
 }
 
+@keyframes infiniteRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
-@keyframes changeImage {
+@keyframes changeNft {
   0% {
     transform: translateY(0%);
     opacity: 1;
@@ -2397,6 +2435,33 @@ Project: less intrusive search button
   .operationTransfersBox__transfer__head__user {
     flex-direction: column;
     gap: 5px;
+  }
+  .contract-collection2 {
+    &__infos__right__div {
+      width: calc(50% - 5px);
+    }
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .contract-collection2 {
+    &__nft {
+      &__list {
+        width: 40%;
+      }
+      &__infos {
+        width: 60%;
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        img {
+          height: 180px;
+        }
+        &__text {
+          width: 100%;
+          gap: 0;
+        }
+      }
+    }
   }
 }
 
@@ -2469,6 +2534,37 @@ Project: less intrusive search button
         }
       }
 
+    }
+  }
+  .contract-collection2 {
+    &__nft {
+      flex-direction: column;
+      &__list {
+        width: calc(100% - 40px);
+        margin: 20px;
+      }
+      &__infos {
+        width: calc(100% - 40px);
+        flex-direction: row-reverse;
+      }
+    }
+  }
+}
+@media screen and (max-width: 600px) {
+  .contract-collection2 {
+    &__infos {
+      flex-direction: column;
+      &__right {
+        width: 100%;
+        &__div {
+          align-items: center;
+        }
+      }
+    }
+    &__nft {
+      &__infos {
+        flex-direction: column-reverse;
+      }
     }
   }
 }

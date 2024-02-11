@@ -15,6 +15,8 @@ export type Contract = {
   id: string,
   creationDate: DateString,
   floorPrice: any,
+  items: any,
+  volume_24h: any,
   balance: string,
   metadata: any,
   operationCount: number,
@@ -140,7 +142,7 @@ export default async function handler(
     FROM
       "Accounts" as contract
     INNER JOIN
-      "TransactionOps" as tsxOps ON(tsxOps."TargetId" = contract."Id")
+      "TransactionOps" as tsxOps ON tsxOps."TargetId" = contract."Id"
     WHERE
       contract."Address" = $1
     LIMIT
@@ -156,6 +158,7 @@ export default async function handler(
 
     const tokens = await query('COLLECTION TOKENS', `
         SELECT
+          token."Id" as tzkt_id,
           token."TokenId" as id,
           token."TotalSupply" as supply,
           token."HoldersCount" as holdersCount,
@@ -197,15 +200,50 @@ export default async function handler(
       }
     };
 
-    tokens?.forEach(token => {
+    const promises = tokens.map(async (token) => {
       token.image = getAssetSources(token.image, address, token.id);
-      token.owner = {
-        accountType: solveAccountType(token.owner.type, token.owner.kind),
-        address: token.owner.address,
-        name: solveAddressName(token.owner.domains, null, null),
-        image: ipfsToHttps(token.owner.metadata?.imageUri),
+      if (!token.owner.address) {
+        const newOwner = await query('TOKEN OWNER', `
+          SELECT
+            owner."Address" as "address",
+            owner."Kind" as "kind",
+            owner."Type" as "type",
+            owner."Metadata" as "metadata",
+            (
+              SELECT jsonb_agg(jsonb_build_object(
+                'name', "Domains"."Name",
+                'lastLevel', "Domains"."LastLevel",
+                'data', "Domains"."Data",
+                'id', "Domains"."Id"
+              )) FROM "Domains" WHERE "Domains"."Address" = owner."Address"
+            ) as "domains"
+          FROM
+            "TokenTransfers"
+          LEFT JOIN
+            "Accounts" as owner ON owner."Id" = "TokenTransfers"."ToId"
+          WHERE
+            "TokenTransfers"."TokenId" = $1
+          ORDER BY
+            "TokenTransfers"."Id" DESC
+        `, [token.tzkt_id]);
+        if (newOwner && newOwner.length > 0) {
+          token.owner = {
+            accountType: solveAccountType(newOwner[0].type, newOwner[0].kind),
+            address: newOwner[0].address,
+            name: solveAddressName(newOwner[0].domains, null, null),
+            image: ipfsToHttps(newOwner[0].metadata?.imageUri),
+          };
+        }
+      } else {
+        token.owner = {
+          accountType: solveAccountType(token.owner.type, token.owner.kind),
+          address: token.owner.address,
+          name: solveAddressName(token.owner.domains, null, null),
+          image: ipfsToHttps(token.owner.metadata?.imageUri),
+        };
       }
     });
+    await Promise.all(promises);
 
     let objktInfos = (await getCollection(address));
 
@@ -213,6 +251,8 @@ export default async function handler(
       infos: {
         contractType: contractType,
         floorPrice: objktInfos.floorPrice,
+        items: objktInfos.supply,
+        volume_24h: objktInfos.volume_24h,
         balance: contract[0].Balance,
         operationCount: contract[0].TransactionsCount,
         metadata: contract[0].Metadata,

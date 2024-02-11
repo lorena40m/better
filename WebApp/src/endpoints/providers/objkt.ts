@@ -69,6 +69,8 @@ export async function getCollection(address: string) {
       floor_price
       items
       path
+      timestamp
+      volume_24h
     }
   }`)
   const collection = queryResult.fa[0]
@@ -78,8 +80,9 @@ export async function getCollection(address: string) {
     image: getCollectionSources(collection?.logo),
     supply: collection?.items.toString(),
     floorPrice: collection?.floor_price,
-    topSale: null,
     marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? address),
+    timestamp: collection?.timestamp,
+    volume_24h: collection?.volume_24h,
   }
 }
 

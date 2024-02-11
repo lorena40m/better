@@ -46,10 +46,6 @@ const Contract = ({ address, miscResponse }) => {
 		fetchContractInfos(address).then((data) => {
 			setAccount(data);
 		});
-		fetch('/api/coins-infos')
-		.then(response => response.json())
-		.then(data => setCoinsInfos(data))
-		.catch(error => console.error('Error fetching data:', error));
 	}, [address]);
 
 	return (
@@ -57,7 +53,7 @@ const Contract = ({ address, miscResponse }) => {
 			<Head>
 				<title>{null || 'Contract'} | {t('App.Title')}</title>
 			</Head>
-			{account.contractType === 'collection' ? <Collection infos={account} infos2={infos} /> : null}
+			{account.contractType === 'collection' ? <Collection infos={account} infos2={infos} miscResponse={miscResponse} /> : null}
 			<div className="pageComponent__center__content">
 				<div className="left">
 					<MainInfos

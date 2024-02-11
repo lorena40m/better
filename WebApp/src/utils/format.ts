@@ -142,6 +142,20 @@ export function formatDate(date: string | number | Date, locale: string) {
   })
 }
 
+export function formatDateShort(date: string | number | Date, locale: string) {
+  date = new Date(date)
+  const jour = date.getDate().toString().padStart(2, '0');
+  const mois = (date.getMonth() + 1).toString().padStart(2, '0'); // Les mois sont indexés à partir de 0
+  const annee = date.getFullYear();
+  if (locale === 'fr') {
+    return `${jour}/${mois}/${annee}`;
+  } else if (locale === 'en') {
+    return `${mois}/${jour}/${annee}`;
+  } else {
+    return "Error: unknown locale";
+  }
+}
+
 export function formatEntiereDate(date: string | number | Date, locale: string) {
   return (new Date(date)).toLocaleString(locale)
 }

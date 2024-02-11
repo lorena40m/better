@@ -73,7 +73,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
   return (
     <>
       <Head>
-        <title>Tezos x {t('App.Title')}</title>
+        <title>{t('App.Title')}</title>
       </Head>
       <main>
         {/*<HeadCrumb /> Temporarely disabled*/}
