@@ -185,7 +185,7 @@ export default async function handler(
         WHERE
           token."ContractId" = $1
         ORDER BY
-          CAST(token."TokenId" AS INTEGER)
+          CAST(token."TokenId" AS BIGINT)
         LIMIT $2
         OFFSET $3
     `, [contract[0].Id, 100, 0]);

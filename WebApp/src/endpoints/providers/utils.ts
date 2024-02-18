@@ -1,1 +1,4 @@
-export const ipfsToHttps = (url: string | null) => url?.slice(0, 4) === 'ipfs' ? process.env.IPFS_GATEWAY + url.split('://')[1] : url
+export const ipfsToHttps = (url: string | null) => {
+	const gateways = process.env.IPFS_GATEWAY.split(',');
+	return url?.slice(0, 4) === 'ipfs' ? gateways[0] + url.split('://')[1] : url;
+};

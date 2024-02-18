@@ -222,7 +222,7 @@ export type CoinResponse = {
 
 export type CollectionResponse = {
   artifactType: 'collection',
-  collection: ExtendedCollection,
+  collection: any,
   items: Nft[], // paginated, sorted by last transaction
   saleHistory: {
     itemId: string,
