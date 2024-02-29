@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../components/Header/index";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
-import Profile from "@/components/wallet/Profile";
 import CoinBox from "@/components/wallet/CoinBox";
-import ConfirmModal from "@/components/wallet/ConfirmModal";
 import TezosIcon from "../../assets/images/tezos.svg";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,13 +20,13 @@ import { AccountIcon } from '@/components/common/ArtifactIcon';
 import { Infos } from '@/pages/api/user-infos';
 import { Page } from "../common/page";
 import { AccountTokens } from '@/pages/api/account-tokens'
+import { useRates } from '@/context/RatesContext'
 
 type Props = {
   address: string,
-  miscResponse: {rates: {"EUR/USD": number}, xtzPrice: number},
 }
 
-const Wallet = ({ address, miscResponse }: Props) => {
+const Wallet = ({ address }: Props) => {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
   const [tokens, setTokens] = useState({domains: [], nfts: [], coins: []} as AccountTokens);
@@ -43,6 +41,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
     }
   } as Infos);
   const [coinsInfos, setCoinsInfos] = useState(null);
+  const rates = useRates()
 
   useEffect(() => {
     fetchAccountTokens(address).then(setTokens)
@@ -68,7 +67,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
             name={name}
             address={address}
             var={t('Wallet.TotalValue')}
-            value={formatPrice(((+infos.balance / 10**6) * miscResponse.xtzPrice + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * (+coin.quantity / 10**coin.asset.decimals)), 0)), locale, miscResponse.rates)}
+            value={rates && formatPrice(((+infos.balance / 10**6) * rates.cryptos.XTZ + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * (+coin.quantity / 10**coin.asset.decimals)), 0)), locale, rates.fiats)}
             var2={null}
             value2={null}
             var3={null}
@@ -85,7 +84,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
               640: { slidesPerView: 1 },
               900: { slidesPerView: 2 },
               1400: { slidesPerView: 2 },
-            }} delay={4000} rates={miscResponse.rates} />
+            }} delay={4000} />
           </div>
           {
             (tokens.coins[0] && coinsInfos || parseInt(infos.balance) > 0) &&
@@ -102,7 +101,7 @@ const Wallet = ({ address, miscResponse }: Props) => {
                   "assetType": 'coin' as 'coin'
                 },
                 "quantity": infos.balance.toString()
-              }].concat(tokens.coins)} coinsInfos={coinsInfos} rates={miscResponse.rates} xtzPrice={miscResponse.xtzPrice} />
+              }].concat(tokens.coins)} coinsInfos={coinsInfos} />
           }
         </div>
         <div className="right">

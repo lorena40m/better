@@ -6,15 +6,17 @@ import { useRouter } from "next/router"
 import { formatPrice } from '../../utils/format'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Mousewheel, Navigation } from "swiper"
+import { useRates } from '@/context/RatesContext'
 // Import Swiper styles
 import "swiper/css"
 import "swiper/css/pagination"
 import "swiper/css/navigation"
 import "swiper/css/bundle"
 
-export default function TokenRanking({ coins, rates }) {
+export default function TokenRanking({ coins }) {
   const { t } = useTranslation("common")
   const { locale } = useRouter()
+  const rates = useRates()
 
   return (
     <Box className="TokenRanking">
@@ -49,7 +51,7 @@ export default function TokenRanking({ coins, rates }) {
                             <span className="TokenRanking-name" title={coin.name}>{coin.name}</span>
                             <span className="TokenRanking-ticker">{coin.ticker}</span>
                           </div>
-                          <span className="TokenRanking-price">{formatPrice(coin.lastPrice, locale, rates)}</span>
+                          <span className="TokenRanking-price">{formatPrice(coin.lastPrice, locale, rates?.fiats)}</span>
                         </div>
                       </div>
                     </Link>

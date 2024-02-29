@@ -17,11 +17,13 @@ import { formatPrice, formatToken } from '@/utils/format'
 import { useRouter } from "next/router"
 import { useTranslation } from "next-i18next"
 import { useState, useEffect } from 'react'
+import { useRates } from '@/context/RatesContext'
 
-export default function ChainStats({ homeResponse, miscResponse, iniSeconds }) {
+export default function ChainStats({ homeResponse, iniSeconds }) {
   const { locale } = useRouter()
   const { t } = useTranslation("common")
   const [seconds, setSeconds] = useState(iniSeconds)
+  const rates = useRates()
   useEffect(() => {
     let i = setInterval(() => setSeconds(seconds => seconds - 1), 1000)
     return () => clearInterval(i)
@@ -36,7 +38,7 @@ export default function ChainStats({ homeResponse, miscResponse, iniSeconds }) {
               {t("stat1")}<b>XTZ</b>
             </div>
             <div className="ChainStats-data">
-              <span className="gradientText">{ formatPrice(miscResponse.xtzPrice, locale, miscResponse.rates) }</span>
+              <span className="gradientText">{formatPrice(rates?.cryptos.XTZ, locale, rates?.fiats)}</span>
             </div>
           </div>
           <Image priority src={tezosLogo} height={40} width={50} alt="" className="cryptoLogo" />
@@ -49,7 +51,7 @@ export default function ChainStats({ homeResponse, miscResponse, iniSeconds }) {
               {t("stat2")}
             </div>
             <div className="ChainStats-data">
-              <span className="gradientText">{formatPrice((+homeResponse.stats.normalFee / 1_000_000) * +miscResponse.xtzPrice, locale, miscResponse.rates)}</span>
+              <span className="gradientText">{rates && formatPrice((+homeResponse.stats.normalFee / 1_000_000) * +rates.cryptos.XTZ, locale, rates.fiats)}</span>
             </div>
           </div>
         </div>

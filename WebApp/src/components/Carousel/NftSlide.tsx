@@ -7,10 +7,9 @@ import { Holding, Nft } from '@/pages/api/account-tokens'
 
 type Props = {
   item: Holding<Nft>,
-  rates: object,
 }
 
-export default function CollectionSlide({ item, rates }: Props) {
+export default function CollectionSlide({ item }: Props) {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
 

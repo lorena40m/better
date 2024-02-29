@@ -7,7 +7,7 @@ import { OperationBatch } from "@/pages/api/_apiTypes";
 import { OperationExecutions } from "./OperationExecutions";
 import { Page } from "../common/page";
 
-const Operation = ({ hash, miscResponse }) => {
+const Operation = ({ hash }) => {
   const { t } = useTranslation("common");
   const [operation, setOperation] = useState({} as OperationBatch);
 
@@ -21,7 +21,7 @@ const Operation = ({ hash, miscResponse }) => {
     <Page title="Operation on Tezos">
       <div className="pageComponent__center__content">
         <div className="left">
-          <Transfert hash={hash} operation={operation} miscResponse={miscResponse} />
+          <Transfert hash={hash} operation={operation} />
           <OperationExecutions operation={operation} />
         </div>
         <div className="right">

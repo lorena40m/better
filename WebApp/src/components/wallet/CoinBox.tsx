@@ -21,18 +21,18 @@ import { divide } from "cypress/types/lodash";
 import { useTranslation } from "next-i18next";
 import { CoinIcon } from '@/components/common/ArtifactIcon'
 import { Holding, Coin } from '@/pages/api/account-tokens'
+import { useRates } from '@/context/RatesContext'
 
 type Props = {
   coins: Holding<Coin>[],
   coinsInfos: any,
-  rates: object,
-  xtzPrice: number,
 }
 
 const CoinBox = (props: Props) => {
   const label = { inputProps: { "aria-label": "Color switch demo" } };
   const { locale } = useRouter();
   const { t } = useTranslation("common");
+  const rates = useRates()
 
   function ipfsToLink(stringIpfs: string): string {
     if (!stringIpfs) {
@@ -56,7 +56,7 @@ const CoinBox = (props: Props) => {
           {props.coins.map((coin) => {
             let coinValue
             if (coin.Address === 'tezos') {
-              coinValue = +props.xtzPrice
+              coinValue = rates?.cryptos.XTZ ?? 0
             } else {
               const coinInfos = props.coinsInfos?.find(coinInfos => coinInfos.tokenAddress === coin.Address);
               coinValue = coinInfos?.exchangeRate ?? 0;
@@ -90,8 +90,8 @@ const CoinBox = (props: Props) => {
                   </div>
                 </div>
                 <div className="coinBox__coin__right"
-                  title={formatPrice(coinValue, locale, props.rates) + '/' + coin.asset.ticker}>
-                  <p>{formatPrice(+coin.quantity / 10**coin.asset.decimals * coinValue, locale, props.rates)}</p>
+                  title={formatPrice(coinValue, locale, rates?.fiats) + '/' + coin.asset.ticker}>
+                  <p>{formatPrice(+coin.quantity / 10**coin.asset.decimals * coinValue, locale, rates?.fiats)}</p>
                 </div>
               </div>
             );

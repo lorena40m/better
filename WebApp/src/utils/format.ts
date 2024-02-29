@@ -105,8 +105,10 @@ export function formatToken(quantity: string, decimals: number, locale: string) 
   return _formatNumber(quantity, decimals, 3, locale)
 }
 
-export function formatPrice(price: number, locale: string, rates: object) {
-  price = locale === 'en' ? price : price * rates['EUR/USD']
+export function formatPrice(price: number, locale: string, rates: { EUR: number } | null) {
+  if (!rates) return
+
+  price = locale === 'en' ? price : price * rates.EUR
 
   let number
   if (price < 1e-18) {

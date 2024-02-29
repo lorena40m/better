@@ -4,33 +4,33 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Wallet from "../components/wallet/index";
 import Operation from "../components/operation/index";
 import Contract from "../components/smart-contract/index";
-import MiscellaneousEndpoint from '../endpoints/MiscellaneousEndpoint';
 import Page404 from '../components/common/404';
+import { useRouter } from 'next/router';
 
-export async function getServerSideProps({ params, locale }: any) {
-  const miscResponse = await MiscellaneousEndpoint({});
+export async function getServerSideProps({ locale }: any) {
   return ({
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
-      hash: params.id,
-      miscResponse,
     },
   });
 }
 
 const Artifact = (props) => {
   const { t } = useTranslation("common");
-  if (props.hash.substring(0, 2) === "tz" && props.hash.length === 36) {
+  const router = useRouter();
+  const id = router.query.id as string;
+
+  if (id.substring(0, 2) === "tz" && id.length === 36) {
     return (
-      <Wallet address={props.hash} miscResponse={props.miscResponse} />
+      <Wallet address={id} />
     );
-  } else if (props.hash.substring(0, 2) === "KT" && props.hash.length === 36) {
+  } else if (id.substring(0, 2) === "KT" && id.length === 36) {
     return (
-      <Contract address={props.hash} miscResponse={props.miscResponse} />
+      <Contract address={id} />
     );
-  } else if (props.hash.substring(0, 1) === "o" && props.hash.length === 51) {
+  } else if (id.substring(0, 1) === "o" && id.length === 51) {
     return (
-      <Operation hash={props.hash} miscResponse={props.miscResponse} />
+      <Operation hash={id} />
     );
   } else {
     return (

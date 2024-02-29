@@ -27,9 +27,8 @@ import Background from "@/components/others/background";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { HomeResponse, MiscellaneousResponse } from '@/endpoints/API';
+import { HomeResponse } from '@/endpoints/API';
 import HomeEndpoint from '@/endpoints/HomeEndpoint';
-import MiscellaneousEndpoint from '@/endpoints/MiscellaneousEndpoint';
 import { formatPrice, formatToken } from '@/utils/format';
 import useWindowSize from '@/hooks/useWindowSize';
 import ChainStats from '@/components/Home/ChainStats';
@@ -37,21 +36,22 @@ import Head from 'next/head';
 import { SearchInput } from '@/components/common/SearchInput';
 
 export async function getServerSideProps({ locale }: any) {
-  const miscResponse = await MiscellaneousEndpoint({})
+  const startTime2 = performance.now()
   const homeResponse = await HomeEndpoint({ pageSize: 10 })
+  const endTime2 = performance.now()
+  console.log(`HomeEndpoint exécuté en ${endTime2 - startTime2} ms`)
 
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
-      miscResponse,
       homeResponse,
       iniSeconds: Math.floor((+(new Date(homeResponse.stats.lastBlockDate)) - +(new Date())) / 1000),
     },
   };
 }
 
-export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18Next }:
-  { homeResponse: HomeResponse, miscResponse: MiscellaneousResponse, iniSeconds: number, _nextI18Next: any }
+export default function Home({ homeResponse, iniSeconds, _nextI18Next }:
+  { homeResponse: HomeResponse, iniSeconds: number, _nextI18Next: any }
 ) {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
@@ -61,8 +61,8 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
   const [tokenCriteria, setTokenCriteria] = useState('byCap');
 
   useEffect(() => {
-    console.log({ homeResponse, miscResponse })
-  }, [homeResponse, miscResponse])
+    console.log({ homeResponse })
+  }, [homeResponse])
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
@@ -108,7 +108,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                 <Image src={searchIcon} width={40} alt="Research icon" style={{zIndex: "1"}} />
               </Button>
             </form>
-            <ChainStats homeResponse={homeResponse} miscResponse={miscResponse} iniSeconds={iniSeconds} />
+            <ChainStats homeResponse={homeResponse} iniSeconds={iniSeconds} />
           </Container>
         </Box>
 
@@ -130,7 +130,6 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
                 900: { slidesPerView: 3 },
                 1400: { slidesPerView: 4 },
               }}
-              rates={miscResponse.rates}
             />
           </Container>
         </Box>
@@ -139,7 +138,7 @@ export default function Home({ homeResponse, miscResponse, iniSeconds, _nextI18N
             <Box className="sectionHead">
               <Box className="sectionHead-title">{t('sectionTitleTokens')}</Box>
             </Box>
-            <TokenRanking coins={homeResponse.coins.byCap} rates={miscResponse.rates} />
+            <TokenRanking coins={homeResponse.coins.byCap} />
           </Container>
         </Box>
       </main>

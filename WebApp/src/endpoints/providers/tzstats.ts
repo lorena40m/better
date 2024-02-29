@@ -41,6 +41,13 @@ export async function getXtzPrice() {
   return binancePrice.last
 }
 
+export async function getPrices() {
+  const data = await fetch('markets/tickers')
+  const xtzPrice = data.filter(feed => feed.pair === 'XTZ_USD' && feed.exchange === 'kraken')[0].last as number
+  const xtzEurPrice = data.filter(feed => feed.pair === 'XTZ_EUR' && feed.exchange === 'kraken')[0].last as number
+  return { xtzPrice, usdToEur: xtzEurPrice / xtzPrice }
+}
+
 export async function getWallet(address) {
   const data = await fetch(`explorer/account/${address}`)
   return {

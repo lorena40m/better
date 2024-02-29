@@ -10,7 +10,6 @@ import Image from "next/image";
 type Props = {
 	infos: Contract,
 	infos2: any,
-	miscResponse: {rates: {"EUR/USD": number}, xtzPrice: number},
 }
 
 export function Collection(props: Props) {

@@ -9,16 +9,17 @@ import { useRouter } from "next/router";
 import OperationGroupIcon from "@/assets/iconSvg/operation-group.svg";
 import CallContractIcon from "@/assets/iconSvg/call-contract.svg";
 import TransferIcon from "@/assets/iconSvg/transfer.svg";
+import { useRates } from '@/context/RatesContext'
 
 type Props = {
   hash: string,
   operation: OperationBatch,
-  miscResponse: any
 }
 
 export default function Transfert(props: Props) {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
+  const rates = useRates()
 
   return (
     <div className="transferBox box shadow-box" style={props.operation.operationGroupList?.some(operationGroup => operationGroup.status === 'success') ? {borderColor: 'green'} : props.operation.operationGroupList?.some(operationGroup => operationGroup.status === 'failure') ? {borderColor: 'red'} : {borderColor: 'grey'}}>
@@ -43,7 +44,7 @@ export default function Transfert(props: Props) {
         </div>
   </div> : <></>*/}
       {<div className="transferBox__bot">
-        <p>Fees : {formatPrice(((+props.operation?.fees / 10**6 || 0) * (+props.miscResponse?.xtzPrice || 1)), locale, props.miscResponse?.rates ?? { 'EUR/USD': 0 })}</p>
+        <p>Fees : {rates && formatPrice(((+props.operation?.fees / 10**6 || 0) * (+rates.cryptos.XTZ || 1)), locale, rates.fiats ?? { EUR: 0 })}</p>
         <p>Block Number: {props.operation.block}</p>
       </div>}
     </div>

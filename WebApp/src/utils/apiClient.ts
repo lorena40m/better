@@ -13,6 +13,11 @@ async function fetchApi(url, data = null) {
   }
 }
 
+import { Rates } from '@/pages/api/rates'
+export async function fetchRates(): Promise<Rates> {
+  return await fetchApi('rates')
+}
+
 import { AccountTokens } from '@/pages/api/account-tokens'
 export async function fetchAccountTokens(address): Promise<AccountTokens> {
   return await fetchApi(`account-tokens?address=${address}`);

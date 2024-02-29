@@ -9,11 +9,11 @@ import Link from "next/link";
 import { AccountTokens } from '@/pages/api/account-tokens'
 import Carousel from "../Carousel/Carousel";
 import NftSlide from "@/components/Carousel/NftSlide";
+import { useRates } from '@/context/RatesContext'
 
 type Props = {
 	tokens: AccountTokens,
 	infos: Infos,
-	miscResponse: any,
 	coinsInfos: any
 }
 
@@ -21,6 +21,7 @@ export function Treasury(props: Props) {
 	const { locale } = useRouter();
 	const [open, setOpen] = useState(false);
 	const [coinsSelected, setCoinsSelected] = useState(true);
+  const rates = useRates()
 
 	function ipfsToLink(stringIpfs: string): string {
 		if (!stringIpfs) {
@@ -38,7 +39,7 @@ export function Treasury(props: Props) {
 			<div className="treasuryBox__head" onClick={() => {setOpen(!open)}}>
 				<h2>Treasury</h2>
 				<div>
-					<p>{formatPrice(((+props.infos.balance / 10**6) * props.miscResponse.xtzPrice + props.tokens.coins.reduce((total, coin) => total + ((props.coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * (+coin.quantity / 10**coin.asset.decimals)), 0)), locale, props.miscResponse.rates)}</p>
+					<p>{rates && formatPrice(((+props.infos.balance / 10**6) * rates.cryptos.XTZ + props.tokens.coins.reduce((total, coin) => total + ((props.coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * (+coin.quantity / 10**coin.asset.decimals)), 0)), locale, rates.fiats)}</p>
 					<div className={open ? "treasuryBox__head__arrow treasuryBox__head__arrow__open" : "treasuryBox__head__arrow"}>
 						<span></span>
 						<span></span>
@@ -71,7 +72,7 @@ export function Treasury(props: Props) {
             }].concat(props.tokens.coins).map((coin) => {
             let coinValue
             if (coin.asset.id === 'tezos') {
-              coinValue = +props.miscResponse.xtzPrice;
+              coinValue = rates?.cryptos.XTZ ?? 0;
             } else {
               const coinInfos = props.coinsInfos?.find(coinInfos => coinInfos.tokenAddress === coin.Address);
               coinValue = coinInfos?.exchangeRate ?? 0;
@@ -105,8 +106,8 @@ export function Treasury(props: Props) {
                   </div>
                 </div>
                 <div className="coinBox__coin__right"
-                  title={formatPrice(coinValue, locale, props.miscResponse.rates) + '/' + coin.asset.ticker}>
-                  <p>{formatPrice(+coin.quantity / 10**coin.asset.decimals * coinValue, locale, props.miscResponse.rates)}</p>
+                  title={formatPrice(coinValue, locale, rates?.fiats) + '/' + coin.asset.ticker}>
+                  <p>{formatPrice(+coin.quantity / 10**coin.asset.decimals * coinValue, locale, rates?.fiats)}</p>
                 </div>
               </div>
             );
@@ -117,7 +118,7 @@ export function Treasury(props: Props) {
             640: { slidesPerView: 1 },
             900: { slidesPerView: 2 },
             1400: { slidesPerView: 2 },
-          }} delay={4000} rates={props.miscResponse.rates} /> : "Pas de nft sur ce contrat"}</p>
+          }} delay={4000} /> : "Pas de nft sur ce contrat"}</p>
 				}
 			</div>
 		</div>

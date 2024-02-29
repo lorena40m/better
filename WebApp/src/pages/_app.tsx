@@ -5,17 +5,10 @@ import { useRouter } from 'next/router';
 import {appWithTranslation} from "next-i18next";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
-
-const publicPages = [
-  "/",
-];
+import { RatesProvider } from '@/context/RatesContext'
 
 function App({ Component, pageProps }: AppProps) {
   const { t } = useTranslation("common");
-  const { pathname } = useRouter();
-  // console.log(a, 'THIS IS IMPORT FROM I18')
-  // Check if the current route matches a public page
-  const isPublicPage = publicPages.includes(pathname);
   
   return (
     <>
@@ -23,14 +16,9 @@ function App({ Component, pageProps }: AppProps) {
         <title>{t('App.Title')}</title>
         <meta name="description" content="The Blockchain Explorer" />
       </Head>
-      {
-        isPublicPage ?
+      <RatesProvider>
         <Component {...pageProps} />
-        :
-        <>
-            <Component {...pageProps} />
-        </>
-      }
+      </RatesProvider>
     </>
   )
 }
