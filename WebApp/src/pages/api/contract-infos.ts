@@ -202,7 +202,7 @@ export default async function handler(
 
     const promises = tokens.map(async (token) => {
       token.image = getAssetSources(token.image, address, token.id);
-      if (!token.owner.address) {
+      if (!token.owner.address && token.holderscount == 1) {
         const newOwner = await query('TOKEN OWNER', `
           SELECT
             owner."Address" as "address",
@@ -218,13 +218,12 @@ export default async function handler(
               )) FROM "Domains" WHERE "Domains"."Address" = owner."Address"
             ) as "domains"
           FROM
-            "TokenTransfers"
+            "TokenBalances"
           LEFT JOIN
-            "Accounts" as owner ON owner."Id" = "TokenTransfers"."ToId"
+            "Accounts" as owner ON owner."Id" = "TokenBalances"."AccountId"
           WHERE
-            "TokenTransfers"."TokenId" = $1
-          ORDER BY
-            "TokenTransfers"."Id" DESC
+            "TokenBalances"."TokenId" = $1 and "TokenBalances"."Balance" != '0'
+          LIMIT 1
         `, [token.tzkt_id]);
         if (newOwner && newOwner.length > 0) {
           token.owner = {
@@ -267,6 +266,6 @@ export default async function handler(
       } as Contract
     });
   } catch (err) {
-    res.status(500).json({ error: err.toString() });
+    res.status(500).json({ error: err?.toString() });
   }
 }

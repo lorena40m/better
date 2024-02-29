@@ -331,7 +331,8 @@ body {
 }
 
 .Carousel {
-  overflow-x: hidden;
+  overflow: hidden;
+  border-radius: 20px;
 }
 
 .CarouselSlide {
@@ -2412,6 +2413,63 @@ Project: less intrusive search button
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  align-items: center;
+  &__header {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    margin: 20px 0 40px 0;
+    img {
+      width: 100px;
+      height: 100px;
+    }
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 80%;
+      h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #2A3B51;
+        max-width: 400px;
+      }
+      p {
+        font-size: 26px;
+        color: #2A3B51;
+      }
+    }
+  }
+  &__stats {
+    display: flex;
+    gap: 60px;
+    div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 20px;
+      h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #19283b;
+      }
+      p {
+        font-size: 18px;
+        color: #19283b;
+      }
+    }
+  }
+  &__main {
+    display: flex;
+    width: 100%;
+    div {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
 }
 
 @keyframes infiniteRotate {

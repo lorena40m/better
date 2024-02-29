@@ -15,6 +15,7 @@ import { AccountIcon } from "../common/ArtifactIcon";
 import { Treasury } from "./Treasury";
 import { AccountTokens } from '@/pages/api/account-tokens'
 import { Collection } from './collection';
+import { Coin } from './coin';
 
 const Contract = ({ address, miscResponse }) => {
 	const { t } = useTranslation("common");
@@ -49,11 +50,12 @@ const Contract = ({ address, miscResponse }) => {
 	}, [address]);
 
 	return (
-		<Page title={account.contractType === 'collection' ? "Collection on Tezos" : "Contract on Tezos"}>
+		<Page title={account.contractType === 'collection' ? "Collection on Tezos" : (account.contractType === 'coin' ? "Coin on Tezos" : "Contract on Tezos")}>
 			<Head>
 				<title>{null || 'Contract'} | {t('App.Title')}</title>
 			</Head>
 			{account.contractType === 'collection' ? <Collection infos={account} infos2={infos} miscResponse={miscResponse} /> : null}
+			{account.contractType === 'coin' ? <Coin address={address} infos={account} infos2={infos} miscResponse={miscResponse} coinsInfos={coinsInfos} /> : null}
 			<div className="pageComponent__center__content">
 				<div className="left">
 					<MainInfos

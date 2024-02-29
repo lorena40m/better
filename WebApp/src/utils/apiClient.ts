@@ -77,6 +77,11 @@ export async function fetchAddressFromDomain(domain: string) {
 	return (address);
 }
 
+export async function fetchCoinInfos(id: string) {
+	const infos = await fetchApi(`coin-infos?id=${id}`).then(response => response);
+	return (infos);
+}
+
 import { History } from '@/pages/api/account-history'
 export function fetchAccountHistory(address: string, limit: number) {
   const cachedShorts: Shorts = getCache(NAME_CACHE_KEY) ?? {}
