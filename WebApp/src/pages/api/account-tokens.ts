@@ -45,7 +45,7 @@ export default async function handler(
               'assetType', 'coin',
               'id', "Tokens"."ContractId",
               'name', "Tokens"."Metadata"->>'name',
-              'image', COALESCE("Tokens"."Metadata"->>'thumbnailUri', "Tokens"."Metadata"->>'displayUri', "Tokens"."Metadata"->>'artifactUri'),
+              'image', COALESCE("Tokens"."Metadata"->>'displayUri', "Tokens"."Metadata"->>'artifactUri', "Tokens"."Metadata"->>'thumbnailUri'),
               'ticker', "Tokens"."Metadata"->>'symbol',
               'decimals', ("Tokens"."Metadata"->>'decimals')::INT
             )
