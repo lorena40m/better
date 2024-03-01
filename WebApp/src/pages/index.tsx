@@ -28,7 +28,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { formatPrice, formatToken } from '@/utils/format';
-import useWindowSize from '@/hooks/useWindowSize';
 import ChainStats from '@/components/Home/ChainStats';
 import Head from 'next/head';
 import { SearchInput } from '@/components/common/SearchInput';
@@ -46,7 +45,6 @@ export default function Home({ _nextI18Next }) {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
   const router = useRouter();
-  const windowWidth = useWindowSize().width;
   const [collectionCriteria, setCollectionCriteria] = useState('trending');
   const [tokenCriteria, setTokenCriteria] = useState('byCap');
   const [collections, setCollections] = useState(null)
@@ -116,14 +114,14 @@ export default function Home({ _nextI18Next }) {
                 defaultValue="trending"
               />
             </Box>
-            {collections && <Carousel Slide={CollectionSlide} items={collections[collectionCriteria]}
+            <Carousel Slide={CollectionSlide} items={collections?.[collectionCriteria]}
               breakpoints={{
                 100: { slidesPerView: 1 },
                 640: { slidesPerView: 2 },
                 900: { slidesPerView: 3 },
                 1400: { slidesPerView: 4 },
               }}
-            />}
+            />
           </Container>
         </Box>
         <Box className="listTableBlock">
@@ -131,7 +129,7 @@ export default function Home({ _nextI18Next }) {
             <Box className="sectionHead">
               <Box className="sectionHead-title">{t('sectionTitleTokens')}</Box>
             </Box>
-            {coins && <TokenRanking coins={coins.byCap} />}
+            <TokenRanking coins={coins?.byCap} />
           </Container>
         </Box>
       </main>

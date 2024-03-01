@@ -36,7 +36,7 @@ export default function ChainStats() {
     return () => clearInterval(i)
   }, [])
 
-  return (
+  return rates ? (
     <div className="ChainStats">
       <div className="ChainStats-box ChainStats-box--important">
         <div className="ChainStats-inner">
@@ -76,5 +76,38 @@ export default function ChainStats() {
         </div>
       </div>
     </div>
-  );
+  ) : (
+    <div className="ChainStats ChainStats--shadow shadow">
+      <div className="ChainStats-box ChainStats-box--important">
+        <div className="ChainStats-inner">
+          <div className="ChainStats-content">
+            <div className="ChainStats-title">
+            </div>
+            <div className="ChainStats-data">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="ChainStats-box">
+        <div className="ChainStats-inner">
+          <div className="ChainStats-content">
+            <div className="ChainStats-title">
+            </div>
+            <div className="ChainStats-data">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="ChainStats-box">
+        <div className="ChainStats-inner">
+          <div className="ChainStats-content">
+            <div className="ChainStats-title">
+            </div>
+            <div className="ChainStats-data">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }

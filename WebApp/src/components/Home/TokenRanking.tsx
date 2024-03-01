@@ -18,7 +18,7 @@ export default function TokenRanking({ coins }) {
   const { locale } = useRouter()
   const rates = useRates()
 
-  return (
+  return coins && rates ? (
     <Box className="TokenRanking">
       <div className="TokenRanking-container" style={{height: "360px"}}>
         <Swiper
@@ -63,5 +63,7 @@ export default function TokenRanking({ coins }) {
         </Swiper>
       </div>
     </Box>
+  ) : (
+    <div className="RoundedShadow shadow" />
   )
 }

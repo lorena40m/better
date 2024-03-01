@@ -224,6 +224,15 @@ body {
       padding-right: 0px;
     }
   }
+
+  &--shadow {
+    .ChainStats-box {
+      height: 65px;
+    }
+    .ChainStats-inner {
+      height: 63px;
+    }
+  }
 }
 
 .cardBox {
@@ -333,6 +342,17 @@ body {
 .Carousel {
   overflow: hidden;
   border-radius: 20px;
+
+  &--shadow {
+    display: flex;
+
+    .CarouselSlide {
+      margin-right: 15px;
+      flex-grow: 1;
+      aspect-ratio: 1;
+      padding-top: 0;
+    }
+  }
 }
 
 .CarouselSlide {
@@ -3043,4 +3063,22 @@ div.MuiPaper-root:has(> [aria-labelledby="languageSelect"]) {
 
 .TokenRanking-slide {
   border: solid 1px black;
+}
+
+.shadow {
+  @keyframes blink {
+    0% {
+      opacity: 0.8;
+    }
+    100% {
+      opacity: 0.4;
+    }
+  }
+  animation: blink 0.5s infinite alternate;
+}
+
+.RoundedShadow {
+  background-color: #c2c2c2;
+  min-height: 50vh;
+  border-radius: 20px;
 }
