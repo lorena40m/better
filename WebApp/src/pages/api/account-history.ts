@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { query } from '@/endpoints/providers/db';
-import { solveAccountType } from '@/pages/api/_solve'
-import { ipfsToHttps } from '@/endpoints/providers/utils'
+import { query } from '@/backend/providers/db';
+import { solveAccountType } from '@/backend/solve'
+import { ipfsToHttps } from '@/utils/link'
 import { eliminateDuplicates, groupBy, sum } from '@/utils/arrays'
 import { DbAccount } from '@/pages/api/account-history-shorts'
 
@@ -30,8 +30,8 @@ export type Coin = {
 }
 export type Asset = Nft | Coin
 
-import { TokenDecimals, UrlString, DateString } from '@/pages/api/_apiTypes'
-import { Account } from '@/pages/api/_apiTypes'
+import { TokenDecimals, UrlString, DateString } from '@/backend/apiTypes'
+import { Account } from '@/backend/apiTypes'
 // output
 export type History = Array<OperationBatch>
 export type OperationBatch = Array<Operation> // ordered ASC

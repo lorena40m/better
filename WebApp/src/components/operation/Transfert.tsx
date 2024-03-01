@@ -3,13 +3,13 @@ import DollarIcon from "../../assets/images/dollar.svg";
 import Image from "next/image";
 import { useTranslation } from "next-i18next";
 import { CopyHashButton } from "../common/CopyHashButton";
-import { OperationBatch } from "@/pages/api/_apiTypes";
+import { OperationBatch } from "@/backend/apiTypes";
 import { formatDate, formatPrice, formatEntiereDate } from "@/utils/format";
 import { useRouter } from "next/router";
 import OperationGroupIcon from "@/assets/iconSvg/operation-group.svg";
 import CallContractIcon from "@/assets/iconSvg/call-contract.svg";
 import TransferIcon from "@/assets/iconSvg/transfer.svg";
-import { useRates } from '@/context/RatesContext'
+import { useRates } from '@/hooks/RatesContext'
 
 type Props = {
   hash: string,

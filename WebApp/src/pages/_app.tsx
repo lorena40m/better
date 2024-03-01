@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import {appWithTranslation} from "next-i18next";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
-import { RatesProvider } from '@/context/RatesContext'
+import { RatesProvider } from '@/hooks/RatesContext'
 
 function App({ Component, pageProps }: AppProps) {
   const { t } = useTranslation("common");

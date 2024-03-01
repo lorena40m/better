@@ -13,15 +13,6 @@ export default function CollectionSlide({ item }: Props) {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
 
-  function ipfsToLink(stringIpfs) {
-    if (stringIpfs.substring(0, 7) !== "ipfs://") {
-      return (stringIpfs);
-    }
-    const ipfsId = stringIpfs.slice(7);
-    return (process.env.IPFS_GATEWAY + ipfsId);
-  }
-  console.log(item?.asset?.image)
-
   return (
     <Link href={'/' + item.Address}>
       <div className="CarouselSlide"

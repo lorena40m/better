@@ -21,7 +21,7 @@ import { divide } from "cypress/types/lodash";
 import { useTranslation } from "next-i18next";
 import { CoinIcon } from '@/components/common/ArtifactIcon'
 import { Holding, Coin } from '@/pages/api/account-tokens'
-import { useRates } from '@/context/RatesContext'
+import { useRates } from '@/hooks/RatesContext'
 
 type Props = {
   coins: Holding<Coin>[],
@@ -33,17 +33,6 @@ const CoinBox = (props: Props) => {
   const { locale } = useRouter();
   const { t } = useTranslation("common");
   const rates = useRates()
-
-  function ipfsToLink(stringIpfs: string): string {
-    if (!stringIpfs) {
-      return ("");
-    }
-    if (stringIpfs.substring(0, 7) !== "ipfs://") {
-      return (stringIpfs);
-    }
-    const ipfsId = stringIpfs.slice(7);
-    return (process.env.IPFS_GATEWAY + ipfsId);
-  }
 
   return (
     <div className="coinBox box shadow-box">
@@ -67,10 +56,10 @@ const CoinBox = (props: Props) => {
               >
                 <div className="coinBox__coin__left">
                   {coin.Address === 'tezos' ?
-                    <CoinIcon coin={{ image: ipfsToLink(coin.asset.image), ticker: coin.asset.ticker, id: coin.Address }} />
+                    <CoinIcon coin={{ image: coin.asset.image, ticker: coin.asset.ticker, id: coin.Address }} />
                     :
                     <Link href={'/' + coin.Address}>
-                      <CoinIcon coin={{ image: ipfsToLink(coin.asset.image), ticker: coin.asset.ticker, id: coin.Address }} />
+                      <CoinIcon coin={{ image: coin.asset.image, ticker: coin.asset.ticker, id: coin.Address }} />
                     </Link>
                   }
                   <div>

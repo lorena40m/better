@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next"
 import { useRouter } from "next/router"
 import { formatToken } from '@/utils/format'
 import Media from './Media'
-import { ExtendedCollection } from '@/endpoints/API'
+import { ExtendedCollection } from '@/backend/providers/objkt'
 
 type Props = {
   item: ExtendedCollection,

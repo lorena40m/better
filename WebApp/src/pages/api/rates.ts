@@ -1,9 +1,9 @@
-import * as tzstats from '@/endpoints/providers/tzstats'
+import * as tzstats from '@/backend/providers/tzstats'
 
-export default async function rates(req, res) {
+async function backend() {
   const { xtzPrice, usdToEur } = await tzstats.getPrices()
 
-  const result = {
+  return {
     fiats: {
       'EUR': usdToEur,
     },
@@ -11,10 +11,10 @@ export default async function rates(req, res) {
       'XTZ': xtzPrice,
     },
   }
-
-  res.status(200).json(result)
-
-  return result
 }
 
-export type Rates = Awaited<ReturnType<typeof rates>>
+export default async function handler(req, res) {
+  res.status(200).json(await backend())
+}
+
+export type Rates = Awaited<ReturnType<typeof backend>>

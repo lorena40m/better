@@ -6,7 +6,7 @@ import { useRouter } from "next/router"
 import { formatPrice } from '../../utils/format'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Mousewheel, Navigation } from "swiper"
-import { useRates } from '@/context/RatesContext'
+import { useRates } from '@/hooks/RatesContext'
 // Import Swiper styles
 import "swiper/css"
 import "swiper/css/pagination"

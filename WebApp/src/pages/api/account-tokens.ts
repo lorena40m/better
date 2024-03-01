@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { query } from '@/endpoints/providers/db';
-import { Nft as _Nft, Coin } from './_apiTypes'
+import { query } from '@/backend/providers/db';
+import { Nft as _Nft, Coin } from '@/backend/apiTypes'
 import { getAssetSources } from '@/utils/link'
 
 export type Nft = _Nft & {

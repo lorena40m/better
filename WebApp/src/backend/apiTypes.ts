@@ -1,4 +1,4 @@
-import { Operation } from './account-history';
+import { Operation } from '@/pages/api/account-history';
 export type Integer = string // integers are stored as string to avoid precisions errors
 export type TokenDecimals = Integer // in decimals
 export type Dollars = number // in $

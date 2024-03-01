@@ -20,7 +20,7 @@ import { AccountIcon } from '@/components/common/ArtifactIcon';
 import { Infos } from '@/pages/api/user-infos';
 import { Page } from "../common/page";
 import { AccountTokens } from '@/pages/api/account-tokens'
-import { useRates } from '@/context/RatesContext'
+import { useRates } from '@/hooks/RatesContext'
 
 type Props = {
   address: string,

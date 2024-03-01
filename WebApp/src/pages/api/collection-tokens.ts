@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { query } from '@/endpoints/providers/db';
+import { query } from '@/backend/providers/db';
 import { getAssetSources } from '@/utils/link';
-import { solveAccountType, solveAddressName } from './_solve';
+import { solveAccountType, solveAddressName } from '@/backend/solve';
 import { ipfsToHttps } from '@/utils/link';
 
 

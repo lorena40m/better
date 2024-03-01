@@ -5,7 +5,7 @@ import { formatToken, formatPrice, formatNumber, formatDate, formatDateShort } f
 import { useRouter } from "next/router";
 import { AccountIcon } from "../common/ArtifactIcon";
 import { fetchCoinInfos } from "@/utils/apiClient";
-import { useRates } from '@/context/RatesContext';
+import { useRates } from '@/hooks/RatesContext';
 
 type Props = {
 	infos: Contract,

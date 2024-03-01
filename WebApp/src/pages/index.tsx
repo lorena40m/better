@@ -27,42 +27,35 @@ import Background from "@/components/others/background";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { HomeResponse } from '@/endpoints/API';
-import HomeEndpoint from '@/endpoints/HomeEndpoint';
 import { formatPrice, formatToken } from '@/utils/format';
 import useWindowSize from '@/hooks/useWindowSize';
 import ChainStats from '@/components/Home/ChainStats';
 import Head from 'next/head';
 import { SearchInput } from '@/components/common/SearchInput';
+import { fetchHomeCollections, fetchHomeCoins } from '@/utils/apiClient'
 
 export async function getServerSideProps({ locale }: any) {
-  const startTime2 = performance.now()
-  const homeResponse = await HomeEndpoint({ pageSize: 10 })
-  const endTime2 = performance.now()
-  console.log(`HomeEndpoint exécuté en ${endTime2 - startTime2} ms`)
-
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
-      homeResponse,
-      iniSeconds: Math.floor((+(new Date(homeResponse.stats.lastBlockDate)) - +(new Date())) / 1000),
     },
   };
 }
 
-export default function Home({ homeResponse, iniSeconds, _nextI18Next }:
-  { homeResponse: HomeResponse, iniSeconds: number, _nextI18Next: any }
-) {
+export default function Home({ _nextI18Next }) {
   const { t } = useTranslation("common");
   const { locale } = useRouter();
   const router = useRouter();
   const windowWidth = useWindowSize().width;
   const [collectionCriteria, setCollectionCriteria] = useState('trending');
   const [tokenCriteria, setTokenCriteria] = useState('byCap');
+  const [collections, setCollections] = useState(null)
+  const [coins, setCoins] = useState(null)
 
   useEffect(() => {
-    console.log({ homeResponse })
-  }, [homeResponse])
+    fetchHomeCollections().then(setCollections)
+    fetchHomeCoins().then(setCoins)
+  }, [])
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
@@ -108,7 +101,7 @@ export default function Home({ homeResponse, iniSeconds, _nextI18Next }:
                 <Image src={searchIcon} width={40} alt="Research icon" style={{zIndex: "1"}} />
               </Button>
             </form>
-            <ChainStats homeResponse={homeResponse} iniSeconds={iniSeconds} />
+            <ChainStats />
           </Container>
         </Box>
 
@@ -123,14 +116,14 @@ export default function Home({ homeResponse, iniSeconds, _nextI18Next }:
                 defaultValue="trending"
               />
             </Box>
-            <Carousel Slide={CollectionSlide} items={homeResponse.collections[collectionCriteria]}
+            {collections && <Carousel Slide={CollectionSlide} items={collections[collectionCriteria]}
               breakpoints={{
                 100: { slidesPerView: 1 },
                 640: { slidesPerView: 2 },
                 900: { slidesPerView: 3 },
                 1400: { slidesPerView: 4 },
               }}
-            />
+            />}
           </Container>
         </Box>
         <Box className="listTableBlock">
@@ -138,7 +131,7 @@ export default function Home({ homeResponse, iniSeconds, _nextI18Next }:
             <Box className="sectionHead">
               <Box className="sectionHead-title">{t('sectionTitleTokens')}</Box>
             </Box>
-            <TokenRanking coins={homeResponse.coins.byCap} />
+            {coins && <TokenRanking coins={coins.byCap} />}
           </Container>
         </Box>
       </main>

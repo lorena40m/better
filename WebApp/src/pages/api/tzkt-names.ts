@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { query } from '@/endpoints/providers/db'
-import * as tzkt from '@/endpoints/providers/tzkt'
+import { query } from '@/backend/providers/db'
+import * as tzkt from '@/backend/providers/tzkt'
 
 const REQUEST_LIMIT = 40
 

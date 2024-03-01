@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { query } from '@/endpoints/providers/db';
-import { OperationBatch } from './_apiTypes';
-import { solveAccountType, solveAddressName } from '@/pages/api/_solve';
-import { ipfsToHttps } from '@/endpoints/providers/utils';
+import { query } from '@/backend/providers/db';
+import { OperationBatch } from '@/backend/apiTypes';
+import { solveAccountType, solveAddressName } from '@/backend/solve';
+import { ipfsToHttps } from '@/utils/link'
 
 export default async function handler(
   req: NextApiRequest,

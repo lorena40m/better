@@ -9,7 +9,7 @@ import Link from "next/link";
 import { AccountTokens } from '@/pages/api/account-tokens'
 import Carousel from "../Carousel/Carousel";
 import NftSlide from "@/components/Carousel/NftSlide";
-import { useRates } from '@/context/RatesContext'
+import { useRates } from '@/hooks/RatesContext'
 
 type Props = {
 	tokens: AccountTokens,
@@ -22,17 +22,6 @@ export function Treasury(props: Props) {
 	const [open, setOpen] = useState(false);
 	const [coinsSelected, setCoinsSelected] = useState(true);
   const rates = useRates()
-
-	function ipfsToLink(stringIpfs: string): string {
-		if (!stringIpfs) {
-		  return ("");
-		}
-		if (stringIpfs.substring(0, 7) !== "ipfs://") {
-		  return (stringIpfs);
-		}
-		const ipfsId = stringIpfs.slice(7);
-		return (process.env.IPFS_GATEWAY + ipfsId);
-	  }
 
 	return (
 		<div className="box treasuryBox shadow-box">
@@ -83,10 +72,10 @@ export function Treasury(props: Props) {
               >
                 <div className="coinBox__coin__left">
                   {coin.asset.id === 'tezos' ?
-                    <CoinIcon coin={{ image: ipfsToLink(coin.asset.image), ticker: coin.asset.ticker, id: coin.Address }} />
+                    <CoinIcon coin={{ image: coin.asset.image, ticker: coin.asset.ticker, id: coin.Address }} />
                     :
                     <Link href={'/' + coin.asset.id}>
-                      <CoinIcon coin={{ image: ipfsToLink(coin.asset.image), ticker: coin.asset.ticker, id: coin.Address }} />
+                      <CoinIcon coin={{ image: coin.asset.image, ticker: coin.asset.ticker, id: coin.Address }} />
                     </Link>
                   }
                   <div>

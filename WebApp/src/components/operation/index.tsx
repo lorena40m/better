@@ -3,7 +3,7 @@ import Transfert from "../../components/operation/Transfert";
 import Transaction from "../../components/operation/Transaction";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { fetchOperation } from "@/utils/apiClient";
-import { OperationBatch } from "@/pages/api/_apiTypes";
+import { OperationBatch } from "@/backend/apiTypes";
 import { OperationExecutions } from "./OperationExecutions";
 import { Page } from "../common/page";
 

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { query } from '@/endpoints/providers/db'
-import { solveAccountType, solveAddressName, solveAddressImage } from '@/pages/api/_solve'
-import { Account } from '@/pages/api/_apiTypes'
+import { query } from '@/backend/providers/db'
+import { solveAccountType, solveAddressName, solveAddressImage } from '@/backend/solve'
+import { Account } from '@/backend/apiTypes'
 import { DbAccount } from '@/pages/api/account-history-shorts'
 
 export type Infos = {

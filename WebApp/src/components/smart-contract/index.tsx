@@ -16,7 +16,7 @@ import { Treasury } from "./Treasury";
 import { AccountTokens } from '@/pages/api/account-tokens'
 import { Collection } from './collection';
 import { Coin } from './coin';
-import { useRates } from '@/context/RatesContext'
+import { useRates } from '@/hooks/RatesContext'
 
 const Contract = ({ address }) => {
 	const { t } = useTranslation("common");

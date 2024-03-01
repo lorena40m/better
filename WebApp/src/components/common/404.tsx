@@ -12,12 +12,12 @@ const page404 = (props: Props) => {
   return (
     <Page title={null}>
       <Head>
-        <title>Error 404</title>
+        <title>Aucun résultat</title>
       </Head>
       <div className="div404">
         <div>
-          <h1>Error 404</h1>
-          <p>Même avec le meilleur des explorateurs de blockchain, certaines pages restent introuvables.</p>
+          <h1>Aucun résultat</h1>
+          <p>Même avec le meilleur explorateur de blockchain, certaines pages restent introuvables.</p>
         </div>
         <Image src={Image404} alt="broken robot" />
       </div>

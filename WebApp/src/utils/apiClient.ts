@@ -1,6 +1,6 @@
 import axios from "axios";
 import { DbAccounts, Shorts } from '@/pages/api/account-history-shorts'
-import { Account } from '@/pages/api/_apiTypes'
+import { Account } from '@/backend/apiTypes'
 import { eliminateDuplicates } from '@/utils/arrays'
 import { getCache, setCache, NAME_CACHE_KEY } from '@/utils/caches'
 
@@ -16,6 +16,21 @@ async function fetchApi(url, data = null) {
 import { Rates } from '@/pages/api/rates'
 export async function fetchRates(): Promise<Rates> {
   return await fetchApi('rates')
+}
+
+import { HomeStats } from '@/pages/api/home-stats'
+export async function fetchHomeStats(): Promise<HomeStats> {
+  return await fetchApi('home-stats')
+}
+
+import { HomeCollections } from '@/pages/api/home-collections'
+export async function fetchHomeCollections(): Promise<HomeCollections> {
+  return await fetchApi('home-collections')
+}
+
+import { HomeCoins } from '@/pages/api/home-coins'
+export async function fetchHomeCoins(): Promise<HomeCoins> {
+  return await fetchApi('home-coins')
 }
 
 import { AccountTokens } from '@/pages/api/account-tokens'
@@ -153,7 +168,7 @@ export function fetchAccountHistory(address: string, limit: number) {
   return { history0$, history1$ };
 }
 
-import { OperationBatch } from "@/pages/api/_apiTypes";
+import { OperationBatch } from "@/backend/apiTypes";
 export async function fetchOperation(hash: string) {
   const infos = await fetchApi(`operation-batch-infos?hash=${hash}`).then(response => response as OperationBatch);
 	return (infos);

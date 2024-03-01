@@ -1,7 +1,6 @@
-import { Address } from './../../endpoints/API';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { query } from '@/endpoints/providers/db'
-import { solveAccountType, solveAddressName, solveAddressImage } from '@/pages/api/_solve'
+import { query } from '@/backend/providers/db'
+import { solveAccountType, solveAddressName, solveAddressImage } from '@/backend/solve'
 
 export default async function handler(
   req: NextApiRequest,

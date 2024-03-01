@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { query } from '@/endpoints/providers/db'
-import { solveAddressName, solveAddressImage } from '@/pages/api/_solve'
-import * as tzkt from '@/endpoints/providers/tzkt'
+import { query } from '@/backend/providers/db'
+import { solveAddressName, solveAddressImage } from '@/backend/solve'
+import * as tzkt from '@/backend/providers/tzkt'
 
 export type DbAccount = { Address: string, Id: number, Kind: number }
 // input

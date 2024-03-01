@@ -1,10 +1,4 @@
-import { HomeEndpoint } from './API'
-import * as tzstats from './providers/tzstats'
-import * as rpc from './providers/rpc'
-import * as objkt from './providers/objkt'
-import * as coinmarketcap from './providers/coinmarketcap'
-
-const topTokens = [
+export const topTokens = [
   {
     "token-logo_image__g2g-4 src": "https://img.templewallet.com/insecure/fill/50/50/ce/0/plain/https://cloudflare-ipfs.com/ipfs/bafybeigulbzm5x72qtmckxqvd3ksk6q3vlklxjgpnvvnbcofgdp6qwu43u",
     "ModalCell_joinRow__sUQiU": "crDAO",
@@ -1468,33 +1462,3 @@ const topTokens = [
     "mcap": 0
   }
 ]
-
-export default (async ({ pageSize }) => {
-  return {
-    stats : {
-      normalFee: '001500', // 0.0015 XTZ // TODO
-      lastBlockNumber: (await rpc.getBlockNumber())?.toString() ?? null,
-      lastBlockDate: await tzstats.getBlockDate(),
-    },
-    collections: {
-      trending: await objkt.getTopNftCollection(pageSize, 'trending'), // paginated
-      top: await objkt.getTopNftCollection(pageSize, 'top'), // paginated
-    },
-    // TODO: should fetch **tokens on the blockchain**, not coins
-    coins: {
-      byCap: topTokens.map(token => ({
-        contractId: token["contract address__1"],
-        id: token["contract address__1"] + (token["token id"] ? '_' + token["token id"] : ''),
-        name: token["Full name"] || token["Alias"],
-        ticker: token["ModalCell_joinRow__sUQiU"],
-        decimals: token["decimals"], // NB: decimals from the scrapping are not reliable
-        logo: [token["token-logo_image__g2g-4 src"]],
-        lastPrice: token["Price"],
-        circulatingSupplyOnChain: BigInt(Math.round(token["total supply"])).toString(),
-        holders: BigInt(Math.round(token["holdersCount"])).toString(),
-        capitalizationOnChain: token.mcap,
-      })).sort((a, b) => +b.holders - +a.holders),
-      byVolume: [],// await coinmarketcap.getTop50Cryptos('volume_24h'), // paginated
-    },
-  }
-}) // as HomeEndpoint

@@ -17,14 +17,21 @@ import { formatPrice, formatToken } from '@/utils/format'
 import { useRouter } from "next/router"
 import { useTranslation } from "next-i18next"
 import { useState, useEffect } from 'react'
-import { useRates } from '@/context/RatesContext'
+import { useRates } from '@/hooks/RatesContext'
+import { fetchHomeStats } from '@/utils/apiClient'
 
-export default function ChainStats({ homeResponse, iniSeconds }) {
+export default function ChainStats() {
   const { locale } = useRouter()
   const { t } = useTranslation("common")
-  const [seconds, setSeconds] = useState(iniSeconds)
+  const [seconds, setSeconds] = useState(null)
+  const [stats, setStats] = useState(null)
   const rates = useRates()
+
   useEffect(() => {
+    fetchHomeStats().then(stats => {
+      setStats(stats)
+      setSeconds(Math.floor((+(new Date(stats.lastBlockDate)) - +(new Date())) / 1000))
+    })
     let i = setInterval(() => setSeconds(seconds => seconds - 1), 1000)
     return () => clearInterval(i)
   }, [])
@@ -51,7 +58,7 @@ export default function ChainStats({ homeResponse, iniSeconds }) {
               {t("stat2")}
             </div>
             <div className="ChainStats-data">
-              <span className="gradientText">{rates && formatPrice((+homeResponse.stats.normalFee / 1_000_000) * +rates.cryptos.XTZ, locale, rates.fiats)}</span>
+              <span className="gradientText">{rates && stats && formatPrice((+stats.normalFee / 1_000_000) * +rates.cryptos.XTZ, locale, rates.fiats)}</span>
             </div>
           </div>
         </div>
@@ -63,7 +70,7 @@ export default function ChainStats({ homeResponse, iniSeconds }) {
               {t("stat3")}
             </div>
             <div className="ChainStats-data">
-              <span className="gradientText">{t('inXSeconds', {seconds: 15 + seconds % 15})}</span>
+              <span className="gradientText">{seconds && t('inXSeconds', {seconds: 15 + seconds % 15})}</span>
             </div>
           </div>
         </div>

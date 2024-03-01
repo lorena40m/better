@@ -1,4 +1,4 @@
-import { OperationBatch } from "@/pages/api/_apiTypes";
+import { OperationBatch } from "@/backend/apiTypes";
 import { formatNumber } from "@/utils/format";
 import { useRouter } from "next/router";
 import Link from "next/link";

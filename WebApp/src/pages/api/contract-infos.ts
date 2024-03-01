@@ -1,14 +1,13 @@
-import { Metadata } from './_solve';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { query } from '@/endpoints/providers/db';
-import { TokenDecimals, UrlString, DateString } from '@/pages/api/_apiTypes';
+import { query } from '@/backend/providers/db';
+import { TokenDecimals, UrlString, DateString } from '@/backend/apiTypes';
 import { TezosToolkit } from '@taquito/taquito';
 import { InMemorySigner } from '@taquito/signer';
 import { getAssetSources } from '@/utils/link';
-import { solveAccountType, solveAddressName } from './_solve';
-import { ipfsToHttps } from '@/endpoints/providers/utils';
-import { Account } from '@/pages/api/_apiTypes';
-import { getCollection } from '@/endpoints/providers/objkt';
+import { Metadata, solveAccountType, solveAddressName } from '@/backend/solve';
+import { Account } from '@/backend/apiTypes';
+import { getCollection } from '@/backend/providers/objkt';
+import { ipfsToHttps } from '@/utils/link'
 
 export type Contract = {
   contractType: string,

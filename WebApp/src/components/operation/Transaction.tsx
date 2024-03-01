@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { OperationBatch } from "@/pages/api/_apiTypes";
+import { OperationBatch } from "@/backend/apiTypes";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import Link from "next/link";
 import { AccountIcon } from "../common/ArtifactIcon";
