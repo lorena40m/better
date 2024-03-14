@@ -1,4 +1,4 @@
-import Image from "next/image"
+import AssetWithPlaceHolder from '@/components/common/AssetWithPlaceHolder'
 import UserIcon from "@/assets/iconSvg/userIcon.svg"
 import UsersIcon from "@/assets/images/users.png"
 import SmartContractIcon from "@/assets/iconSvg/smartContractIcon.svg"
@@ -8,7 +8,8 @@ import BakerIcon from "@/assets/images/baker.png"
 import AssetIcon from "@/assets/images/token.png"
 import TokenIcon from "@/assets/images/token.png"
 import TezosIcon from "@/assets/images/tezos.png"
-import { useState, useEffect } from 'react'
+import NftIcon_ from "@/assets/images/nft.png"
+import { getCollectionSources, getAssetSources } from '@/utils/link'
 
 const icons = {
   // accounts
@@ -22,6 +23,7 @@ const icons = {
   // coins
   token: TokenIcon,
   tezos: TezosIcon,
+  nft: NftIcon_,
 }
 
 const alts = {
@@ -36,6 +38,7 @@ const alts = {
   // coins
   token: "Token",
   tezos: "Tezos",
+  nft: "NFT",
 }
 
 type Account = {
@@ -51,48 +54,75 @@ type Coin = {
   image: string | null,
 }
 
-type Artifact = {
-  id: string,
+type Nft = {
+  id: `${string}_${number}`,
+  name: string,
+  image: string,
+}
+
+export function AccountIcon({ account, ...attr }: { account: Account | null, [key: string]: any }) {
+  if (!account) return
+
+  const sources = [
+    `https://services.tzkt.io/v1/avatars/${account.address}`
+  ]
+
+  if (account.image)
+    sources.push(...getCollectionSources(account.image))
+
+  return <ArtifactIcon
+    alt={account.name}
+    type={account?.accountType ?? 'userGroup'}
+    sources={sources}
+    {...attr}
+  />
+}
+
+export function CoinIcon({ coin, ...attr }: { coin: Coin | null, [key: string]: any }) {
+  if (!coin) return
+
+  const sources = [
+    `https://services.tzkt.io/v1/avatars/${coin.id}`
+  ]
+
+  if (coin.image)
+    sources.push(...getCollectionSources(coin.image))
+
+  return <ArtifactIcon
+    alt={coin.ticker}
+    type={coin.id === 'tezos' ? 'tezos' : 'token'}
+    sources={sources}
+    {...attr}
+  />
+}
+
+export function NftIcon({ nft, ...attr }: { nft: Nft | null, [key: string]: any }) {
+  if (!nft) return
+
+  const sources = getAssetSources(nft.image, nft.id) ?? []
+
+  return <ArtifactIcon
+    alt={nft.name}
+    type="nft"
+    sources={sources}
+    {...attr}
+  />
+}
+
+type Props = {
   alt: string,
-  image: string | null,
   type: keyof typeof icons,
+  sources: string[],
+  [key: string]: any,
 }
 
-export function AccountIcon(props: { account: Account }) {
-  return <ArtifactIcon artifact={{
-    id: props.account.address,
-    alt: props.account.name,
-    image: props.account.image,
-    type: props.account?.accountType ?? 'userGroup',
-  }} />
-}
-
-export function CoinIcon(props: { coin: Coin }) {
-  return <ArtifactIcon artifact={{
-    id: props.coin.id,
-    alt: props.coin.ticker,
-    image: props.coin.image,
-    type: props.coin.id === 'tezos' ? 'tezos' : 'token',
-  }} />
-}
-
-export default function ArtifactIcon({ artifact }: { artifact: Artifact }) {
-  const tzktCache = `https://services.tzkt.io/v1/avatars/${artifact.id}`
-  const [useTzktCache, setUseTzktCache] = useState(false)
-  const [useImage, setUseImage] = useState(false)
-
-  useEffect(() => {
-    fetch(tzktCache, { method: 'HEAD' })
-      // if it has header last-modified, it means it's a cached, not-generated image
-      .then(response => setUseTzktCache(response.headers.has('last-modified')))
-
-    if (artifact.image)
-      fetch(artifact.image, { method: 'HEAD' })
-        .then(response => setUseImage(response.ok))
-        .catch(err => console.warn(`Failed to fetch image '${artifact.image}' of ${artifact.alt}: ${err}`))
-  }, [artifact])
-
-  return useTzktCache ? <img className="ArtifactIcon" src={tzktCache} alt={artifact.alt} /> :
-    useImage ? <img className="ArtifactIcon" src={artifact.image} alt={artifact.alt} /> :
-    <Image className="ArtifactIcon" src={icons[artifact.type]} alt={alts[artifact.type]} />
+function ArtifactIcon({ alt, type, sources, ...attr }: Props) {
+  return <AssetWithPlaceHolder
+    sources={sources}
+    alt={alt}
+    defaultSource={icons[type]}
+    defaultAlt={alts[type]}
+    className="ArtifactIcon"
+    {...attr}
+  />
 }

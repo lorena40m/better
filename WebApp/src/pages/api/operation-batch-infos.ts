@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { query } from '@/backend/providers/db';
 import { OperationBatch } from '@/backend/apiTypes';
 import { solveAccountType, solveAddressName } from '@/backend/solve';
-import { ipfsToHttps } from '@/utils/link'
 
 export default async function handler(
   req: NextApiRequest,
@@ -50,7 +49,7 @@ export default async function handler(
           jsonb_agg(jsonb_build_object(
             'Amount', "TokenTransfers"."Amount",
             'Metadata', "Tokens"."Metadata",
-            'Id', "Tokens"."TokenId",
+            'Id', "TokenContract"."Address" || '_' || "Tokens"."TokenId",
             'From', jsonb_build_object(
               'address', TokenTransferSender."Address",
               'type', TokenTransferSender."Type",
@@ -102,6 +101,8 @@ export default async function handler(
           "Accounts" as TokenTransferTarget ON TokenTransferTarget."Id" = "TokenTransfers"."ToId"
         LEFT JOIN
 			    "Tokens" ON "Tokens"."Id" = "TokenTransfers"."TokenId"
+        LEFT JOIN
+          "Accounts" as "TokenContract" ON "TokenContract"."Id" = "Tokens"."ContractId"
         WHERE
           op."OpHash" = $1
         GROUP BY
@@ -143,13 +144,13 @@ export default async function handler(
               accountType: solveAccountType(operation.SenderType, operation.SenderKind),
               address: operation.SenderAddress,
               name: solveAddressName(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
-              image: ipfsToHttps(operation.SenderMetadata?.imageUri),
+              image: operation.SenderMetadata?.imageUri,
             },
             to: {
               accountType: solveAccountType(operation.TargetType, operation.TargetKind),
               address: operation.TargetAddress,
               name: solveAddressName(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
-              image: ipfsToHttps(operation.TargetMetadata?.imageUri),
+              image: operation.TargetMetadata?.imageUri,
             },
             assets: (operation.Amount != "0" ? [{
               quantity: operation.Amount.toString(),
@@ -165,13 +166,13 @@ export default async function handler(
                 accountType: solveAccountType(operation.SenderType, operation.SenderKind),
                 address: operation.SenderAddress,
                 name: solveAddressName(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
-                image: ipfsToHttps(operation.SenderMetadata?.imageUri),
+                image: operation.SenderMetadata?.imageUri,
               },
               to: {
                 accountType: solveAccountType(operation.TargetType, operation.TargetKind),
                 address: operation.TargetAddress,
                 name: solveAddressName(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
-                image: ipfsToHttps(operation.TargetMetadata?.imageUri),
+                image: operation.TargetMetadata?.imageUri,
               }
             }] : []).concat(operation.Tokens?.map((token) => (
               (token.Metadata.decimals == '0' ? {
@@ -182,19 +183,19 @@ export default async function handler(
                   name: token.Metadata.name,
                   ticker: null,
                   decimals: '0',
-                  image: ipfsToHttps(token.Metadata.thumbnailUri)
+                  image: token.Metadata.thumbnailUrl
                 },
                 from: {
                   accountType: solveAccountType(token.From.type, token.From.kind) ?? solveAccountType(operation.SenderType, operation.SenderKind),
                   address: token.From.address ?? operation.SenderAddress,
                   name: solveAddressName(token.From.domains, null, null),
-                  image: ipfsToHttps(token.From.metadata?.imageUri),
+                  image: token.From.metadata?.imageUri,
                 },
                 to: {
                   accountType: solveAccountType(token.To.type, token.To?.kind),
                   address: token.To.address,
                   name: solveAddressName(token.To.domains, null, null),
-                  image: ipfsToHttps(token.To.metadata?.imageUri),
+                  image: token.To.metadata?.imageUri,
                 }
               } : {
                 quantity: token.Amount,
@@ -204,19 +205,19 @@ export default async function handler(
                   name: token.Metadata.name,
                   ticker: token.Metadata.symbol,
                   decimals: token.Metadata.decimals,
-                  image: ipfsToHttps(token.Metadata.thumbnailUri ?? token.Metadata.icon ?? null)
+                  image: token.Metadata.thumbnailUri ?? token.Metadata.icon ?? null
                 },
                 from: {
                   accountType: solveAccountType(token.From.type, token.From.kind) ?? solveAccountType(operation.SenderType, operation.SenderKind),
                   address: token.From.address ?? operation.SenderAddress,
                   name: solveAddressName(token.From.domains, null, null),
-                  image: ipfsToHttps(token.From.metadata?.imageUri),
+                  image: token.From.metadata?.imageUri,
                 },
                 to: {
                   accountType: solveAccountType(token.To.type, token.To.kind),
                   address: token.To.address,
                   name: solveAddressName(token.To.domains, null, null),
-                  image: ipfsToHttps(token.To.metadata?.imageUri),
+                  image: token.To.metadata?.imageUri,
                 }
               }))
             ) ?? []),
@@ -237,13 +238,13 @@ export default async function handler(
                 accountType: solveAccountType(operation.SenderType, operation.SenderKind),
                 address: operation.SenderAddress,
                 name: solveAddressName(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
-                image: ipfsToHttps(operation.SenderMetadata?.imageUri),
+                image: operation.SenderMetadata?.imageUri,
               },
               to: {
                 accountType: solveAccountType(operation.TargetType, operation.TargetKind),
                 address: operation.TargetAddress,
                 name: solveAddressName(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
-                image: ipfsToHttps(operation.TargetMetadata?.imageUri),
+                image: operation.TargetMetadata?.imageUri,
               },
               assets: (operation.Amount != "0" ? [{
                 quantity: operation.Amount.toString(),
@@ -259,13 +260,13 @@ export default async function handler(
                   accountType: solveAccountType(operation.SenderType, operation.SenderKind),
                   address: operation.SenderAddress,
                   name: solveAddressName(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
-                  image: ipfsToHttps(operation.SenderMetadata?.imageUri),
+                  image: operation.SenderMetadata?.imageUri,
                 },
                 to: {
                   accountType: solveAccountType(operation.TargetType, operation.TargetKind),
                   address: operation.TargetAddress,
                   name: solveAddressName(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
-                  image: ipfsToHttps(operation.TargetMetadata?.imageUri),
+                  image: operation.TargetMetadata?.imageUri,
                 }
               }] : []).concat(operation.Tokens?.map((token) => (
                 (token.Metadata.decimals == '0' ? {
@@ -276,19 +277,19 @@ export default async function handler(
                     name: token.Metadata.name,
                     ticker: null,
                     decimals: '0',
-                    image: ipfsToHttps(token.Metadata.thumbnailUri)
+                    image: token.Metadata.thumbnailUri
                   },
                   from: {
                     accountType: solveAccountType(token.From.type, token.From.kind) ?? solveAccountType(operation.SenderType, operation.SenderKind),
                     address: token.From.address ?? operation.SenderAddress,
                     name: solveAddressName(token.From.domains, null, null),
-                    image: ipfsToHttps(token.From.metadata?.imageUri),
+                    image: token.From.metadata?.imageUri,
                   },
                   to: {
                     accountType: solveAccountType(token.To.type, token.To.kind),
                     address: token.To.address,
                     name: solveAddressName(token.To.domains, null, null),
-                    image: ipfsToHttps(token.To.metadata?.imageUri),
+                    image: token.To.metadata?.imageUri,
                   }
                 } : {
                   quantity: token.Amount,
@@ -298,19 +299,19 @@ export default async function handler(
                     name: token.Metadata.name,
                     ticker: token.Metadata.symbol,
                     decimals: token.Metadata.decimals,
-                    image: ipfsToHttps(token.Metadata.thumbnailUri ?? token.Metadata.icon ?? null)
+                    image: token.Metadata.thumbnailUri ?? token.Metadata.icon ?? null
                   },
                   from: {
                     accountType: solveAccountType(token.From.type, token.From.kind) ?? solveAccountType(operation.SenderType, operation.SenderKind),
                     address: token.From.address ?? operation.SenderAddress,
                     name: solveAddressName(token.From.domains, null, null),
-                    image: ipfsToHttps(token.From.metadata?.imageUri),
+                    image: token.From.metadata?.imageUri,
                   },
                   to: {
                     accountType: solveAccountType(token.To.type, token.To.kind),
                     address: token.To.address,
                     name: solveAddressName(token.To.domains, null, null),
-                    image: ipfsToHttps(token.To.metadata?.imageUri),
+                    image: token.To.metadata?.imageUri,
                   }
                 })
               )) ?? []),

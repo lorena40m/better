@@ -50,9 +50,9 @@ export default function Carousel({ items, Slide, breakpoints, delay = 1000, ...a
       }
     </Swiper>
   ) : (
-    <div className="Carousel--shadow">
+    <div className="Carousel--PlaceHolder">
       {(new Array(numberOfSlides)).fill(null).map((_, i) =>
-        <div className="CarouselSlide shadow" key={i}>
+        <div className="CarouselSlide blink" key={i}>
           <div className="CarouselSlide-title-floating">
             <h5 className="CarouselSlide-title"></h5>
             <h5 className="CarouselSlide-subTitle"></h5>

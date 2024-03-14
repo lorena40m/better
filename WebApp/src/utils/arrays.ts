@@ -1,9 +1,10 @@
 // keeps ordering
-export function eliminateDuplicates<O>(arr: O[], property: keyof O): O[] {
+export function eliminateDuplicates<O>(arr: O[], property: keyof O = null): O[] {
   const seenIds = new Set();
   return arr.filter(obj => {
-    if (!seenIds.has(obj[property])) {
-      seenIds.add(obj[property]);
+    const item = property ? obj[property] : obj;
+    if (!seenIds.has(item)) {
+      seenIds.add(item);
       return true;
     }
     return false;
@@ -22,6 +23,9 @@ export function groupBy<K, O>(arr: O[], keyFn: (obj: O) => K): Map<K, O[]> {
   }, new Map());
 }
 
-export function sum(numbers: number[] | BigInt[]) {
-  return (numbers as number[]).reduce((total, num) => (total as number) + num, typeof numbers[0] === 'number' ? 0 : BigInt(0));
+export function sum<N extends number | BigInt>(numbers: N[]): N {
+  return numbers.reduce(
+    (total, num) => (total as number) + (num as number) as N,
+    (typeof numbers[0] === 'number' ? 0 : BigInt(0)) as N
+  );
 }

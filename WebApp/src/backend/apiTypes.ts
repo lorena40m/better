@@ -23,9 +23,9 @@ export type AssetOp = {
 
 export type Nft = {
   assetType: 'nft',
-  id: string,
+  id: `${string}_${number}`,
   name: string,
-  image: UrlString[],
+  image: UrlString,
 }
 
 export type Coin = {

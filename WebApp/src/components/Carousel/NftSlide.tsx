@@ -3,7 +3,8 @@ import Link from 'next/link'
 import { useTranslation } from "next-i18next"
 import { useRouter } from "next/router"
 import { formatPrice } from '@/utils/format'
-import { Holding, Nft } from '@/pages/api/account-tokens'
+import type { Holding, Nft } from '@/pages/api/account-tokens'
+import { getAssetSources } from '@/utils/link'
 
 type Props = {
   item: Holding<Nft>,
@@ -16,7 +17,8 @@ export default function CollectionSlide({ item }: Props) {
   return (
     <Link href={'/' + item.Address}>
       <div className="CarouselSlide"
-        style={{ backgroundImage: item?.asset?.image?.map(source => `url(${source})`)?.join(',') }}
+        style={{ backgroundImage: getAssetSources(item?.asset?.image, item?.asset?.id)
+          ?.map(source => `url(${source})`)?.join(',') }}
       >
         <div className="CarouselSlide-title-floating">
           <h5 className="CarouselSlide-title">{item.asset.name}</h5>

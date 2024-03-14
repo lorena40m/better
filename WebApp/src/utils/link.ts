@@ -1,8 +1,4 @@
-const gateways = process.env.IPFS_GATEWAY.split(',')
-
-export function ipfsToHttps(url: string | null) {
-  return url?.slice(0, 4) === 'ipfs' ? gateways[0] + url.split('://')[1] : url
-}
+const gateways = process.env.NEXT_PUBLIC_IPFS_GATEWAY.split(',')
 
 // via objkt's collection.logo
 // Collections that uses https like dogami (aws), stables (rarible) are available via collection.logo
@@ -11,7 +7,7 @@ export function ipfsToHttps(url: string | null) {
 // Other that use IPFS id
 // https://assets.objkt.media/file/assets-003/Qmf7NzaxhfmVTKuMGyBXoASX26EsP4uJeGigua9k3K19XL/thumb288
 export function getCollectionSources(url: string | null): string[] | null {
-  if (!url) return
+  if (!url) return null
 
   if (url.startsWith('http')) {
     return [url]
@@ -27,8 +23,11 @@ export function getCollectionSources(url: string | null): string[] | null {
 
 // asset
 // https://assets.objkt.media/file/assets-003/KT1AESo9UrxV3fEErfMeBhFuCdAXz2UFC2ek/1/thumb400
-export function getAssetSources(url: string | null, contractHash: string, tokenId: string): string[] | null {
-  if (!url) return
+export function getAssetSources(url: string | null, id: `${string}_${number}`): string[] | null {
+  if (!url) return null
+
+  if (!id.includes('_')) throw new Error(`NFT id should be {contractAddress}_{tokenId}, given: ${id}`)
+  const [ contractHash, tokenId ] = id.split('_')
 
   if (url.startsWith('http')) {
     return [url]

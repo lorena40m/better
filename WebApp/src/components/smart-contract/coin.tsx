@@ -22,7 +22,7 @@ export function Coin(props: Props) {
 	const [svgMouseX, setSvgMouseX] = useState(0);
 	const rates = useRates();
 
-	function roundUpToSecondDecimal(number) { 
+	function roundUpToSecondDecimal(number) {
 		let powerOfTen = 1;
 		while (number > 10) {
 			number /= 10;
@@ -33,10 +33,10 @@ export function Coin(props: Props) {
 			powerOfTen /= 10;
 		}
 		number = Math.ceil(number * 100) / 100;
-	
+
 		return number * powerOfTen;
 	}
-	
+
 	function roundDownToSecondDecimal(number) {
 		let powerOfTen = 1;
 		while (number >= 10) {
@@ -50,11 +50,11 @@ export function Coin(props: Props) {
 		number = Math.floor(number * 100) / 100;
 		return number * powerOfTen;
 	}
-	
+
 	function padZero(n) {
 		return n < 10 ? "0" + n : n;
 	}
-	
+
 	function getPriceBoxInfos() {
 		const history = coinGraph.price.history;
 		let place = Math.round(svgMouseX * history.length / 100) - 1;
@@ -85,7 +85,7 @@ export function Coin(props: Props) {
 		}
 		return (ret);
 	}
-	
+
 	function createPath(data) {
 		if (!data) { return; }
 		let minValue = Number(data[0][Object.keys(data[0])[0]].c);
@@ -104,7 +104,7 @@ export function Coin(props: Props) {
 		maxValue = roundUpToSecondDecimal(maxValue);
 		minValue = roundDownToSecondDecimal(minValue);
 		setLineValues([minValue, parseFloat((minValue + (maxValue - minValue) / 4).toPrecision(4)), parseFloat((minValue + (maxValue - minValue) / 2).toPrecision(4)), parseFloat((minValue + (maxValue - minValue) / 4 * 3).toPrecision(4)), maxValue]);
-		
+
 		const svgWidth = 900;
 		const svgHeight = 540;
 		const svgXStart = 100;
@@ -139,7 +139,17 @@ export function Coin(props: Props) {
 	return (
 		<div className="contract-coin shadow-box">
 			<div className="contract-coin__header">
-				{props.infos.image?.[0] ? <img src={props.infos.image[0]} alt={props.infos.metadata?.name} /> : <AccountIcon account={props.infos2.account} />}
+				{
+					props.infos.image ?
+					<AccountIcon account={{
+						address: props.infos.id,
+						name: props.infos.metadata?.name,
+						accountType: 'nft',
+						image: props.infos.image
+					}} />
+					:
+					<AccountIcon account={props.infos2.account} />
+				}
 				<div>
 					<h1>{props.infos.tokens[0].metadata?.name ?? props.infos.metadata?.name ?? props.infos2.account.name ?? 'Token'}</h1>
 					{coinInfos ? <p>{formatPrice(coinInfos.price.value, locale, rates?.fiats)}</p> : null}
@@ -195,7 +205,7 @@ export function Coin(props: Props) {
 									<rect
 										x={110 + 900 / 100 * svgMouseX - (svgMouseX > 50 ? 220 : 0)}
 										rx="10"
-										y={getPriceBoxInfos().y - 50} 
+										y={getPriceBoxInfos().y - 50}
 										width="200"
 										height="100"
 										fill="white"

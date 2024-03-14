@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { ipfsToHttps } from '@/utils/link'
 
 async function fetch(urn: string) {
   try {

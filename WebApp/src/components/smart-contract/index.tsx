@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import GeneralInfos from "@/components/common/GeneralInfos";
 import MainInfos from "../common/MainInfos";
 import OtherInfos from "@/components/smart-contract/OtherInfos";
-import Operations from "@/components/common/Operations";
+import History from "@/components/History/History";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { formatPrice, formatNumber, formatToken, formatDate } from "@/utils/format";
-import { fetchContractInfos, fetchAccountTokens, fetchAccountHistory, fetchUserInfos } from '@/utils/apiClient';
+import { fetchContractInfos, fetchAccountTokens, fetchAccountHistory, fetchAccountInfo } from '@/utils/apiClient';
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { Contract } from "@/pages/api/contract-infos";
 import { Page } from "../common/page";
-import { Infos } from "@/pages/api/user-infos";
+import { Info } from "@/pages/api/accounts-info";
 import { AccountIcon } from "../common/ArtifactIcon";
 import { Treasury } from "./Treasury";
 import { AccountTokens } from '@/pages/api/account-tokens'
@@ -33,15 +33,13 @@ const Contract = ({ address }) => {
 			image: null,
 			accountType: 'user',
 		}
-	  } as Infos);
+	  } as Info);
 	const [coinsInfos, setCoinsInfos] = useState(null);
 	const rates = useRates()
 
 	useEffect(() => {
 		fetchAccountTokens(address).then(setTokens);
-		const { infos0$, infos1$ } = fetchUserInfos(address)
-		infos0$.then(setInfos)
-		infos1$.then(setInfos)
+		fetchAccountInfo(address).then(setInfos)
 		fetch('/api/coins-infos')
 			.then(response => response.json())
 			.then(data => setCoinsInfos(data))
@@ -79,7 +77,7 @@ const Contract = ({ address }) => {
 					<Treasury tokens={tokens} infos={infos} coinsInfos={coinsInfos}  />
 				</div>
 				<div className="right">
-					<Operations address={address} operationCount={account?.operationCount} />
+					<History address={address} operationCount={account?.operationCount} />
 				</div>
 			</div>
 		</Page>

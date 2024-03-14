@@ -64,6 +64,6 @@ export default function TokenRanking({ coins }) {
       </div>
     </Box>
   ) : (
-    <div className="RoundedShadow shadow" />
+    <div className="RoundedPlaceHolder" style={{ minHeight: '50vh' }} />
   )
 }

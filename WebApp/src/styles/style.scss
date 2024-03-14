@@ -225,7 +225,9 @@ body {
     }
   }
 
-  &--shadow {
+  &--PlaceHolder {
+    @extend .blink;
+
     .ChainStats-box {
       height: 65px;
     }
@@ -343,7 +345,7 @@ body {
   overflow: hidden;
   border-radius: 20px;
 
-  &--shadow {
+  &--PlaceHolder {
     display: flex;
 
     .CarouselSlide {
@@ -1693,9 +1695,9 @@ Project: less intrusive search button
     display: flex;
     align-items: center;
 
-    img {
-      width: 70px;
-      height: 70px;
+    .ArtifactIcon {
+      min-width: 70px;
+      min-height: 70px;
       margin-right: 10px;
     }
   }
@@ -1842,7 +1844,7 @@ Project: less intrusive search button
           text-decoration: underline;
         }
 
-        img.ArtifactIcon {
+        .ArtifactIcon {
           height: 50px;
           width: 50px;
           object-fit: scale-down;
@@ -1871,9 +1873,12 @@ Project: less intrusive search button
           }
         }
 
+        &__methods {
+          margin: 5px 0;
+        }
+
         &__method {
           color: #4c4b4b;
-          line-height: 25px;
           font-size: 14px;
         }
       }
@@ -1898,9 +1903,17 @@ Project: less intrusive search button
           align-items: center;
           justify-content: end;
 
-          img.ArtifactIcon {
+          .ArtifactIcon {
             width: 30px;
             height: 30px;
+            margin-right: 5px;
+          }
+
+          .NftIcon {
+            height: 70px;
+            width: 70px;
+            margin-right: 5px;
+            object-fit: scale-down;
           }
 
           img {
@@ -2006,7 +2019,7 @@ Project: less intrusive search button
         }
       }
     }
-    &__left img {
+    &__left .ArtifactIcon {
       width: 40px;
       height: 40px;
     }
@@ -2214,7 +2227,7 @@ Project: less intrusive search button
         align-items: center;
         gap: 10px;
         width: 100%;
-        img {
+        .ArtifactIcon {
           height: 60px;
           width: 60px;
           border: 1px solid #2A3B51;
@@ -2249,7 +2262,9 @@ Project: less intrusive search button
         display: flex;
         align-items: center;
         justify-content: center;
-        img {
+        .ArtifactIcon {
+          width: 100%;
+          height: 100%;
           object-fit: cover;
         }
       }
@@ -2285,7 +2300,7 @@ Project: less intrusive search button
     justify-content: space-between;
     gap: 50px;
     background: linear-gradient(180deg, #ffffff20 0%, #ffffff80 40%, #ffffff 100%);
-    img {
+    .ArtifactIcon {
       height: 150px;
       width: 150px;
       object-fit: cover;
@@ -2356,8 +2371,9 @@ Project: less intrusive search button
         border-radius: 2px;
         cursor: pointer;
         transition: background-color 0.2s;
-        img {
-          height: 100%;
+        .NftIcon {
+          width: 60px;
+          height: 60px;
           border-radius: 2px;
         }
         &__text {
@@ -2415,7 +2431,9 @@ Project: less intrusive search button
           }
         }
       }
-      img {
+      .NftIcon {
+        width: 380px;
+        height: 380px;
         max-width: 50%;
         max-height: 380px;
         border-radius: 5px;
@@ -2439,7 +2457,7 @@ Project: less intrusive search button
     gap: 30px;
     align-items: center;
     margin: 20px 0 40px 0;
-    img {
+    .ArtifactIcon {
       width: 100px;
       height: 100px;
     }
@@ -3068,7 +3086,7 @@ div.MuiPaper-root:has(> [aria-labelledby="languageSelect"]) {
   border: solid 1px black;
 }
 
-.shadow {
+.blink {
   @keyframes blink {
     0% {
       opacity: 0.8;
@@ -3080,8 +3098,8 @@ div.MuiPaper-root:has(> [aria-labelledby="languageSelect"]) {
   animation: blink 0.5s infinite alternate;
 }
 
-.RoundedShadow {
+.RoundedPlaceHolder {
+  @extend .blink;
   background-color: #c2c2c2;
-  min-height: 50vh;
   border-radius: 20px;
 }

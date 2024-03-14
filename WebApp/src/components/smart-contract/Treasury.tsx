@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import { Infos } from "@/pages/api/user-infos";
+import type { Info } from "@/pages/api/accounts-info";
 import { useRouter } from "next/router";
 import { formatPrice } from "@/utils/format";
 import CoinBox from "../wallet/CoinBox";
 import { CoinIcon } from "../common/ArtifactIcon";
 import { formatTokenWithExactAllDecimals, formatToken } from "@/utils/format";
 import Link from "next/link";
-import { AccountTokens } from '@/pages/api/account-tokens'
+import { AccountTokens, Holding, Coin } from '@/pages/api/account-tokens'
 import Carousel from "../Carousel/Carousel";
 import NftSlide from "@/components/Carousel/NftSlide";
 import { useRates } from '@/hooks/RatesContext'
 
 type Props = {
 	tokens: AccountTokens,
-	infos: Infos,
+	infos: Info,
 	coinsInfos: any
 }
 
@@ -58,7 +58,7 @@ export function Treasury(props: Props) {
                 "assetType": 'coin' as 'coin'
               },
               "quantity": props.infos.balance.toString()
-            }].concat(props.tokens.coins).map((coin) => {
+            }].concat(props.tokens.coins).map((coin: Holding<Coin>) => {
             let coinValue
             if (coin.asset.id === 'tezos') {
               coinValue = rates?.cryptos.XTZ ?? 0;
@@ -68,7 +68,7 @@ export function Treasury(props: Props) {
             }
             return (
               <div key={coin.TokenId} className="coinBox__coin"
-                style={coin.asset.image?.length ? {order: "1"} : {order: "1"}}
+                style={coin.asset.image ? {order: "1"} : {order: "1"}}
               >
                 <div className="coinBox__coin__left">
                   {coin.asset.id === 'tezos' ?

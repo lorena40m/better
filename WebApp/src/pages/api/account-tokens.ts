@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { query } from '@/backend/providers/db';
 import { Nft as _Nft, Coin } from '@/backend/apiTypes'
-import { getAssetSources } from '@/utils/link'
 
 export type Nft = _Nft & {
   collection: {
@@ -32,12 +31,20 @@ export default async function handler(
   const address = req.query.address;
 
   try {
+    type DbToken = {
+      ContractId: number,
+      TokenId: number,
+      Address: string,
+      quantity: string,
+      asset: Coin | Nft,
+    }
+
     //TODO : add value in dollars, add lastPrice into Asset object and check that it's the right id
-    const tokens = await query('TOKENS', `
+    const tokens: DbToken[] = await query('TOKENS', `
       SELECT
         "Tokens"."ContractId",
         "Tokens"."TokenId",
-        MIN(contract."Address") as "Address",
+        contract."Address" as "Address",
         SUM("TokenBalances"."Balance"::NUMERIC) AS "quantity",
         CASE
           WHEN (("Tokens"."Metadata"->>'decimals')::INT > 0) THEN
@@ -52,7 +59,7 @@ export default async function handler(
           WHEN (("Tokens"."Metadata"->>'decimals')::INT = 0) THEN
             jsonb_build_object(
               'assetType', 'nft',
-              'id', "Tokens"."ContractId",
+              'id', contract."Address" || '_' || "Tokens"."TokenId",
               'name', "Tokens"."Metadata"->>'name',
               'image', COALESCE("Tokens"."Metadata"->>'thumbnailUri', "Tokens"."Metadata"->>'displayUri', "Tokens"."Metadata"->>'artifactUri'),
               'collection', jsonb_build_object(
@@ -75,7 +82,8 @@ export default async function handler(
         "Tokens"."TokenId",
         "Tokens"."ContractId",
         "Tokens"."Metadata",
-        contract."Metadata"
+        contract."Metadata",
+        contract."Address"
     `, [address]);
 
     const domains: Holding<Nft>[] = [];
@@ -84,15 +92,11 @@ export default async function handler(
 
     tokens.forEach((token) => {
       if (token.asset?.assetType === 'coin') {
-        coins.push(token);
-      } else if (token.asset?.ContractId === 1262424) {
-        domains.push(token);
+        coins.push(token as Holding<Coin>);
+      } else if (token.ContractId === 1262424) {
+        domains.push(token as Holding<Nft>);
       } else if (token.asset?.assetType === 'nft') {
-        if (token?.asset?.image) {
-          token.asset.image = getAssetSources(token.asset.image, token.Address, token.TokenId)
-        }
-
-        nfts.push(token);
+        nfts.push(token as Holding<Nft>);
       } else {
         console.error('WHAT IS THIS TOKEN?!? not displayed', token);
       }

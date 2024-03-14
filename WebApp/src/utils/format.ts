@@ -46,7 +46,8 @@ const yesterday = {
   fr: 'hier',
 }
 
-function _formatNumber(quantity: string, decimals: number, significantDigits = 3, locale: string): string {
+function _formatNumber(quantity: string | BigInt, decimals: number, significantDigits = 3, locale: string): string {
+  quantity = quantity.toString()
   const sign = quantity.startsWith('-') ? '-' : ''
   if (quantity.startsWith('-')) quantity = quantity.substring(1)
   if (/^0*$/.test(quantity)) return '0'
@@ -92,16 +93,16 @@ export function formatNumber(number: number, locale: string) {
   return (returnValue);
 }
 
-export function formatInteger(number: number, locale: string) {
-  return _formatNumber(BigInt(Math.round(number)).toString(), 0, 3, locale)
+export function formatInteger(number: number | BigInt, locale: string) {
+  return _formatNumber(typeof number === 'bigint' ? number : BigInt(Math.round(number as number)), 0, 3, locale)
 }
 
-export function formatTokenWithExactAllDecimals(quantity: string, decimals: number, locale: string) {
-  return _formatNumber(quantity, decimals, quantity.length, locale)
+export function formatTokenWithExactAllDecimals(quantity: string | BigInt, decimals: number, locale: string) {
+  return _formatNumber(quantity, decimals, quantity.toString().length, locale)
 }
 
 // Note: made for maximum 6 digits (TODO for 18)
-export function formatToken(quantity: string, decimals: number, locale: string) {
+export function formatToken(quantity: string | BigInt, decimals: number, locale: string) {
   return _formatNumber(quantity, decimals, 3, locale)
 }
 

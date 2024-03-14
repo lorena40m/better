@@ -77,7 +77,7 @@ export default function ChainStats() {
       </div>
     </div>
   ) : (
-    <div className="ChainStats ChainStats--shadow shadow">
+    <div className="ChainStats ChainStats--PlaceHolder">
       <div className="ChainStats-box ChainStats-box--important">
         <div className="ChainStats-inner">
           <div className="ChainStats-content">

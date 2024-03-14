@@ -3,11 +3,9 @@ import { query } from '@/backend/providers/db';
 import { TokenDecimals, UrlString, DateString } from '@/backend/apiTypes';
 import { TezosToolkit } from '@taquito/taquito';
 import { InMemorySigner } from '@taquito/signer';
-import { getAssetSources } from '@/utils/link';
 import { Metadata, solveAccountType, solveAddressName } from '@/backend/solve';
 import { Account } from '@/backend/apiTypes';
 import { getCollection } from '@/backend/providers/objkt';
-import { ipfsToHttps } from '@/utils/link'
 
 export type Contract = {
   contractType: string,
@@ -23,7 +21,7 @@ export type Contract = {
   creatorDomain: string,
   image: any,
   tokens: Array<{
-    id: string,
+    id: `${string}_${number}`,
     supply: string,
     holderscount: number,
     owner: Account,
@@ -158,7 +156,7 @@ export default async function handler(
     const tokens = await query('COLLECTION TOKENS', `
         SELECT
           token."Id" as tzkt_id,
-          token."TokenId" as id,
+          $4 || '_' || token."TokenId" as id,
           token."TotalSupply" as supply,
           token."HoldersCount" as holdersCount,
           jsonb_build_object(
@@ -187,7 +185,7 @@ export default async function handler(
           CAST(token."TokenId" AS BIGINT)
         LIMIT $2
         OFFSET $3
-    `, [contract[0].Id, 100, 0]);
+    `, [contract[0].Id, 100, 0, address]);
 
     if (tokens?.length > 0) {
       if (tokens.length === 1 && Number(tokens[0].metadata?.decimals) > 0) {
@@ -200,7 +198,7 @@ export default async function handler(
     };
 
     const promises = tokens.map(async (token) => {
-      token.image = getAssetSources(token.image, address, token.id);
+      token.image = token.image, address, token.id;
       if (!token.owner.address && token.holderscount == 1) {
         const newOwner = await query('TOKEN OWNER', `
           SELECT
@@ -229,7 +227,7 @@ export default async function handler(
             accountType: solveAccountType(newOwner[0].type, newOwner[0].kind),
             address: newOwner[0].address,
             name: solveAddressName(newOwner[0].domains, null, null),
-            image: ipfsToHttps(newOwner[0].metadata?.imageUri),
+            image: newOwner[0].metadata?.imageUri,
           };
         }
       } else {
@@ -237,7 +235,7 @@ export default async function handler(
           accountType: solveAccountType(token.owner.type, token.owner.kind),
           address: token.owner.address,
           name: solveAddressName(token.owner.domains, null, null),
-          image: ipfsToHttps(token.owner.metadata?.imageUri),
+          image: token.owner.metadata?.imageUri,
         };
       }
     });
@@ -254,7 +252,7 @@ export default async function handler(
         balance: contract[0].Balance,
         operationCount: contract[0].TransactionsCount,
         metadata: contract[0].Metadata,
-        image: objktInfos.image ?? getAssetSources(contract[0].Metadata?.thumbnailUri ?? contract[0].Metadata?.displayUri ?? contract[0].Metadata?.imageUri ?? contract[0].Metadata?.artifactUri, null, null) ?? tokens.find((token) => token.id == 0)?.image ?? tokens.find((token) => token.id == 1)?.image,
+        image: objktInfos.image ?? (contract[0].Metadata?.thumbnailUri ?? contract[0].Metadata?.displayUri ?? contract[0].Metadata?.imageUri ?? contract[0].Metadata?.artifactUri) ?? tokens.find((token) => token.id == 0)?.image ?? tokens.find((token) => token.id == 1)?.image,
         id: contract[0].Id,
         tokens: tokens,
         creationDate: contract[0].Timestamp,

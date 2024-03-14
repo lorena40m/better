@@ -1,8 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { query } from '@/backend/providers/db';
-import { getAssetSources } from '@/utils/link';
 import { solveAccountType, solveAddressName } from '@/backend/solve';
-import { ipfsToHttps } from '@/utils/link';
 
 
 export default async function handler(
@@ -50,7 +48,7 @@ res: NextApiResponse
 		`, [id, limit, offset]);
 
 		const promises = tokens?.map(async (token) => {
-			token.image = getAssetSources(token.image, address, token.id);
+			token.image = token.image, address, token.id;
 			if (!token.owner.address) {
 			  const newOwner = await query('TOKEN OWNER', `
 				SELECT
@@ -80,7 +78,7 @@ res: NextApiResponse
 				  accountType: solveAccountType(newOwner[0].type, newOwner[0].kind),
 				  address: newOwner[0].address,
 				  name: solveAddressName(newOwner[0].domains, null, null),
-				  image: ipfsToHttps(newOwner[0].metadata?.imageUri),
+				  image: newOwner[0].metadata?.imageUri,
 				};
 			  }
 			} else {
@@ -88,7 +86,7 @@ res: NextApiResponse
 				accountType: solveAccountType(token.owner.type, token.owner.kind),
 				address: token.owner.address,
 				name: solveAddressName(token.owner.domains, null, null),
-				image: ipfsToHttps(token.owner.metadata?.imageUri),
+				image: token.owner.metadata?.imageUri,
 			  };
 			}
 		  });

@@ -5,6 +5,7 @@ import { useRouter } from "next/router"
 import { formatToken } from '@/utils/format'
 import Media from './Media'
 import { ExtendedCollection } from '@/backend/providers/objkt'
+import { getCollectionSources } from '@/utils/link'
 
 type Props = {
   item: ExtendedCollection,
@@ -17,7 +18,8 @@ export default function CollectionSlide({ item }: Props) {
   return (
     <Link href={'/' + item.id}>
       <div className="CarouselSlide"
-        style={{ backgroundImage: item?.image?.map(source => `url(${source})`)?.join(',') }}
+        style={{ backgroundImage: getCollectionSources(item?.image)
+          ?.map(source => `url(${source})`)?.join(',') }}
       >
         <div className="CarouselSlide-title-floating">
           {/*<Media src={item?.image?.map(source => `url(${source})`)?.join(',')} />*/}

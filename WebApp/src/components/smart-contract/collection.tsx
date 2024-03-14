@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Contract } from "@/pages/api/contract-infos";
+import type { Contract } from "@/pages/api/contract-infos";
 import Link from "next/link";
 import { formatToken, formatPrice, formatDate, formatDateShort } from "@/utils/format";
 import { useRouter } from "next/router";
 import { fetchCollectionTokens } from "@/utils/apiClient";
 import LoaderSvg from "@/assets/iconSvg/loader.svg";
 import Image from "next/image";
+import { getCollectionSources, getAssetSources } from '@/utils/link'
+import { AccountIcon, CoinIcon, NftIcon } from '@/components/common/ArtifactIcon'
 
 type Props = {
 	infos: Contract,
@@ -65,10 +67,17 @@ export function Collection(props: Props) {
 	}, [tokens, hasMore]);
 
 	return (
-		<div className="contract-collection2 shadow-box" style={{ '--dynamic-background-image': props.infos.image?.map(source => `url(${source})`)?.join(',') } as any}>
+		<div className="contract-collection2 shadow-box" style={{
+			'--dynamic-background-image': getCollectionSources(props.infos.image)?.map(source => `url(${source})`)?.join(',')
+		} as any}>
 			<div className="contract-collection2__infos">
 				<div className="contract-collection2__infos__left">
-					{props.infos.image?.[0] ? <img src={props.infos.image[0]} alt={props.infos.metadata?.name} /> : null}
+					<AccountIcon account={{
+						address: props.infos.id,
+						name: props.infos.metadata?.name,
+						accountType: 'nft',
+						image: props.infos.image
+					}} />
 					<div className="contract-collection2__infos__text">
 						<h2 className="contract-collection2__infos__text__title">{props.infos.metadata?.name ?? props.infos2.account.name ?? 'Collection'}</h2>
 						<p className="contract-collection2__infos__text__description">{props.infos.metadata?.description ? `Description : ${props.infos.metadata?.description}` : null}</p>
@@ -110,15 +119,19 @@ export function Collection(props: Props) {
 					{
 						tokens
 							.sort((a, b) => +a.id - +b.id)
-							.map((nft, i) => (
-								<div key={nft.id} className="contract-collection2__nft__list__nft" style={nft.id === nftShow.id ? {backgroundColor: '#00000030'} : null} onClick={() => changeNft(nft)}>
-									{nft.image?.[0] ? <img src={nft.image[0]} alt={nft.metadata?.name} /> : null}
-									<div className="contract-collection2__nft__list__nft__text">
-										<h4>{nft.metadata?.name ?? 'NFT'}</h4>
-										<p>{nft.owner.name ?? (nft.owner.address ? nft.owner.address?.slice(0, 8) + "..." : `${nft.holderscount} holders`)}</p>
+							.map((nft, i) => {
+								const sources = getAssetSources(nft.image, nft.id)
+
+								return (
+									<div key={nft.id} className="contract-collection2__nft__list__nft" style={nft.id === nftShow.id ? {backgroundColor: '#00000030'} : null} onClick={() => changeNft(nft)}>
+										<NftIcon nft={{ ...nft, name: nft.metadata?.name }} className="NftIcon" />
+										<div className="contract-collection2__nft__list__nft__text">
+											<h4>{nft.metadata?.name ?? 'NFT'}</h4>
+											<p>{nft.owner.name ?? (nft.owner.address ? nft.owner.address?.slice(0, 8) + "..." : `${nft.holderscount} holders`)}</p>
+										</div>
 									</div>
-								</div>
-							))
+								)
+							})
 					}
 					{hasMore &&
 						<div className="contract-collection2__nft__list__loader">
@@ -135,7 +148,7 @@ export function Collection(props: Props) {
 							<p className="contract-collection2__nft__infos__text__description"><strong>Owner :</strong> <Link href={'/' + nftShow.owner.address} title={nftShow.owner.address}>{nftShow.owner.name ?? nftShow.owner.address?.slice(0, 8) + "..."}</Link></p> : <p>{nftShow.holderscount} holders</p>
 						}
 					</div>
-					{nftShow.image?.[0] ? <img src={nftShow.image[0]} alt={nftShow.metadata?.name} /> : null}
+					<NftIcon nft={{ ...nftShow, name: nftShow.metadata?.name }} className="NftIcon" />
 				</div>
 			</div>
 		</div>

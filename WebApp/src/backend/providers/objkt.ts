@@ -1,11 +1,10 @@
 import axios from 'axios'
-import { getAssetSources, getCollectionSources } from '@/utils/link'
 import { UrlString, Dollars, Integer } from '@/backend/apiTypes'
 
 export type ExtendedCollection = {
   id: string,
   name: string,
-  image: UrlString[],
+  image: UrlString,
   floorPrice: Dollars,
   topSale: Dollars,
   marketplaceLink: UrlString,
@@ -50,7 +49,7 @@ export async function getTopNftCollection(pageSize = 10) {
 
   const formatCollections = collections => collections.map((collection) => ({
     id: collection?.contract,
-    image: getCollectionSources(collection?.logo),
+    image: collection?.logo,
     name: collection?.short_name || collection?.name,
     supply: collection?.items?.toString(),
     floorPrice: collection?.floor_price ?? null,
@@ -80,7 +79,7 @@ export async function getCollection(address: string) {
   return {
     id: address,
     name: collection?.short_name || collection?.name,
-    image: getCollectionSources(collection?.logo),
+    image: collection?.logo,
     supply: collection?.items.toString(),
     floorPrice: collection?.floor_price,
     marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? address),
