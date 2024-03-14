@@ -102,6 +102,11 @@ export async function fetchCoinInfos(id: string) {
 	return (infos);
 }
 
+export async function fetchCoinGraph(symbol: string) {
+	const graphData = await fetchApi(`coin-graph?symbol=${symbol}`).then(response => response);
+	return (graphData);
+}
+
 import { History } from '@/pages/api/account-history'
 export function fetchAccountHistory(address: string, limit: number) {
   const cachedShorts: Shorts = getCache(NAME_CACHE_KEY) ?? {}

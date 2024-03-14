@@ -2,7 +2,7 @@ import Cache from 'node-cache';
 import fetch from 'node-fetch';
 
 const myCache = new Cache({ stdTTL: 100, checkperiod: 120 });
-const API_URL = 'https://temple-api-mainnet.prod.templewallet.com/api/exchange-rates';
+const API_URL = 'https://api.plenty.network/analytics/tokens';
 
 async function fetchData() {
   const response = await fetch(API_URL);

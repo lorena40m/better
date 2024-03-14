@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-export default function fetchCoinsInfos(req, res) {
+export default function fetchCoinInfos(req, res) {
     const requestBody = {
         operationName: "GetToken",
         query: `query GetToken($id: String!, $currency: CurrencyEnum) {
@@ -51,9 +51,11 @@ export default function fetchCoinsInfos(req, res) {
     })
     .then(response => response.json())
     .then(data => {
-        res.status(200).json(data.data.token);
+        console.log(data);
+        res.status(200).json(data?.data.token);
     })
     .catch(error => {
+        console.log(error);
         res.status(500).json({ error: 'Une erreur est survenue' });
     });
 }
