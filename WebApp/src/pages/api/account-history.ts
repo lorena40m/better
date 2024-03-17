@@ -38,7 +38,7 @@ export type OperationBatch = Array<Operation> // ordered ASC
 export type Operation = {
   id: string,
   operationType: 'transfer' | 'call' | 'contractCreation' | 'tezosSpecific',
-  tezosSpecificType: (typeof OPERATION_TABLES)[number]['type'],
+  tezosSpecificType: (typeof TABLES)[number]['type'],
   status: 'waiting' | 'success' | 'failure',
   date: DateString,
   functionName: string,
@@ -49,7 +49,8 @@ export type Operation = {
   }>,
 }
 
-const OPERATION_TABLES = [
+const TABLES = [
+  { type: 'TokenTransfer', pageSize: 100 }, // Special processing for TokenTransfers
   { type: 'Activation', sender: null, target: 'AccountId', initiator: false, amount: 'Balance', pageSize: 50, otherProperties: [] },
   //// { type: 'Autostacking', sender: null, target: null, initiator: false, amount: 'Amount', pageSize: 50, otherProperties: [] }, // note: no OpHash
   { type: 'Ballot', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
@@ -80,7 +81,7 @@ const OPERATION_TABLES = [
   { type: 'SmartRollupRecoverBond', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
   { type: 'SmartRollupRefute', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
   { type: 'Staking', sender: 'SenderId', target: 'BakerId', initiator: false, amount: 'Amount', pageSize: 50, otherProperties: [] },
-  { type: 'Transaction', sender: 'SenderId', target: 'TargetId', initiator: true, amount: 'Amount', pageSize: 1000, otherProperties: [
+  { type: 'Transaction', sender: 'SenderId', target: 'TargetId', initiator: true, amount: 'Amount', pageSize: 250, otherProperties: [
     "Entrypoint", "Status"
   ] },
   { type: 'TransferTicket', sender: 'SenderId', target: 'TargetId', initiator: false, amount: null, pageSize: 50, otherProperties: [] }, // Amount = not xtz
@@ -97,44 +98,66 @@ const OPERATION_TABLES = [
 ]
 
 type DbOperation = {
+  Id: string,
   OpHash: string,
   OperationType: string,
-  Id: number,
-  Timestamp: string,
-  IsRoot: boolean,
   // Only if defined
   SenderId?: number,
   TargetId?: number,
   Amount?: number,
-  // Only for Transaction
+  IsRoot: boolean,
+  // specific to operations
+  Timestamp: string,
   otherProperties: {
     Entrypoint?: string | null,
     Status?: number,
   },
 }
 
-async function identifyLastBatches(
+type DbTransfer = {
+  Id: string,
+  OpHash: string,
+  OperationType: 'TokenTransfer',
+  SenderId: number,
+  TargetId: number,
+  Amount: number,
+  IsRoot: false,
+  // specific to transfers
+  AssetId: string,
+  Metadata: any,
+  TokenId: string,
+  ContractAddress: string,
+}
+
+type PropertiesThatAreOnlyInTransfer = Omit<DbTransfer, keyof DbOperation>
+type PropertiesThatAreOnlyInOperation = Omit<DbOperation, keyof DbTransfer>
+
+async function queryBatches(
   accountId: number,
   limit = 10,
-  previousOldestId: number | null,
+  previousOldestId: string | null,
 ) {
-  let operations: Array<DbOperation> = []
-  let tablesThatDidntReachEnd = OPERATION_TABLES.map(table => table.type)
+  let operationsAndTransfers: Array<DbOperation | DbTransfer> = []
+  let tablesThatDidntReachEnd = TABLES.map(table => table.type)
   let offset = 0
 
-  const makeOperationQuery = (table: typeof OPERATION_TABLES[number], offset: number) => `
+  const makeOperationQuery = (table: typeof TABLES[number], limit: number, offset: number) => `
     SELECT
+      "Id",
       "OpHash",
       '${table.type}' as "OperationType",
-      "Id",
-      "Timestamp",
       ${table.sender ? `"${table.sender}"` : `null`} as "SenderId",
       ${table.target ? `"${table.target}"` : `null`} as "TargetId",
-      ${table.amount ? `"${table.amount}"` : `null`} as "Amount",
+      ${table.amount ? `"${table.amount}"` : `null`}::TEXT as "Amount",
       ${table.initiator ? `("InitiatorId" is null)` : `true`} as "IsRoot",
+      "Timestamp",
       ${`jsonb_build_object(
         ${table.otherProperties.map(p => `'${p}', "${p}"`).join(`, `)}
-      )`} as "otherProperties"
+      )`} as "otherProperties",
+      null as "AssetId",
+      null as "Metadata",
+      null as "TokenId",
+      null as "ContractAddress"
     FROM "${table.type}Ops"
     WHERE
       (${[
@@ -143,89 +166,24 @@ async function identifyLastBatches(
       ].filter(x => x).join(` or `)})
       ${previousOldestId ? ` and "Id" < $2` : ``}
     ORDER BY "Id" DESC
-    LIMIT ${table.pageSize}
-    OFFSET ${offset * table.pageSize}
+    LIMIT ${limit}
+    OFFSET ${offset}
   `
-
-  while (tablesThatDidntReachEnd.length) {
-    const operationsQuery = OPERATION_TABLES
-      .filter(table => tablesThatDidntReachEnd.includes(table.type))
-      .map(table => '(' + makeOperationQuery(table, offset) + ')')
-      .join(' UNION ')
-
-    const params = [accountId]
-    if (previousOldestId) params.push(previousOldestId)
-    const newOperations: Array<DbOperation> = await query('OPERATIONS', operationsQuery, params)
-
-    operations = operations.concat(newOperations).sort((o1, o2) => o2.Id - o1.Id)
-    const hashes = eliminateDuplicates(operations.map(o => o.OpHash))
-    const newOperationsByType = groupBy(newOperations, o => o.OperationType)
-
-    if (process.env.NODE_ENV === 'development')
-      console.info(Array.from(newOperationsByType).map(([type, ops]) => ([type, ops.length])))
-
-    tablesThatDidntReachEnd = tablesThatDidntReachEnd.filter(type => {
-      const operations = newOperationsByType.get(type)
-      const pageSize = OPERATION_TABLES.find(table => table.type === type).pageSize
-      return operations && operations.length === pageSize &&
-        hashes.indexOf(operations[operations.length - 1].OpHash) < limit
-    })
-    offset += 1
-  }
-
-  const batches = Array.from(groupBy(operations, o => o.OpHash))
-    .slice(0, limit)
-    .map(([OpHash, operations]) => ({
-      OpHash,
-      oldestId: +operations[operations.length - 1].Id,
-      operationsAndTransfers: <Array<DbOperation | DbTransfer>> operations
-    }))
-
-  return { operations, batches }
-}
-
-type DbTransfer = {
-  Id: number,
-  Amount: number,
-  AssetId: number,
-  Metadata: any,
-  ContractId: number,
-  TokenId: number,
-  OpHash: string,
-  SenderId: number,
-  TargetId: number,
-  ContractAddress: string,
-  OperationType: 'Transfer',
-  IsRoot: false,
-}
-
-async function queryTransfers(
-  accountId: number,
-  oldestId: number | false, // pass false when we don't have enough hashes
-  previousOldestId: number | null,
-  batches: Array<{ OpHash: string, oldestId: number }>,
-  limit: number
-) {
-  let transfers: Array<DbTransfer> = []
-  let didntReachEnd = true
-  let offset = 0
-  batches = batches.slice() // make sure not to modify the original array
-
-  const PAGE_SIZE = 500
-  const makeTransferQuery = (offset: number) => `
+  const makeTransferQuery = (table: typeof TABLES[number], limit: number, offset: number) => `
     SELECT
       t."Id",
-      t."Amount",
+      COALESCE("TransactionOps"."OpHash", "OriginationOps"."OpHash") AS "OpHash",
+      'TokenTransfer' as "OperationType",
       t."FromId" as "SenderId",
       t."ToId" as "TargetId",
+      t."Amount",
+      false as "IsRoot",
+      null as "Timestamp",
+      null as "otherProperties",
       tok."Id" as "AssetId",
       tok."Metadata",
-      tok."ContractId",
       tok."TokenId",
-      contract."Address" as "ContractAddress",
-      'Transfer' as "OperationType",
-      false as "IsRoot",
-      COALESCE("TransactionOps"."OpHash", "OriginationOps"."OpHash") AS "OpHash"
+      contract."Address" as "ContractAddress"
     FROM "TokenTransfers" as t
     INNER JOIN "Tokens" as tok ON tok."Id" = t."TokenId"
     LEFT JOIN "TransactionOps" ON "TransactionOps"."Id" = t."TransactionId"
@@ -233,53 +191,67 @@ async function queryTransfers(
     LEFT JOIN "Accounts" as contract ON contract."Id" = tok."ContractId"
     WHERE
       (t."FromId" = $1 OR t."ToId" = $1)
-      ${oldestId ? ` AND $2 <= t."Id"` : ``}
-      ${previousOldestId ? ` AND t."Id" < $` + (oldestId ? `3` : `2`) : ``}
+      ${previousOldestId ? ` AND t."Id" < $2` : ``}
     ORDER BY t."Id" DESC
-    LIMIT ${PAGE_SIZE}
-    OFFSET ${offset * PAGE_SIZE}
+    LIMIT ${limit}
+    OFFSET ${offset}
   `
+  const makeQuery = (table: typeof TABLES[number]) => (offset: number) => {
+    const evolutiveLimit = (offset + 1) * table.pageSize
+    const evolutiveOffset = sum(Array.from({ length: offset + 1 }, (_, index) => index)) * table.pageSize
 
-  while (didntReachEnd) {
-    const transfersQuery = makeTransferQuery(offset)
+    return table.type === 'TokenTransfer' ?
+      makeTransferQuery(table, evolutiveLimit, evolutiveOffset) :
+      makeOperationQuery(table, evolutiveLimit, evolutiveOffset)
+  }
 
-    const params = [accountId]
-    if (oldestId) params.push(oldestId)
+  while (tablesThatDidntReachEnd.length) {
+    const operationsQuery = TABLES
+      .filter(table => tablesThatDidntReachEnd.includes(table.type))
+      .map(table => '(' + makeQuery(table)(offset) + ')')
+      .join(' UNION ')
+
+    const params: any[] = [accountId]
     if (previousOldestId) params.push(previousOldestId)
-    let newTransfers: Array<DbTransfer> = await query('TRANSFERS', transfersQuery, params)
+    let newOperationsAndTransfers: Array<DbOperation | DbTransfer> = await query('OPERATIONS', operationsQuery, params)
 
     // NOTE: Migration can also be a root operation for a transfer
     // Migrations are not implemented in the explorer because they don't have an OpHash
     // Therefore exclude Migration related transfers
-    const count = newTransfers.length
-    newTransfers = newTransfers.filter(t => t.OpHash)
-    if (newTransfers.length !== count)
-      console.warn('EXCLUDED transfer with no OpHash')
+    const count = newOperationsAndTransfers.length
+    newOperationsAndTransfers = newOperationsAndTransfers.filter(t => t.OpHash)
+    if (newOperationsAndTransfers.length !== count)
+      console.warn(`EXCLUDED ${count - newOperationsAndTransfers.length} operations or transfers with no OpHash`)
 
-    transfers = transfers.concat(newTransfers)
-    // Update batches
-    transfers.forEach(transfer => {
-      const batch = batches.find(batch => batch.OpHash === transfer.OpHash)
-      if (!batch) {
-        batches.push({
-          OpHash: transfer.OpHash,
-          oldestId: transfer.Id,
-        })
-      }
-      // don't bother computing the oldestId, any id if enough to sort
-    })
-    batches.sort((b1, b2) => b2.oldestId - b1.oldestId) // DESC
-    const hashes = batches.map(b => b.OpHash)
+    operationsAndTransfers = operationsAndTransfers.concat(newOperationsAndTransfers)
+      .sort((o1, o2) => Number(BigInt(o2.Id) - BigInt(o1.Id)))
+    const hashes = eliminateDuplicates(operationsAndTransfers.map(o => o.OpHash))
+    const newOperationsByType = groupBy(newOperationsAndTransfers, o => o.OperationType)
 
     if (process.env.NODE_ENV === 'development')
-      console.info(['Transfer', newTransfers.length])
+      console.info(Array.from(newOperationsByType).map(([type, ops]) => ([type, ops.length])))
 
-    didntReachEnd = newTransfers.length === PAGE_SIZE &&
-      hashes.indexOf(newTransfers[newTransfers.length - 1].OpHash) < limit
+    tablesThatDidntReachEnd = tablesThatDidntReachEnd.filter(type => {
+      const operationsAndTransfers = newOperationsByType.get(type)
+      const pageSize = TABLES.find(table => table.type === type).pageSize
+      return operationsAndTransfers && operationsAndTransfers.length === pageSize &&
+        hashes.indexOf(operationsAndTransfers[operationsAndTransfers.length - 1].OpHash) < limit
+    })
     offset += 1
   }
 
-  return transfers
+  const batches = Array.from(groupBy(operationsAndTransfers, o => o.OpHash))
+    .slice(0, limit)
+    .map(([OpHash, operationsAndTransfers]) => ({
+      OpHash,
+      oldestId: operationsAndTransfers[operationsAndTransfers.length - 1].Id,
+      operationsAndTransfers: <Array<DbOperation | DbTransfer>> operationsAndTransfers
+    }))
+
+  const hashes = batches.map(o => o.OpHash)
+  operationsAndTransfers = operationsAndTransfers.filter(o => hashes.includes(o.OpHash))
+
+  return { operationsAndTransfers, batches, hashes }
 }
 
 async function queryRoots(addressId: number, hashes: string[]) {
@@ -344,8 +316,8 @@ async function queryAddresses(ids: number[]) {
 }
 
 async function backend(address: string, limit: number, previousPagePayload) {
-  let addressId: number = +previousPagePayload?.addressId
-  const previousOldestId: number | null = +previousPagePayload?.oldestId
+  let addressId: number = previousPagePayload?.addressId
+  const previousOldestId: string | null = previousPagePayload?.oldestId
 
   if (!addressId) {
     const addressQuery = `SELECT "Id" FROM "Accounts" WHERE "Address" = $1`
@@ -354,43 +326,11 @@ async function backend(address: string, limit: number, previousPagePayload) {
 
   // 1. On récupère les X derniers hashes
 
-  let { operations, batches } = await identifyLastBatches(addressId, limit, previousOldestId)
+  // Not Implemented Yet: ticket transfers
+  let { operationsAndTransfers, batches, hashes } = await queryBatches(addressId, limit, previousOldestId)
   let oldestId = batches[batches.length - 1].oldestId
 
-  // 2. On récupère les tokens transfers, jusqu'à avoir X hashes
-  // Not Implemented Yet: ticket transfers
-
-  // Idea for better performance: identifyLastBatches and queryTransfers could be parallelized
-  // as they are the 2 bottlenecks (would load a bit more transfers as it wouldn't have oldestId and batches)
-  // or both could be merged in the same function
-
-  const transfers = await queryTransfers(addressId, batches.length === limit && oldestId, previousOldestId, batches, limit)
-
-  // merge transfers into batches[].operationsAndTransfers
-  transfers.forEach(transfer => {
-    const batch = batches.find(b => b.OpHash === transfer.OpHash)
-    if (batch) {
-      batch.operationsAndTransfers.push(transfer) // note: breaks order
-      batch.oldestId = Math.min(batch.oldestId, transfer.Id)
-    }
-    else {
-      batches.push({
-        OpHash: transfer.OpHash,
-        oldestId: transfer.Id,
-        operationsAndTransfers: [transfer]
-      })
-    }
-  })
-
-  // re-sort and slice
-  batches = batches
-    .sort((b1, b2) => b2.oldestId - b1.oldestId) // DESC
-    .slice(0, limit)
-
-  oldestId = batches[batches.length - 1].oldestId
-  const hashes = batches.map(b => b.OpHash)
-
-  // 3. Je récupère les opérations racines
+  // 2. Je récupère les opérations racines
 
   const allRoots = await queryRoots(addressId, hashes)
 
@@ -411,14 +351,18 @@ async function backend(address: string, limit: number, previousPagePayload) {
 
   const uniqueRoots = eliminateDuplicates(Object.values(rootsOf), 'Id')
     .filter(r => r)
-    .sort((a, b) => b.Id - a.Id) // DESC
+    .sort((a, b) => Number(BigInt(b.Id) - BigInt(a.Id))) // DESC
 
   // keeps ordering
   const rootsByHash = groupBy(uniqueRoots, r => r.OpHash)
-  const operationsByRoot = groupBy(operations.filter(o => hashes.includes(o.OpHash)), o => rootsOf[o.Id].Id)
-  const transfersByRoot = groupBy(transfers.filter(o => hashes.includes(o.OpHash)), t => rootsOf[t.Id].Id)
+  const operationsByRoot = groupBy(
+    operationsAndTransfers.filter(o => o.OperationType !== 'TokenTransfer') as DbOperation[]
+  , o => rootsOf[o.Id].Id)
+  const transfersByRoot = groupBy(
+    operationsAndTransfers.filter(t => t.OperationType === 'TokenTransfer') as DbTransfer[]
+  , t => rootsOf[t.Id].Id)
 
-  // 4. Identify and query adresses of every counterparty
+  // 3. Identify and query adresses of every counterparty
 
   const counterpartyIdOfRoot: Record<string, number> = {}
   uniqueRoots.forEach(root => {
@@ -438,7 +382,7 @@ async function backend(address: string, limit: number, previousPagePayload) {
 
   const counterparties = await queryAddresses(eliminateDuplicates(Object.values(counterpartyIdOfRoot)))
 
-  // 5. On fabrique la réponse
+  // 4. On fabrique la réponse
 
   const history: History = Array.from(rootsByHash).map(([hash, roots]) =>
     roots.map(root => {
@@ -463,7 +407,8 @@ async function backend(address: string, limit: number, previousPagePayload) {
         id: root.OpHash,
         operationType,
         tezosSpecificType: operationType === 'tezosSpecific' ? root.OperationType : null,
-        status: root.otherProperties?.Status === null ? 'success' : root.otherProperties?.Status === 1 ? 'success' : 'failure',
+        status: root.otherProperties?.Status === null ? 'success' :
+          root.otherProperties?.Status === 1 ? 'success' : 'failure',
         date: root.Timestamp,
         functionName: root.otherProperties?.Entrypoint,
         counterpartyAddress: counterparties.find(c => c.Id === counterpartyIdOfRoot[root.Id]).Address,
@@ -482,7 +427,9 @@ async function backend(address: string, limit: number, previousPagePayload) {
           .concat(
             Array.from(groupBy(transfersByRoot.get(root.Id) ?? [], t => t.AssetId))
             .map(([assetId, transfers]) => ({
-              quantity: sum(transfers.map(t => BigInt(t.SenderId === addressId ? -1 : 1) * BigInt(t.Amount))).toString(),
+              quantity: sum(
+                transfers.map(t => BigInt(t.SenderId === addressId ? -1 : 1) * BigInt(t.Amount))
+              ).toString(),
               asset: transfers[0].Metadata?.decimals == 0 ? {
                 assetType: 'nft',
                 id: transfers[0].ContractAddress + '_' + transfers[0].TokenId,
@@ -524,6 +471,8 @@ const validate = (address, limit, nextPageToken): string | undefined => {
 }
 
 const validatePagePayload = (pagePayload): string | undefined => {
+  const digitsOnly = /^\d+$/
+
   if (!(
     'addressId' in pagePayload &&
     typeof pagePayload.addressId === 'number' &&
@@ -535,9 +484,8 @@ const validatePagePayload = (pagePayload): string | undefined => {
 
   if (!(
     'oldestId' in pagePayload &&
-    typeof pagePayload.oldestId === 'number' &&
-    Number.isInteger(pagePayload.oldestId) &&
-    0 < pagePayload.oldestId
+    typeof pagePayload.oldestId === 'string' &&
+    digitsOnly.test(pagePayload.addressId)
   )) {
     return 'Invalid oldestId in pagePayload'
   }
@@ -545,7 +493,7 @@ const validatePagePayload = (pagePayload): string | undefined => {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const address = req.query.address
-  const limit = +req.query.limit || 0
+  const limit = +req.query.limit
   const nextPageToken = req.query.nextPageToken
   let pagePayload
 
