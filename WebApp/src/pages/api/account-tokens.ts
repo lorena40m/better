@@ -98,7 +98,7 @@ export default async function handler(
       } else if (token.asset?.assetType === 'nft') {
         nfts.push(token as Holding<Nft>);
       } else {
-        console.error('WHAT IS THIS TOKEN?!? not displayed', token);
+        console.warn('WHAT IS THIS TOKEN?!? not displayed', token);
       }
     });
 
