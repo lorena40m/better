@@ -1,4 +1,4 @@
-import { ipfsToHttps } from '@/utils/link';
+import { getCollectionSources } from '@/utils/link';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { query } from '@/backend/providers/db'
 import { solveAccountType, solveAddressName, solveAddressImage } from '@/backend/solve'
@@ -39,7 +39,7 @@ export default async function handler(
 				accountType: solveAccountType(holder.Type, holder.Kind),
 				address: holder.Address,
 				name: solveAddressName(holder.domains, null, null),
-				image: ipfsToHttps(holder.metadata?.imageUri),
+				image: getCollectionSources(holder.metadata?.imageUri),
 			}
 		});
 	});

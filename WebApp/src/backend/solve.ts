@@ -27,7 +27,7 @@ export function solveAccountType(accountType, accountKind) {
 }
 
 export function solveAddressName(domains: Array<Domain>, accountMetadata: Metadata, tokenMetadata: Metadata) {
-  domains?.sort((a, b) => (a.name.length - b.name.length) || (b.id - a.id) || (b.lastLevel - a.lastLevel) || (b < a ? 1 : -1))
+  domains?.sort((a, b) => (a.name?.length - b.name?.length) || (b.id - a.id) || (b.lastLevel - a.lastLevel) || (b < a ? 1 : -1))
   return (
     accountMetadata?.name ||
     findDomainsMetadata(domains, 'openid:name') ||
