@@ -80,7 +80,7 @@ function _formatNumber(quantity: string | BigInt, decimals: number, significantD
 
 export function formatNumber(number: number, locale: string) {
   let returnValue = _formatNumber(BigInt(Math.round(number * 1e18)).toString(), 18, 3, locale);
-  while (returnValue.length > 0 && (returnValue.includes('.') || returnValue.includes(','))) {
+  while (returnValue.length > 0 && (returnValue.includes('.') || (returnValue.includes(',') && locale === "fr"))) {
     if (returnValue[returnValue.length - 1] === '0') {
       returnValue = returnValue.slice(0, -1);
     } else {

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { formatToken, formatPrice, formatNumber, formatDate, formatDateShort } from "@/utils/format";
 import { useRouter } from "next/router";
 import { AccountIcon } from "../common/ArtifactIcon";
-import { fetchCoinInfos, fetchCoinGraph } from "@/utils/apiClient";
+import { fetchCoinInfos, fetchCoinGraph, fetchCoinHolders } from "@/utils/apiClient";
 import { useRates } from '@/hooks/RatesContext';
 
 type Props = {
@@ -20,6 +20,7 @@ export function Coin(props: Props) {
 	const [lineValues, setLineValues] = useState([0, 0, 0, 0, 0]);
 	const [path, setPath] = useState("");
 	const [svgMouseX, setSvgMouseX] = useState(0);
+	const [topHolders, setTopHolders] = useState([]);
 	const rates = useRates();
 
 	function roundUpToSecondDecimal(number) {
@@ -90,7 +91,6 @@ export function Coin(props: Props) {
 		if (!data) { return; }
 		let minValue = Number(data[0][Object.keys(data[0])[0]].c);
 		let maxValue = minValue;
-		console.log(maxValue);
 		for (let i = 0; i < data.length; i++) {
 			if (Number(data[i][Object.keys(data[i])[0]].c) > maxValue) {
 				maxValue = Number(data[i][Object.keys(data[i])[0]].c);
@@ -135,6 +135,9 @@ export function Coin(props: Props) {
 			setCoinGraph(data[0]);
 			createPath(data[0].price.history);
 		});
+		fetchCoinHolders(props.infos.tokens[0].tzkt_id).then((data) => {
+			setTopHolders(data);
+		})
 	}, [props.address]);
 	return (
 		<div className="contract-coin shadow-box">
@@ -175,6 +178,16 @@ export function Coin(props: Props) {
 				<div className="contract-coin__main">
 					<div>
 						<h2>Top Holder</h2>
+						{topHolders.map((holder, i) => {
+							return (
+								<Link href={'/' + holder.account.address} title={holder.account.address} key={i} className="contract-coin__main__holder">
+									<p>{holder.account.name ?? holder.account.address.slice(0, 8) + "..." }</p>
+									<div>
+										<p>{formatNumber((holder.balance / 10**props.infos.tokens[0].metadata.decimals), locale)}</p>
+									</div>
+								</Link>
+							)
+						})}
 					</div>
 					<div>
 						<h2>Market price</h2>

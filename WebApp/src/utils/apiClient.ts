@@ -67,6 +67,11 @@ export async function fetchCoinGraph(symbol: string) {
 	return (graphData);
 }
 
+export async function fetchCoinHolders(id: string) {
+  const topHolders = await fetchApi(`coin-holders?id=${id}`).then(response => response);
+  return (topHolders);
+}
+
 import type { AccountHistoryOutput } from '@/pages/api/account-history'
 export function fetchAccountHistory(
   address: string,

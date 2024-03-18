@@ -2528,8 +2528,38 @@ Project: less intrusive search button
       display: flex;
       flex-direction: column;
       align-items: center;
+      gap: 5px;
       svg {
         width: 100%;
+      }
+      h2 {
+        margin-bottom: 20px;
+      }
+      .contract-coin__main__holder {
+        background-color: #19283b10;
+        width: 100%;
+        height: 20%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        color: #19283b;
+        div {
+          align-items: center;
+          flex-direction: row;
+          justify-content: flex-end;
+          p {
+            font-size: 22px;
+            font-weight: 700;
+          }
+        }
+        &:hover {
+          background-color: #19283b20;
+        }
       }
     }
   }

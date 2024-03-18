@@ -22,6 +22,7 @@ export type Contract = {
   image: any,
   tokens: Array<{
     id: `${string}_${number}`,
+    tzkt_id: string,
     supply: string,
     holderscount: number,
     owner: Account,

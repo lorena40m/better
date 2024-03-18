@@ -14,7 +14,7 @@ export default async function handler(
         "Domains"."Address"
       FROM "Domains"
       WHERE "Domains"."Name" = $1
-    `, [domain], 'long');
+    `, [domain]);
     res.status(200).json(
 		address[0].Address
 	);
