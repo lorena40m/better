@@ -1,5 +1,3 @@
-const RATE_USD_TO_EUR = 0.95
-
 import { useState, useEffect } from 'react'
 import Image from "next/image";
 import Header from "@/components/Header";

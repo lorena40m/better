@@ -51,7 +51,7 @@ const CoinBox = (props: Props) => {
               coinValue = coinInfos?.exchangeRate ?? 0;
             }
             return (
-              <div key={coin.TokenId} className="coinBox__coin"
+              <div key={coin.asset.id} className="coinBox__coin"
                 style={coin.asset.image ? {order: "1"} : {order: "1"}}
               >
                 <div className="coinBox__coin__left">

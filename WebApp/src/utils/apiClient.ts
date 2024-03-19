@@ -67,10 +67,18 @@ export async function fetchCoinGraph(symbol: string) {
 	return (graphData);
 }
 
-import type { History } from '@/pages/api/account-history'
-export function fetchAccountHistory(address: string, historyLimit: number, counterpartyLimit: number) {
-  const history$ = fetchApi(`account-history?address=${address}&limit=${historyLimit}`)
-    .then(response => response.history as History)
+import type { AccountHistoryOutput } from '@/pages/api/account-history'
+export function fetchAccountHistory(
+  address: string,
+  historyLimit: number,
+  counterpartyLimit: number,
+  nextPageToken: string = ''
+) {
+  const data$: Promise<AccountHistoryOutput> = fetchApi(
+    `account-history?address=${address}&limit=${historyLimit}&nextPageToken=${nextPageToken}`
+  )
+  const history$ = data$.then(data => data.history)
+  const nextPageToken$ = data$.then(data => data.nextPageToken)
 
   const counterpartiesInfo$ = history$.then(history => {
     const addresses = eliminateDuplicates(
@@ -86,7 +94,7 @@ export function fetchAccountHistory(address: string, historyLimit: number, count
     return fetchApi(`accounts-info`, { addresses }).then(response => response as Info[])
   })
 
-  return { history$, counterpartiesInfo$ }
+  return { history$, nextPageToken$, counterpartiesInfo$ }
 }
 
 import type { OperationBatch } from "@/backend/apiTypes";

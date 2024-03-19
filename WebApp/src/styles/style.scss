@@ -1840,8 +1840,18 @@ Project: less intrusive search button
         max-width: 50%;
         gap: 20px;
         margin-bottom: 10px;
-        a:hover + div .operationsBox__batch__operation__start__name {
-          text-decoration: underline;
+
+        a:hover + div {
+          .operationsBox__batch__operation__start__name {
+            text-decoration: underline;
+          }
+          .operationsBox__batch__operation__start__methods {
+            text-decoration: none !important;
+          }
+        }
+
+        a:hover ~ .operationsBox__batch__operation__start__methods {
+          text-decoration: none !important;
         }
 
         .ArtifactIcon {
@@ -1933,6 +1943,18 @@ Project: less intrusive search button
       font-size: 18px;
       // font-weight: 700;
     }
+  }
+
+  .batchLink {
+    text-decoration: none;
+
+    &:hover .operationsBox__batch__operation__start__methods {
+      text-decoration: underline;
+    }
+  }
+
+  .RoundedPlaceHolder {
+    margin-top: 10px;
   }
 }
 

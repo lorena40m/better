@@ -1,7 +1,6 @@
 import SuccessIcon from "@/assets/images/check.png"
 import FailureIcon from "@/assets/images/failure.png"
 import PendingIcon from "@/assets/images/pending.png"
-import React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useTranslation } from "next-i18next"
@@ -11,7 +10,7 @@ import type { History } from '@/pages/api/account-history'
 import type { Info } from '@/pages/api/accounts-info'
 import { AccountIcon, CoinIcon, NftIcon } from '@/components/common/ArtifactIcon'
 import { fetchAccountHistory } from '@/utils/apiClient'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { Account } from '@/backend/apiTypes'
 import { eliminateDuplicates, groupBy, sum } from '@/utils/arrays'
 
@@ -30,17 +29,75 @@ export default function History(props: Props) {
   const { locale } = useRouter()
   const [history, setHistory] = useState<History>(null)
   const [counterparties, setCounterparties] = useState<Map<string, Account>>(null)
+  const nextPageTokenRef = useRef(null)
+  const historyRef = useRef(null)
+  const loadingMoreRef = useRef(false)
+  const [loadingMore, setLoadingMore] = useState(false)
 
   useEffect(() => {
-    const { history$, counterpartiesInfo$ } = fetchAccountHistory(props.address, LIMIT_HISTORY, LIMIT_OPERATIONS)
+    const {
+      history$,
+      nextPageToken$,
+      counterpartiesInfo$
+    } = fetchAccountHistory(props.address, LIMIT_HISTORY, LIMIT_OPERATIONS)
+
     history$.then(setHistory).catch(console.error)
+
+    nextPageToken$.then(token => nextPageTokenRef.current = token)
+
     counterpartiesInfo$.then(info => setCounterparties(
       new Map(info.map(counterpartyInfo => [counterpartyInfo.account.address, counterpartyInfo.account]))
     )).catch(console.error)
   }, [props.address])
 
+  useEffect(() => {
+    if (!history) return
+
+    function handleScroll() {
+      const scrollHeight = document.documentElement.scrollHeight
+      const scrollPosition = window.innerHeight + window.scrollY
+
+      if (scrollHeight - scrollPosition < 400) {
+        loadMore()
+      }
+    }
+
+    document.addEventListener('scroll', handleScroll)
+
+    return () => {
+      if (historyRef.current) {
+        document.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [history])
+
+  function loadMore() {
+    if (loadingMoreRef.current) return
+
+    setLoadingMore(loadingMoreRef.current = true)
+
+    const {
+      history$,
+      nextPageToken$,
+      counterpartiesInfo$
+    } = fetchAccountHistory(props.address, LIMIT_HISTORY, LIMIT_OPERATIONS, nextPageTokenRef.current)
+
+    history$.then(moreHistory => {
+      setHistory(history => history.concat(moreHistory))
+      setLoadingMore(loadingMoreRef.current = false)
+    }).catch(console.error)
+
+    nextPageToken$.then(token => nextPageTokenRef.current = token)
+
+    counterpartiesInfo$.then(moreInfo => setCounterparties(info =>
+      new Map(Array.from(info).concat(
+        moreInfo.map(counterpartyInfo => [counterpartyInfo.account.address, counterpartyInfo.account])
+      ))
+    )).catch(console.error)
+  }
+
   return history ? (
-    <div className="operationsBox box shadow-box">
+    <div className="operationsBox box shadow-box" ref={historyRef}>
       <div className="header">
         <h3>{t('History.Title')}</h3>
         {props.operationCount && <span className="headerInfo">
@@ -54,7 +111,7 @@ export default function History(props: Props) {
         const operationLimit = rootsByCounterparty.length > LIMIT_OPERATIONS && LIMIT_OPERATIONS - 1
 
         return (
-          <Link href={'/' + hash} key={hash} title={hash}>
+          <Link href={'/' + hash} key={hash} title={hash} className="batchLink">
           <div className="operationsBox__batch hoverItem">
             {rootsByCounterparty
               .slice(0, operationLimit || rootsByCounterparty.length)
@@ -75,14 +132,14 @@ export default function History(props: Props) {
                 )
                 const methodLimit = methods.length > LIMIT_METHODS && LIMIT_METHODS - 1
 
-                return  <div className="operationsBox__batch__operation" key={i}>
+                return <div className="operationsBox__batch__operation" key={i}>
                   <div className="operationsBox__batch__operation__start">
                     <Link href={'/' + counterpartyAddress} title={counterpartyAddress}>
                       <AccountIcon account={counterparties?.get(counterpartyAddress)} />
                     </Link>
                     <div>
                       <Link href={'/' + counterpartyAddress}>
-                        {counterparties ?
+                        {counterparty ?
                           <p className="operationsBox__batch__operation__start__name" title={counterpartyAddress}>
                             {
                               counterparty?.name ??
@@ -161,6 +218,8 @@ export default function History(props: Props) {
           </Link>
         )
       })}
+
+      {loadingMore && <div className="RoundedPlaceHolder" style={{ minHeight: '20vh' }} />}
     </div>
   ) : <div className="RoundedPlaceHolder" style={{ minHeight: '100vh' }} />
 }
