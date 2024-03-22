@@ -154,7 +154,7 @@ export default async function handler(
 
     let contractType = 'smart_contract';
 
-    const tokens = await query('COLLECTION TOKENS', `
+    let tokens = await query('COLLECTION TOKENS', `
         SELECT
           token."Id" as tzkt_id,
           $4 || '_' || token."TokenId" as id,
@@ -197,6 +197,8 @@ export default async function handler(
         contractType = 'multiple_assets'
       }
     };
+
+    tokens = tokens.filter(token => token.metadata != null);
 
     const promises = tokens.map(async (token) => {
       token.image = token.image, address, token.id;

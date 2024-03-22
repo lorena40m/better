@@ -108,7 +108,7 @@ export function Coin(props: Props) {
 		const svgWidth = 900;
 		const svgHeight = 540;
 		const svgXStart = 100;
-		const svgWidthInterval = svgWidth / (data.length - 1);
+		const svgWidthInterval = svgWidth / (data.length);
 		let newPath = `M ${svgXStart} ${svgHeight * (maxValue - Number(data[0][Object.keys(data[0])[0]].c)) / (maxValue - minValue)}`;
 		for (let i = 0; i < data.length; i++) {
 			newPath += `L ${svgWidthInterval * (i + 1) + svgXStart} ${svgHeight * (maxValue - Number(data[i][Object.keys(data[i])[0]].c)) / (maxValue - minValue)}`;
@@ -133,6 +133,7 @@ export function Coin(props: Props) {
 	useEffect(() => {
 		fetchCoinGraph(props.infos.tokens[0].metadata.symbol).then((data) => {
 			setCoinGraph(data[0]);
+			if (!data || !data[0]) { return; }
 			createPath(data[0].price.history);
 		});
 		fetchCoinHolders(props.infos.tokens[0].tzkt_id).then((data) => {

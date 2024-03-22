@@ -15,8 +15,8 @@ type Props = {
 }
 
 export function Collection(props: Props) {
-	const [tokens, setTokens] = useState(props.infos.tokens);
-	const [nftShow, setNftShow] = useState(tokens.sort((a, b) => +a.id - +b.id)[0]);
+	const [tokens, setTokens] = useState([]);
+	const [nftShow, setNftShow] = useState(tokens.find((token) => Number(token.id.split("_")[1]) === Number(window.location.hash.match(/#(\d+)/)?.[1])) ?? tokens.sort((a, b) => +a.id - +b.id)[0]);
 	const { locale } = useRouter();
 
 	let refAnim = useRef(null);
@@ -40,21 +40,35 @@ export function Collection(props: Props) {
 
 	useEffect(() => {
 		const handleScroll = () => {
-			if (hasMore === false) return;
 			const box = scrollNftRef.current;
 			const scrollPosition = box.scrollTop;
 			const boxHeight = box.clientHeight;
 			const totalContentHeight = box.scrollHeight;
 		
-			if (scrollPosition / (totalContentHeight - boxHeight) > 0.8) {
+			if (scrollPosition / (totalContentHeight - boxHeight) > 0.8 && hasMore === true) {
 				if (currentFetch === false) {
 					currentFetch = true;
-					fetchCollectionTokens(props.infos.id, 100, tokens.length, props.infos2.account.address).then((data) => {
+					fetchCollectionTokens(props.infos.id, 100, tokens[tokens.length - 1].id.split('_')[1], props.infos2.account.address).then((data) => {
 						if (data.length === 0) {
 							setHasMore(false);
 						} else {
-							setTokens([...tokens, ...data]);
+							let newTokensTab = [...tokens, ...data];
+							newTokensTab = newTokensTab.sort((a, b) => +a.id.split('_')[1] - +b.id.split('_')[1]);
+							newTokensTab = newTokensTab.filter((token, index, self) => self.findIndex(t => t.id === token.id) === index);
+							setTokens(newTokensTab);
 						}
+						currentFetch = false;
+					});
+				}
+			} else if (scrollPosition / (totalContentHeight - boxHeight) < 0.2) {
+				if (currentFetch === false) {
+					currentFetch = true;
+					if (tokens[0].id.split('_')[1] == 0) { return; }
+					fetchCollectionTokens(props.infos.id, 100, (tokens[0].id.split('_')[1] - 100 < 0 ? 0 : tokens[0].id.split('_')[1] - 100), props.infos2.account.address).then((data) => {
+						let newTokensTab = [...data, ...tokens];
+						newTokensTab = newTokensTab.sort((a, b) => +a.id.split('_')[1] - +b.id.split('_')[1]);
+						newTokensTab = newTokensTab.filter((token, index, self) => self.findIndex(t => t.id === token.id) === index);
+						setTokens(newTokensTab);
 						currentFetch = false;
 					});
 				}
@@ -65,6 +79,50 @@ export function Collection(props: Props) {
 		box.addEventListener('scroll', handleScroll);
 		return () => box.removeEventListener('scroll', handleScroll);
 	}, [tokens, hasMore]);
+
+	useEffect(() => {
+		currentFetch = true;
+		fetchCollectionTokens(props.infos.id, 100, (Number(window.location.hash.match(/#(\d+)/)?.[1]) > 50 ? Number(window.location.hash.match(/#(\d+)/)?.[1]) - 50 : 0), props.infos2.account.address).then((data) => {
+			if (data.length === 0) {
+				setHasMore(false);
+			} else {
+				setNftShow(data.find((token) => Number(token.id.split("_")[1]) === Number(window.location.hash.match(/#(\d+)/)?.[1])) ?? data.sort((a, b) => +a.id - +b.id)[0]);
+				let newTokensTab = [...tokens, ...data];
+				newTokensTab = newTokensTab.sort((a, b) => +a.id.split('_')[1] - +b.id.split('_')[1]);
+				newTokensTab = newTokensTab.filter((token, index, self) => self.findIndex(t => t.id === token.id) === index);
+				setTokens(newTokensTab);
+				scrollNftRef.current.scrollTop = 3500;
+			}
+			currentFetch = false;
+		});
+	}, []);
+
+	useEffect(() => {
+		const handle = () => {
+			if (tokens.find((token) => Number(token.id.split("_")[1]) === Number(window.location.hash.match(/#(\d+)/)?.[1]))) {
+				setNftShow(tokens.find((token) => Number(token.id.split("_")[1]) === Number(window.location.hash.match(/#(\d+)/)?.[1])));
+			} else {
+				fetchCollectionTokens(props.infos.id, 100, (Number(window.location.hash.match(/#(\d+)/)?.[1]) > 50 ? Number(window.location.hash.match(/#(\d+)/)?.[1]) - 50 : 0), props.infos2.account.address).then((data) => {
+					if (data.length === 0) {
+						setHasMore(false);
+					} else {
+						setNftShow(data.find((token) => Number(token.id.split("_")[1]) === Number(window.location.hash.match(/#(\d+)/)?.[1])) ?? data.sort((a, b) => +a.id - +b.id)[0]);
+						let newTokensTab = [...tokens, ...data];
+						newTokensTab = newTokensTab.sort((a, b) => +a.id.split('_')[1] - +b.id.split('_')[1]);
+						newTokensTab = newTokensTab.filter((token, index, self) => self.findIndex(t => t.id === token.id) === index);
+						setTokens(newTokensTab);
+					}
+					currentFetch = false;
+				});
+			}
+		}
+
+		window.addEventListener("hashchange", handle);
+
+		return () => {
+			window.removeEventListener("hashchange", handle);
+		}
+	}, [])
 
 	return (
 		<div className="contract-collection2 shadow-box" style={{
@@ -117,8 +175,8 @@ export function Collection(props: Props) {
 			<div className="contract-collection2__nft">
 				<div className="contract-collection2__nft__list" ref={scrollNftRef}>
 					{
-						tokens
-							.sort((a, b) => +a.id - +b.id)
+						tokens.length && tokens
+							.sort((a, b) => +a.id.split('_')[1] - +b.id.split('_')[1])
 							.map((nft, i) => {
 								const sources = getAssetSources(nft.image, nft.id)
 
@@ -139,7 +197,7 @@ export function Collection(props: Props) {
 						</div>
 					}
 				</div>
-				<div className="contract-collection2__nft__infos" ref={refAnim}>
+				{nftShow ? <div className="contract-collection2__nft__infos" ref={refAnim}>
 					<div className="contract-collection2__nft__infos__text">
 						<p className="contract-collection2__nft__infos__text__title">{nftShow.metadata?.name ?? 'Unnamed NFT'}</p>
 						{nftShow.metadata?.description ? <p className="contract-collection2__nft__infos__text__description"><strong>Description :</strong> {nftShow.metadata?.description}</p> : null}
@@ -149,7 +207,7 @@ export function Collection(props: Props) {
 						}
 					</div>
 					<NftIcon nft={{ ...nftShow, name: nftShow.metadata?.name }} className="NftIcon" />
-				</div>
+				</div> : null}
 			</div>
 		</div>
 	);

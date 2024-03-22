@@ -94,18 +94,40 @@ const Transaction = (props: Props) => {
             {/*<p>Assets :</p>*/}
             <div className="operationTransfersBox__transfer__assets">
               {transfer.assets.map((asset, j) => {
-                return (
-                  <>
-                    <p key={j}>
+                if (asset.asset.id === 'tezos') { return (
+                  <div className="operationTransfersBox__transfer__assets__div" key={j}>
+                    <p>
                       {formatNumber(asset.quantity / 10**asset.asset.decimals, locale)} {asset.asset.assetType === 'nft' ? asset.asset.name : asset.asset.ticker}
                     </p>
-                    {asset.asset.image ? <div className="operationTransfersBox__transfer__assets__imageBox">
-                      {asset.asset.assetType === 'coin' ?
-                        <CoinIcon coin={asset.asset} />
-                        :
-                        <NftIcon nft={asset.asset} className="ArtifactIcon" />
-                      }
-                    </div> : null}
+                    {asset.asset.image ?
+                      <div className="operationTransfersBox__transfer__assets__imageBox">
+                        {asset.asset.assetType === 'coin' ?
+                          <CoinIcon coin={asset.asset} />
+                          :
+                          <NftIcon nft={asset.asset} className="ArtifactIcon" />
+                        }
+                      </div> : null
+                    }
+                  </div>
+                )};
+                return (
+                  <>
+                    <Link href={asset.asset.id.replace("_", "#")} key={j}>
+                      <div className="operationTransfersBox__transfer__assets__div">
+                        <p>
+                          {formatNumber(asset.quantity / 10**asset.asset.decimals, locale)} {asset.asset.assetType === 'nft' ? asset.asset.name : asset.asset.ticker}
+                        </p>
+                        {asset.asset.image ?
+                          <div className="operationTransfersBox__transfer__assets__imageBox">
+                            {asset.asset.assetType === 'coin' ?
+                              <CoinIcon coin={asset.asset} />
+                              :
+                              <NftIcon nft={asset.asset} className="ArtifactIcon" />
+                            }
+                          </div> : null
+                        }
+                      </div>
+                    </Link>
                   </>
                 );
               })}

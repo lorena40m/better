@@ -13,10 +13,10 @@ res: NextApiResponse
 	const address = <string>req.query.address;
 
 	try {
-		const tokens = await query('COLLECTION TOKENS', `
+		let tokens = await query('COLLECTION TOKENS', `
 			SELECT
 				token."Id" as tzkt_id,
-				token."TokenId" as id,
+				$4 || '_' || token."TokenId" as id,
 				token."TotalSupply" as supply,
 				token."HoldersCount" as holdersCount,
 				jsonb_build_object(
@@ -45,7 +45,9 @@ res: NextApiResponse
 				CAST(token."TokenId" AS INTEGER)
 			LIMIT $2
 			OFFSET $3
-		`, [id, limit, offset]);
+		`, [id, limit, offset, address]);
+
+		tokens = tokens.filter(token => token.metadata != null);
 
 		const promises = tokens?.map(async (token) => {
 			token.image = token.image, address, token.id;

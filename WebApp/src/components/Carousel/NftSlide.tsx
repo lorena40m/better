@@ -15,7 +15,7 @@ export default function CollectionSlide({ item }: Props) {
   const { locale } = useRouter();
 
   return (
-    <Link href={'/' + item.Address}>
+    <Link href={'/' + item?.asset?.id.replace("_", "#")}>
       <div className="CarouselSlide"
         style={{ backgroundImage: getAssetSources(item?.asset?.image, item?.asset?.id)
           ?.map(source => `url(${source})`)?.join(',') }}

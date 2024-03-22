@@ -80,7 +80,7 @@ export async function getCollection(address: string) {
     id: address,
     name: collection?.short_name || collection?.name,
     image: collection?.logo,
-    supply: collection?.items.toString(),
+    supply: collection?.items?.toString(),
     floorPrice: collection?.floor_price,
     marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? address),
     timestamp: collection?.timestamp,

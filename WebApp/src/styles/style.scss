@@ -2274,6 +2274,11 @@ Project: less intrusive search button
       display: flex;
       flex-direction: column;
       align-items: center;
+      &__div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
       p {
         text-align: center;
       }
