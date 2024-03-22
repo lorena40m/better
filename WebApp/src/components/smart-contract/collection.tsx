@@ -133,7 +133,7 @@ export function Collection(props: Props) {
 					<AccountIcon account={{
 						address: props.infos.id,
 						name: props.infos.metadata?.name,
-						accountType: 'nft',
+						accountType: 'collection',
 						image: props.infos.image
 					}} />
 					<div className="contract-collection2__infos__text">
@@ -145,7 +145,7 @@ export function Collection(props: Props) {
 					<div className="contract-collection2__infos__right__div">
 						<div>
 							<p className="contract-collection2__infos__right__value">{props.infos.items}</p>
-							<p>Uniques NFT</p>
+							<p>Unique NFT</p>
 						</div>
 					</div>
 					{props.infos.volume_24h != 0 &&

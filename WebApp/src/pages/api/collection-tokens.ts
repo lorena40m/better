@@ -7,12 +7,17 @@ export default async function handler(
 req: NextApiRequest,
 res: NextApiResponse
 ) {
-	const id = req.query.id;
 	const limit = req.query.limit;
 	const offset = req.query.offset;
 	const address = <string>req.query.address;
 
 	try {
+		const contractId = (await query('CONTRACT ID', `
+			SELECT "Id"
+			FROM "Accounts"
+			WHERE "Address" = $1
+		`, [address]))[0].Id
+
 		let tokens = await query('COLLECTION TOKENS', `
 			SELECT
 				token."Id" as tzkt_id,
@@ -34,23 +39,24 @@ res: NextApiResponse
 					)
 				) as owner,
 				token."Metadata" as metadata,
-				COALESCE(token."Metadata"->>'thumbnailUri', token."Metadata"->>'displayUri', token."Metadata"->>'artifactUri') as image
+				COALESCE(token."Metadata"->>'thumbnailUri', token."Metadata"->>'displayUri', token."Metadata"->>'artifactUri') as image,
 			FROM
 				"Tokens" as token
 			LEFT JOIN
 				"Accounts" as tokenOwner ON tokenOwner."Id" = token."OwnerId"
 			WHERE
 				token."ContractId" = $1
+				AND
+				(token."Metadata"->>'decimals')::INT = 0
 			ORDER BY
 				CAST(token."TokenId" AS INTEGER)
 			LIMIT $2
 			OFFSET $3
-		`, [id, limit, offset, address]);
+		`, [contractId, limit, offset, address]);
 
 		tokens = tokens.filter(token => token.metadata != null);
 
 		const promises = tokens?.map(async (token) => {
-			token.image = token.image, address, token.id;
 			if (!token.owner.address) {
 			  const newOwner = await query('TOKEN OWNER', `
 				SELECT

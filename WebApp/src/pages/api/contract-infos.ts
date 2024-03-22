@@ -109,13 +109,14 @@ export default async function handler(
   try {
     const contract = await query('ACCOUNT INFOS', `
     SELECT
-      contract."Balance",
       contract."Id",
+      contract."Balance",
+      contract."Address",
       contract."TransactionsCount",
       contract."Metadata",
-      creator."Address",
-      creatorDomain."Name",
-      creationBlock."Timestamp"
+      creator."Address" as "creatorAddress",
+      creatorDomain."Name" as "creatorName",
+      creationBlock."Timestamp" as "creationTimestamp"
     FROM
       "Accounts" as contract
     INNER JOIN
@@ -175,7 +176,11 @@ export default async function handler(
             )
           ) as owner,
           token."Metadata" as metadata,
-          COALESCE(token."Metadata"->>'thumbnailUri', token."Metadata"->>'displayUri', token."Metadata"->>'artifactUri') as image
+          COALESCE(token."Metadata"->>'thumbnailUri', token."Metadata"->>'displayUri', token."Metadata"->>'artifactUri') as image,
+          CASE
+            WHEN ((token."Metadata"->>'decimals')::INT > 0) THEN 'coin'
+            WHEN ((token."Metadata"->>'decimals')::INT = 0) THEN 'nft'
+          END as "assetType"
         FROM
           "Tokens" as token
         LEFT JOIN
@@ -188,17 +193,17 @@ export default async function handler(
         OFFSET $3
     `, [contract[0].Id, 100, 0, address]);
 
+    tokens = tokens.filter(token => token.metadata != null);
+
     if (tokens?.length > 0) {
-      if (tokens.length === 1 && Number(tokens[0].metadata?.decimals) > 0) {
+      if (tokens.length === 1 && tokens[0].assetType === 'coin') {
         contractType = 'coin';
-      } else if (tokens.reduce((total, token) => total + (!token.metadata?.decimals ? 0 : token.metadata?.decimals != '0' ? 1 : 0), 0) === 0) {
+      } else if (tokens.every(token => token.assetType === 'nft')) {
         contractType = 'collection';
       } else {
         contractType = 'multiple_assets'
       }
     };
-
-    tokens = tokens.filter(token => token.metadata != null);
 
     const promises = tokens.map(async (token) => {
       token.image = token.image, address, token.id;
@@ -256,11 +261,11 @@ export default async function handler(
         operationCount: contract[0].TransactionsCount,
         metadata: contract[0].Metadata,
         image: objktInfos.image ?? (contract[0].Metadata?.thumbnailUri ?? contract[0].Metadata?.displayUri ?? contract[0].Metadata?.imageUri ?? contract[0].Metadata?.artifactUri) ?? tokens.find((token) => token.id == 0)?.image ?? tokens.find((token) => token.id == 1)?.image,
-        id: contract[0].Id,
+        id: contract[0].Address,
         tokens: tokens,
-        creationDate: contract[0].Timestamp,
-        creatorAddress: contract[0].Address,
-        creatorDomain: contract[0].Name,
+        creationDate: contract[0].creationTimestamp,
+        creatorAddress: contract[0].creatorAddress,
+        creatorDomain: contract[0].creatorName,
         averageFee: averageFee,
         entrypoints: []
       } as Contract

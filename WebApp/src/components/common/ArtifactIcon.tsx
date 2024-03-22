@@ -10,6 +10,7 @@ import TokenIcon from "@/assets/images/token.png"
 import TezosIcon from "@/assets/images/tezos.png"
 import NftIcon_ from "@/assets/images/nft.png"
 import { getCollectionSources, getAssetSources } from '@/utils/link'
+import { memo } from 'react'
 
 const icons = {
   // accounts
@@ -20,9 +21,11 @@ const icons = {
   delegator: DelegatorIcon,
   contract: SmartContractIcon,
   asset: AssetIcon,
+  collection: NftIcon_,
   // coins
   token: TokenIcon,
   tezos: TezosIcon,
+  // nft
   nft: NftIcon_,
 }
 
@@ -35,9 +38,11 @@ const alts = {
   delegator: "Delegator",
   contract: "Contract",
   asset: "Financial Asset",
+  collection: "NFT Collection",
   // coins
   token: "Token",
   tezos: "Tezos",
+  // nft
   nft: "NFT",
 }
 
@@ -45,7 +50,8 @@ type Account = {
   address: string,
   name: string,
   image: string | null,
-  accountType: keyof typeof icons | null, // null worth 'userGroup'
+  accountType: 'user' | 'baker' | 'ghostContract' | 'delegator' | 'contract' | 'asset' | 'collection' |
+    null, // null worth 'userGroup'
 }
 
 type Coin = {
@@ -60,15 +66,16 @@ type Nft = {
   image: string,
 }
 
-export function AccountIcon({ account, ...attr }: { account: Account | null, [key: string]: any }) {
+export const AccountIcon = memo(function AccountIcon({ account, ...attr }: { account: Account | null, [key: string]: any }) {
   if (!account) return
 
   const sources = [
     `https://services.tzkt.io/v1/avatars/${account.address}`
   ]
 
-  if (account.image)
+  if (account.image) {
     sources.push(...getCollectionSources(account.image))
+  }
 
   return <ArtifactIcon
     alt={account.name}
@@ -76,17 +83,20 @@ export function AccountIcon({ account, ...attr }: { account: Account | null, [ke
     sources={sources}
     {...attr}
   />
-}
+}, (prev, next) => prev.account?.address === next.account?.address)
 
-export function CoinIcon({ coin, ...attr }: { coin: Coin | null, [key: string]: any }) {
+export const CoinIcon = memo(function CoinIcon({ coin, ...attr }: { coin: Coin | null, [key: string]: any }) {
   if (!coin) return
 
-  const sources = [
-    `https://services.tzkt.io/v1/avatars/${coin.id}`
-  ]
+  const sources = []
 
-  if (coin.image)
+  if (coin.id !== 'tezos') {
+    sources.push(`https://services.tzkt.io/v1/avatars/${coin.id}`)
+  }
+
+  if (coin.image) {
     sources.push(...getCollectionSources(coin.image))
+  }
 
   return <ArtifactIcon
     alt={coin.ticker}
@@ -94,9 +104,9 @@ export function CoinIcon({ coin, ...attr }: { coin: Coin | null, [key: string]: 
     sources={sources}
     {...attr}
   />
-}
+}, (prev, next) => prev.coin?.id === next.coin?.id)
 
-export function NftIcon({ nft, ...attr }: { nft: Nft | null, [key: string]: any }) {
+export const NftIcon = memo(function NftIcon({ nft, ...attr }: { nft: Nft | null, [key: string]: any }) {
   if (!nft) return
 
   const sources = getAssetSources(nft.image, nft.id) ?? []
@@ -107,7 +117,7 @@ export function NftIcon({ nft, ...attr }: { nft: Nft | null, [key: string]: any 
     sources={sources}
     {...attr}
   />
-}
+}, (prev, next) => prev.nft?.id === next.nft?.id)
 
 type Props = {
   alt: string,

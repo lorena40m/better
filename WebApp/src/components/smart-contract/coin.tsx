@@ -3,7 +3,7 @@ import { Contract } from "@/pages/api/contract-infos";
 import Link from "next/link";
 import { formatToken, formatPrice, formatNumber, formatDate, formatDateShort } from "@/utils/format";
 import { useRouter } from "next/router";
-import { AccountIcon } from "../common/ArtifactIcon";
+import { AccountIcon, CoinIcon } from "../common/ArtifactIcon";
 import { fetchCoinInfos, fetchCoinGraph, fetchCoinHolders } from "@/utils/apiClient";
 import { useRates } from '@/hooks/RatesContext';
 
@@ -145,10 +145,9 @@ export function Coin(props: Props) {
 			<div className="contract-coin__header">
 				{
 					props.infos.image ?
-					<AccountIcon account={{
-						address: props.infos.id,
-						name: props.infos.metadata?.name,
-						accountType: 'nft',
+					<CoinIcon coin={{
+						id: props.infos.id,
+						ticker: props.infos.metadata?.symbol,
 						image: props.infos.image
 					}} />
 					:

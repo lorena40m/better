@@ -66,7 +66,7 @@ const Contract = ({ address }) => {
 						value={formatNumber(account?.operationCount ?? 0, locale)}
 						var2={"Average fee"}
 						value2={rates && formatPrice(account.averageFee / 10**6 * rates.cryptos.XTZ ?? 0, locale, rates.fiats)}
-						var3={"Tresury"}
+						var3={"Treasury"}
 						value3={rates && formatPrice(((+infos.balance / 10**6) * rates.cryptos.XTZ + tokens.coins.reduce((total, coin) => total + ((coinsInfos?.find((coinInfos) => coinInfos.tokenAddress === coin.Address)?.exchangeRate ?? 0) * (+coin.quantity / 10**coin.asset.decimals)), 0)), locale, rates.fiats)}
 						title={null}
 					/>
