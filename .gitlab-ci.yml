@@ -1,0 +1,14 @@
+stages:
+  - check
+
+cache:
+  paths:
+    - node_modules/
+
+check:
+  stage: check
+  image: node
+  script:
+    - cd WebApp
+    - npm install
+    - npm run check-all

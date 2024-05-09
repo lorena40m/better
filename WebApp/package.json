@@ -6,10 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next build && next start",
-    "lint": "next lint",
-    "test": "cypress open",
     "unittest": "rm -rf unittests_*; mkdir -p unittests_build unittests_logs; npx tsc unittests/* --outDir unittests_build; for file in unittests_build/unittests/test${TEST_ONLY}*.js; do node $file 2>unittests_logs/$(basename $file .js).errors; done",
-    "unittest-utils": "TEST_ONLY=Utils npm run unittest"
+    "unittest-utils": "TEST_ONLY=Utils npm run unittest",
+    "check-types": "npx tsc --pretty --noEmit",
+    "check-format": "prettier --check .",
+    "check-lint": "next lint",
+    "check": "npm run check-types; npm run check-format; npm run check-lint",
+    "check-all": "npm run check-types && npm run check-format && npm run check-lint",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@clerk/nextjs": "^4.15.0",
