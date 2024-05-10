@@ -1,9 +1,9 @@
-import { expect, TestCase, TestScript, logResult } from './framework'
 import * as coinmarketcap from '../src/endpoints/providers/coinmarketcap'
 import * as objkt from '../src/endpoints/providers/objkt'
 import * as rpc from '../src/endpoints/providers/rpc'
-import * as tzstats from '../src/endpoints/providers/tzstats'
 import * as tzkt from '../src/endpoints/providers/tzkt'
+import * as tzstats from '../src/endpoints/providers/tzstats'
+import { TestCase, TestScript, expect, logResult } from './framework'
 import { ids } from './sampleIds'
 
 async function testProviderFunction(provider: string, fc: Function) {

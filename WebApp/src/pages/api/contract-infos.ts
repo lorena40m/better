@@ -1,37 +1,34 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { query } from '@/backend/providers/db';
-import { TokenDecimals, UrlString, DateString } from '@/backend/apiTypes';
-import { TezosToolkit } from '@taquito/taquito';
-import { InMemorySigner } from '@taquito/signer';
-import { Metadata, solveAccountType, solveAddressName } from '@/backend/solve';
-import { Account } from '@/backend/apiTypes';
-import { getCollection } from '@/backend/providers/objkt';
+import { Account, DateString, UrlString } from '@/backend/apiTypes'
+import { query } from '@/backend/providers/db'
+import { getCollection } from '@/backend/providers/objkt'
+import { solveAccountType, solveAddressName } from '@/backend/solve'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 export type Contract = {
-  contractType: string,
-  id: string,
-  creationDate: DateString,
-  floorPrice: any,
-  items: any,
-  volume_24h: any,
-  balance: string,
-  metadata: any,
-  operationCount: number,
-  creatorAddress: string,
-  creatorDomain: string,
-  image: any,
+  contractType: string
+  id: string
+  creationDate: DateString
+  floorPrice: any
+  items: any
+  volume_24h: any
+  balance: string
+  metadata: any
+  operationCount: number
+  creatorAddress: string
+  creatorDomain: string
+  image: any
   tokens: Array<{
-    id: `${string}_${number}`,
-    tzkt_id: string,
-    supply: string,
-    holderscount: number,
-    owner: Account,
-    metadata: any,
-    image: UrlString,
-  }>,
-  averageFee: number,
+    id: `${string}_${number}`
+    tzkt_id: string
+    supply: string
+    holderscount: number
+    owner: Account
+    metadata: any
+    image: UrlString
+  }>
+  averageFee: number
   entrypoints: Array<{
-    name: string,
+    name: string
     fee: number
   }>
 }
@@ -100,14 +97,13 @@ function generateMichelsonValue(typeObj) {
   }
 }*/
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const address = <string> req.query.address;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const address = <string>req.query.address
 
   try {
-    const contract = await query('ACCOUNT INFOS', `
+    const contract = await query(
+      'ACCOUNT INFOS',
+      `
     SELECT
       contract."Id",
       contract."Balance",
@@ -132,8 +128,12 @@ export default async function handler(
       creator."Address",
       creatorDomain."Name",
       creationBlock."Timestamp"
-    `, [address]);
-    const feeHistory = await query('FEE HISTORY', `
+    `,
+      [address],
+    )
+    const feeHistory = await query(
+      'FEE HISTORY',
+      `
     SELECT
       tsxOps."BakerFee",
       tsxOps."StorageFee",
@@ -146,16 +146,20 @@ export default async function handler(
       contract."Address" = $1
     LIMIT
       100
-    `, [address]);
-    let totalFee = 0;
+    `,
+      [address],
+    )
+    let totalFee = 0
     feeHistory.forEach(fee => {
-      totalFee += +fee?.BakerFee + +fee?.StorageFee + +fee?.AllocationFee;
-    });
-    const averageFee = totalFee / feeHistory.length;
+      totalFee += +fee?.BakerFee + +fee?.StorageFee + +fee?.AllocationFee
+    })
+    const averageFee = totalFee / feeHistory.length
 
-    let contractType = 'smart_contract';
+    let contractType = 'smart_contract'
 
-    let tokens = await query('COLLECTION TOKENS', `
+    let tokens = await query(
+      'COLLECTION TOKENS',
+      `
         SELECT
           token."Id" as tzkt_id,
           $4 || '_' || token."TokenId" as id,
@@ -191,24 +195,28 @@ export default async function handler(
           CAST(token."TokenId" AS BIGINT)
         LIMIT $2
         OFFSET $3
-    `, [contract[0].Id, 100, 0, address]);
+    `,
+      [contract[0].Id, 100, 0, address],
+    )
 
-    tokens = tokens.filter(token => token.metadata != null);
+    tokens = tokens.filter(token => token.metadata != null)
 
     if (tokens?.length > 0) {
       if (tokens.length === 1 && tokens[0].assetType === 'coin') {
-        contractType = 'coin';
+        contractType = 'coin'
       } else if (tokens.every(token => token.assetType === 'nft')) {
-        contractType = 'collection';
+        contractType = 'collection'
       } else {
         contractType = 'multiple_assets'
       }
-    };
+    }
 
-    const promises = tokens.map(async (token) => {
-      token.image = token.image, address, token.id;
+    const promises = tokens.map(async token => {
+      ;(token.image = token.image), address, token.id
       if (!token.owner.address && token.holderscount == 1) {
-        const newOwner = await query('TOKEN OWNER', `
+        const newOwner = await query(
+          'TOKEN OWNER',
+          `
           SELECT
             owner."Address" as "address",
             owner."Kind" as "kind",
@@ -229,14 +237,16 @@ export default async function handler(
           WHERE
             "TokenBalances"."TokenId" = $1 and "TokenBalances"."Balance" != '0'
           LIMIT 1
-        `, [token.tzkt_id]);
+        `,
+          [token.tzkt_id],
+        )
         if (newOwner && newOwner.length > 0) {
           token.owner = {
             accountType: solveAccountType(newOwner[0].type, newOwner[0].kind),
             address: newOwner[0].address,
             name: solveAddressName(newOwner[0].domains, null, null),
             image: newOwner[0].metadata?.imageUri,
-          };
+          }
         }
       } else {
         token.owner = {
@@ -244,12 +254,12 @@ export default async function handler(
           address: token.owner.address,
           name: solveAddressName(token.owner.domains, null, null),
           image: token.owner.metadata?.imageUri,
-        };
+        }
       }
-    });
-    await Promise.all(promises);
+    })
+    await Promise.all(promises)
 
-    let objktInfos = (await getCollection(address));
+    let objktInfos = await getCollection(address)
 
     res.status(200).json({
       infos: {
@@ -260,17 +270,24 @@ export default async function handler(
         balance: contract[0].Balance,
         operationCount: contract[0].TransactionsCount,
         metadata: contract[0].Metadata,
-        image: objktInfos.image ?? (contract[0].Metadata?.thumbnailUri ?? contract[0].Metadata?.displayUri ?? contract[0].Metadata?.imageUri ?? contract[0].Metadata?.artifactUri) ?? tokens.find((token) => token.id == 0)?.image ?? tokens.find((token) => token.id == 1)?.image,
+        image:
+          objktInfos.image ??
+          contract[0].Metadata?.thumbnailUri ??
+          contract[0].Metadata?.displayUri ??
+          contract[0].Metadata?.imageUri ??
+          contract[0].Metadata?.artifactUri ??
+          tokens.find(token => token.id == 0)?.image ??
+          tokens.find(token => token.id == 1)?.image,
         id: contract[0].Address,
         tokens: tokens,
         creationDate: contract[0].creationTimestamp,
         creatorAddress: contract[0].creatorAddress,
         creatorDomain: contract[0].creatorName,
         averageFee: averageFee,
-        entrypoints: []
-      } as Contract
-    });
+        entrypoints: [],
+      } as Contract,
+    })
   } catch (err) {
-    res.status(500).json({ error: err?.toString() });
+    res.status(500).json({ error: err?.toString() })
   }
 }

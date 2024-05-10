@@ -1,26 +1,31 @@
-import { useState, useEffect, useRef, CSSProperties } from 'react'
-import Image from "next/image"
+import Image from 'next/image'
+import { CSSProperties, useEffect, useRef, useState } from 'react'
 
 // TODO: Use React Query
 
 type Props = {
-  sources: string[],
-  alt: string,
-  defaultSource: string,
-  defaultAlt: string,
-  style?: CSSProperties,
-  sizes?: string,
-  [key: string]: any,
+  sources: string[]
+  alt: string
+  defaultSource: string
+  defaultAlt: string
+  style?: CSSProperties
+  sizes?: string
+  [key: string]: any
 }
 
-const accept = response => !response.url.startsWith('https://services.tzkt.io') ||
-  response.headers.has('last-modified')
+const accept = response => !response.url.startsWith('https://services.tzkt.io') || response.headers.has('last-modified')
 
 const sourceCache = {}
 
-export default function AssetWithPlaceHolder(
-  { sources, alt, defaultSource, defaultAlt, style, sizes, ...attr }: Props
-) {
+export default function AssetWithPlaceHolder({
+  sources,
+  alt,
+  defaultSource,
+  defaultAlt,
+  style,
+  sizes,
+  ...attr
+}: Props) {
   const [loaded, setLoaded] = useState(false)
   const [source, setSource] = useState(null)
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -32,7 +37,7 @@ export default function AssetWithPlaceHolder(
 
   const tryNextSource = (sources: string[], accept?: (response: Response) => boolean) => {
     if (sources.length === 0) {
-      setSourceWithDefault(sourceCache[cacheKey] = false)
+      setSourceWithDefault((sourceCache[cacheKey] = false))
       return
     }
 
@@ -44,7 +49,7 @@ export default function AssetWithPlaceHolder(
     fetch(nextSource, { method: 'HEAD', signal })
       .then(response => {
         if (response.ok && (!accept || accept(response))) {
-          setSourceWithDefault(sourceCache[cacheKey] = nextSource)
+          setSourceWithDefault((sourceCache[cacheKey] = nextSource))
         } else {
           if (!response.ok) {
             console.warn(`Failed to fetch image '${nextSource}': ${response.status}`)
@@ -73,15 +78,24 @@ export default function AssetWithPlaceHolder(
     }
   }, [sources])
 
-  return <div style={{ position: 'relative', ...style }} {...attr}>
-    {!loaded && <div className="RoundedPlaceHolder" style={{ width: '100%', height: '100%' }} />}
-    {source && <Image src={source} alt={source === defaultSource ? defaultAlt : alt}
-      fill={true} sizes={sizes}
-      onLoad={() => setLoaded(true)}
-      style={{
-        position: 'absolute', width: '100%', height: '100%',
-        visibility: loaded ? 'visible' : 'hidden',
-      }}
-    />}
-  </div>
+  return (
+    <div style={{ position: 'relative', ...style }} {...attr}>
+      {!loaded && <div className="RoundedPlaceHolder" style={{ width: '100%', height: '100%' }} />}
+      {source && (
+        <Image
+          src={source}
+          alt={source === defaultSource ? defaultAlt : alt}
+          fill={true}
+          sizes={sizes}
+          onLoad={() => setLoaded(true)}
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            visibility: loaded ? 'visible' : 'hidden',
+          }}
+        />
+      )}
+    </div>
+  )
 }

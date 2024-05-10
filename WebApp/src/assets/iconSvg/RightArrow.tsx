@@ -1,14 +1,6 @@
-import React from "react";
-
 const RightArrow = () => {
   return (
-    <svg
-      width="26"
-      height="24"
-      viewBox="0 0 26 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fill-rule="evenodd"
         clip-rule="evenodd"
@@ -16,7 +8,7 @@ const RightArrow = () => {
         fill="#8C8C8C"
       />
     </svg>
-  );
-};
+  )
+}
 
-export default RightArrow;
+export default RightArrow

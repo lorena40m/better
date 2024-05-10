@@ -2,7 +2,7 @@ body {
   padding: 0;
   margin: 0;
   font-family: 'Open Sans', sans-serif !important;
-  background: #FAFAFB;
+  background: #fafafb;
   cursor: default;
 }
 
@@ -11,7 +11,7 @@ body {
 }
 
 .gradientText {
-  background: linear-gradient(152.26deg, #F74545 0%, #3384F5 101.41%);
+  background: linear-gradient(152.26deg, #f74545 0%, #3384f5 101.41%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -20,13 +20,13 @@ body {
 
 /* TopHeader CSS */
 .headCrumb button {
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 4px;
   padding: 6px 18px;
   font-weight: 700;
   font-size: 16px;
   line-height: 22px;
-  color: #2A3B51;
+  color: #2a3b51;
   text-transform: none;
   font-family: 'Manrope', sans-serif;
 }
@@ -44,8 +44,7 @@ body {
   line-height: 22px;
   /* identical to box height */
 
-
-  color: #2A3B51;
+  color: #2a3b51;
 }
 
 /* SiteHeader CSS */
@@ -76,7 +75,7 @@ body {
   line-height: 52px;
   text-align: center;
   font-family: 'Open Sans', sans-serif;
-  color: #2A3B51;
+  color: #2a3b51;
   margin: 0 auto 32px;
 }
 
@@ -86,12 +85,13 @@ body {
   display: flex;
   max-width: 852px;
   margin: 0 auto;
-  background: #FFFFFF;
+  background: #ffffff;
   position: relative;
 
-  &:hover, &:has(input:focus) {
+  &:hover,
+  &:has(input:focus) {
     border-color: transparent;
-    box-shadow: 0 1px 6px rgba(32,33,36,.28);
+    box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
   }
 
   .mainSearchButton {
@@ -122,13 +122,13 @@ body {
   font-weight: 500;
   font-size: 20px;
   line-height: 22px;
-  color: #2A3B51;
+  color: #2a3b51;
   border-radius: 40px 0 0 40px !important; /* For Chrome Completion Background */
   cursor: pointer;
 }
 
 .searchBlock-form input::placeholder {
-  color: #839BBB;
+  color: #839bbb;
   opacity: 1; /* Firefox */
 }
 
@@ -154,7 +154,9 @@ body {
 
     &:hover {
       border-color: transparent;
-      box-shadow: 2px 3px 2px 0px #f7454520, 2px 3px 2px 0px #3384f520;
+      box-shadow:
+        2px 3px 2px 0px #f7454520,
+        2px 3px 2px 0px #3384f520;
     }
   }
 
@@ -163,7 +165,7 @@ body {
   }
 
   &-inner {
-    background: #FFFFFF;
+    background: #ffffff;
     padding: 10px 10px;
     border-radius: 50px;
     display: flex;
@@ -246,7 +248,7 @@ body {
 }
 
 .cardBox-inner {
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 10px;
   padding: 10px 15px;
 }
@@ -262,7 +264,7 @@ body {
 .cardBox-title {
   font-weight: 300 !important;
   font-size: 16px !important;
-  color: #2A3B51 !important;
+  color: #2a3b51 !important;
   font-family: 'Open Sans', sans-serif !important;
   margin: 0 !important;
 }
@@ -284,7 +286,7 @@ body {
   font-size: 14px !important;
   line-height: 25px !important;
   font-family: 'Open Sans', sans-serif !important;
-  color: #839BBB;
+  color: #839bbb;
 }
 
 .cardBox--info .cardBox-inner {
@@ -294,7 +296,7 @@ body {
   justify-content: space-between;
   gap: 22px;
 }
-.cardBox-generalinfo{
+.cardBox-generalinfo {
   background-color: white;
   display: flex;
   align-items: center;
@@ -321,7 +323,7 @@ body {
   font-weight: 500;
   font-size: 26px;
   line-height: 27px;
-  color: #2A3B51;
+  color: #2a3b51;
 }
 
 .selectBox fieldset {
@@ -336,7 +338,7 @@ body {
 .selectBox .MuiSelect-select {
   font-weight: 300;
   font-size: 16px;
-  color: #2A3B51;
+  color: #2a3b51;
   font-family: 'Open Sans', sans-serif !important;
   padding: 10px 15px;
 }
@@ -365,7 +367,7 @@ body {
   border-radius: 20px;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     bottom: 0;
     left: 0;
@@ -450,10 +452,11 @@ body {
 }
 
 .listTableBlock table {
-  .MuiTableHead-root th, .MuiTableBody-root td {
+  .MuiTableHead-root th,
+  .MuiTableBody-root td {
     font-weight: 500;
     font-size: 18px;
-    color: #839BBB;
+    color: #839bbb;
 
     @media (max-width: 900px) {
       font-size: 16px;
@@ -486,12 +489,11 @@ body {
   font-size: 16px;
   line-height: 22px;
   font-family: 'Open Sans', sans-serif !important;
-  color: #2C3131;
+  color: #2c3131;
 }
 
-
 .MuiTypography-root {
-  font-family: "Open Sans", sans-serif !important;
+  font-family: 'Open Sans', sans-serif !important;
 }
 .SearchBox {
   width: 500px;
@@ -502,7 +504,7 @@ body {
     margin-bottom: 23px;
   }
   &__title {
-    font-family: "Open Sans", sans-serif !important;
+    font-family: 'Open Sans', sans-serif !important;
     font-weight: 700 !important;
     font-size: 30px !important;
     line-height: 41px !important;
@@ -737,7 +739,7 @@ body {
           padding-left: 0;
         }
         &::after {
-          content: "x";
+          content: 'x';
           font-size: 16px;
           line-height: 22px;
           position: absolute;
@@ -750,7 +752,7 @@ body {
     padding: 28px 0 48px;
     position: relative;
     &:after {
-      content: "";
+      content: '';
       left: 0;
       right: 0;
       top: 0;
@@ -793,7 +795,7 @@ body {
   position: relative;
   transition: background 0.3s !important;
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     z-index: 0;
     top: 0;
@@ -901,7 +903,7 @@ Project: less intrusive search button
     .MuiTabs-root {
       position: relative;
       &::before {
-        content: "";
+        content: '';
         left: 0;
         right: 0;
         bottom: 0;
@@ -1181,15 +1183,15 @@ Project: less intrusive search button
       }
     }
   }
-  
-  .crypto{
+
+  .crypto {
     margin-top: 20px !important;
   }
   .ElevationBox {
     padding: 20px 25px;
     border: 1px solid rgba(181, 195, 214, 0.4);
     box-sizing: border-box;
-    
+
     &__title {
       font-weight: 700;
       font-size: 21px;
@@ -1292,7 +1294,7 @@ Project: less intrusive search button
     h1 {
       font-size: 30px;
       font-weight: 600;
-      color: #2A3B51;
+      color: #2a3b51;
     }
     &__content {
       margin-top: 30px;
@@ -1300,7 +1302,8 @@ Project: less intrusive search button
       display: flex;
       justify-content: center;
       gap: 40px;
-      .left, .right {
+      .left,
+      .right {
         width: 50%;
         display: flex;
         flex-direction: column;
@@ -1312,7 +1315,8 @@ Project: less intrusive search button
     &__center__content {
       flex-direction: column;
 
-      .left, .right {
+      .left,
+      .right {
         width: 100%;
       }
     }
@@ -1329,10 +1333,10 @@ Project: less intrusive search button
     h2 {
       font-size: 24px;
       font-weight: 600;
-      color: #2A3B51;
+      color: #2a3b51;
     }
     p {
-      color: #2A3B51;
+      color: #2a3b51;
       font-size: 24px;
     }
     div {
@@ -1393,7 +1397,7 @@ Project: less intrusive search button
           border-bottom: 2px solid transparent;
         }
         &__selected {
-          border-bottom: 2px solid #2A3B51 !important;
+          border-bottom: 2px solid #2a3b51 !important;
         }
         &__notselected {
           cursor: pointer;
@@ -1467,7 +1471,9 @@ Project: less intrusive search button
         border: 1px solid #b3b3b3;
         width: 600px;
         max-width: 80%;
-        transition: border-color 0.3s, outline 0.3s;
+        transition:
+          border-color 0.3s,
+          outline 0.3s;
         input {
           background: transparent;
           border-radius: 100px 0 0 100px;
@@ -1498,7 +1504,7 @@ Project: less intrusive search button
         border-color: red;
         outline-color: red !important;
         animation-name: searchError;
-        animation-duration: .5s;
+        animation-duration: 0.5s;
         animation-delay: 0.25s;
         @keyframes searchError {
           0% {
@@ -1535,7 +1541,8 @@ Project: less intrusive search button
           }
         }
       }
-      &__input:hover, &__input:focus-within {
+      &__input:hover,
+      &__input:focus-within {
         outline: 1px solid #ababab;
       }
     }
@@ -1565,7 +1572,7 @@ Project: less intrusive search button
 
 .generalInfos {
   width: 100%;
-  background: linear-gradient(150deg, #F2474A20, #3E81EC20);
+  background: linear-gradient(150deg, #f2474a20, #3e81ec20);
   border-radius: 20px;
   padding: 25px 30px;
   display: flex;
@@ -1600,7 +1607,7 @@ Project: less intrusive search button
     &__var {
       font-size: 22px;
       font-weight: 700;
-      color: #839BBB;
+      color: #839bbb;
       display: flex;
       align-items: center;
       min-height: 40px;
@@ -1608,7 +1615,7 @@ Project: less intrusive search button
     &__value {
       font-size: 28px;
       font-weight: 700;
-      background: linear-gradient(-30deg,#F64545, #3384F5);
+      background: linear-gradient(-30deg, #f64545, #3384f5);
       background-clip: text;
       -webkit-text-fill-color: transparent;
       display: flex;
@@ -1626,7 +1633,7 @@ Project: less intrusive search button
   &__bottom .divider {
     width: 80%;
     height: 2px;
-    background-color: #839BBB;
+    background-color: #839bbb;
   }
 
   @media (min-width: 1000px) and (max-width: 1199px) {
@@ -1654,7 +1661,7 @@ Project: less intrusive search button
 
 .MainInfos {
   width: 100%;
-  background: linear-gradient(150deg, #F2474A20, #3E81EC20);
+  background: linear-gradient(150deg, #f2474a20, #3e81ec20);
   border-radius: 20px;
   padding: 25px 30px;
   display: flex;
@@ -1672,7 +1679,7 @@ Project: less intrusive search button
       font-size: 15px;
       background-color: #ffffff;
       cursor: pointer;
-      border: 2px solid #839BBB66;
+      border: 2px solid #839bbb66;
       padding: 6px 16px;
       border-radius: 5px;
       max-width: 40%;
@@ -1684,7 +1691,7 @@ Project: less intrusive search button
       height: 20px;
     }
     &__copy:hover {
-      border: 2px solid #839BBB;
+      border: 2px solid #839bbb;
     }
   }
   .__top h2 {
@@ -1708,7 +1715,7 @@ Project: less intrusive search button
     &__var {
       font-size: 18px;
       font-weight: 700;
-      color: #839BBB;
+      color: #839bbb;
       display: flex;
       align-items: center;
       min-height: 30px;
@@ -1716,7 +1723,7 @@ Project: less intrusive search button
     &__value {
       font-size: 34px;
       font-weight: 700;
-      background: linear-gradient(-30deg,#F64545, #3384F5);
+      background: linear-gradient(-30deg, #f64545, #3384f5);
       background-clip: text;
       -webkit-text-fill-color: transparent;
       display: flex;
@@ -1734,7 +1741,7 @@ Project: less intrusive search button
   .__bottom .divider {
     width: 80%;
     height: 2px;
-    background-color: #839BBB;
+    background-color: #839bbb;
   }
 
   @media (min-width: 1000px) and (max-width: 1199px) {
@@ -1779,12 +1786,12 @@ Project: less intrusive search button
     h1 {
       font-size: 80px;
       font-weight: 600;
-      color: #2A3B51;
+      color: #2a3b51;
       margin-bottom: 10px;
     }
     p {
       font-size: 30px;
-      color: #2A3B51;
+      color: #2a3b51;
     }
   }
 }
@@ -1810,13 +1817,13 @@ Project: less intrusive search button
   color: #2a3b51;
 }
 .otherInfos p a {
-  background: linear-gradient(-30deg,#F64545, #3384F5);
+  background: linear-gradient(-30deg, #f64545, #3384f5);
   background-clip: text;
   -webkit-text-fill-color: transparent;
   transition: border-bottom 0.1s;
 }
 .otherInfos p a:hover {
-  border-bottom: 1px solid #94649D;
+  border-bottom: 1px solid #94649d;
 }
 
 .operationsBox {
@@ -1969,7 +1976,8 @@ Project: less intrusive search button
   box-shadow: 0px 5px 16px rgba(3, 7, 18, 0.08);
 }
 
-.box, .boxWithoutBorder {
+.box,
+.boxWithoutBorder {
   h3 {
     font-size: 24px;
     font-weight: 700;
@@ -1998,7 +2006,9 @@ Project: less intrusive search button
 
 .hoverItem {
   background-color: #f6f6f680;
-  transition: background-color 0.2s, box-shadow 0.2s;
+  transition:
+    background-color 0.2s,
+    box-shadow 0.2s;
   cursor: pointer;
 
   &:hover {
@@ -2034,7 +2044,7 @@ Project: less intrusive search button
       gap: 10px;
       &__title {
         font-size: 20px;
-        color: #2A3B51;
+        color: #2a3b51;
 
         .ticker {
           padding: 5px;
@@ -2053,14 +2063,14 @@ Project: less intrusive search button
       justify-content: center;
       font-size: 20px;
       font-weight: 500;
-      color: #2A3B51;
+      color: #2a3b51;
     }
   }
   &__coin::after {
-    content: "";
+    content: '';
     width: 90%;
     height: 1px;
-    background-color: #2A3B5188;
+    background-color: #2a3b5188;
     position: absolute;
     bottom: -5px;
     left: 5%;
@@ -2080,7 +2090,7 @@ Project: less intrusive search button
     &__left {
       display: flex;
       gap: 20px;
-      color: #2A3B51;
+      color: #2a3b51;
       h1 {
         font-size: 28px;
         font-weight: 600;
@@ -2099,7 +2109,7 @@ Project: less intrusive search button
     justify-content: flex-start;
     align-items: center;
     gap: 10px;
-    color: #2A3B51;
+    color: #2a3b51;
     &__signer {
       font-size: 20px;
     }
@@ -2112,7 +2122,7 @@ Project: less intrusive search button
     }
   }
   &__bot {
-    color: #2A3B51;
+    color: #2a3b51;
   }
 }
 
@@ -2123,7 +2133,7 @@ Project: less intrusive search button
   font-size: 15px;
   background-color: #ffffff;
   cursor: pointer;
-  border: 2px solid #839BBB66;
+  border: 2px solid #839bbb66;
   padding: 6px 16px;
   border-radius: 5px;
   max-width: 40%;
@@ -2134,14 +2144,14 @@ Project: less intrusive search button
     height: 20px;
   }
   &:hover {
-    border: 2px solid #839BBB;
+    border: 2px solid #839bbb;
   }
 }
 
 .operationExecutionsBox {
   h2 {
     font-size: 26px;
-    color: #2A3B51;
+    color: #2a3b51;
     margin-bottom: 20px;
   }
   div {
@@ -2155,9 +2165,9 @@ Project: less intrusive search button
     align-items: center;
     justify-content: center;
     text-align: center;
-    color: #2A3B51;
+    color: #2a3b51;
     width: 100%;
-    &:nth-last-child(-n+4) {
+    &:nth-last-child(-n + 4) {
       border-bottom: none;
     }
     a {
@@ -2174,8 +2184,8 @@ Project: less intrusive search button
   }
   &__gridItem1 {
     grid-column: span 1;
-    border-right: 1px solid #2A3B51AA;
-    border-bottom: 1px solid #2A3B51AA;
+    border-right: 1px solid #2a3b51aa;
+    border-bottom: 1px solid #2a3b51aa;
     font-size: 20px;
     font-weight: 700;
     img {
@@ -2185,27 +2195,27 @@ Project: less intrusive search button
   }
   &__gridItem2 {
     grid-column: span 2;
-    border-right: 1px solid #2A3B51AA;
-    border-bottom: 1px solid #2A3B51AA;
+    border-right: 1px solid #2a3b51aa;
+    border-bottom: 1px solid #2a3b51aa;
   }
   &__gridItem3 {
     grid-column: span 2;
-    border-right: 1px solid #2A3B51AA;
-    border-bottom: 1px solid #2A3B51AA;
+    border-right: 1px solid #2a3b51aa;
+    border-bottom: 1px solid #2a3b51aa;
   }
   &__gridItem4 {
     grid-column: span 4;
-    border-bottom: 1px solid #2A3B51AA;
+    border-bottom: 1px solid #2a3b51aa;
   }
 }
 .operationTransfersBox {
   h2 {
     font-size: 26px;
-    color: #2A3B51;
+    color: #2a3b51;
     margin-bottom: 20px;
   }
   &__transfer {
-    color: #2A3B51;
+    color: #2a3b51;
     margin-bottom: 10px;
     border: #d6d6d6 1px solid;
     padding: 10px 10px;
@@ -2223,7 +2233,7 @@ Project: less intrusive search button
         position: relative;
         span {
           position: absolute;
-          background-color: #2A3B51;
+          background-color: #2a3b51;
           &:nth-child(1) {
             width: 80px;
             height: 2px;
@@ -2252,7 +2262,7 @@ Project: less intrusive search button
         .ArtifactIcon {
           height: 60px;
           width: 60px;
-          border: 1px solid #2A3B51;
+          border: 1px solid #2a3b51;
           border-radius: 4px;
         }
         p {
@@ -2308,7 +2318,7 @@ Project: less intrusive search button
   position: relative;
   overflow: hidden;
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     width: 100%;
     height: 100%;
@@ -2496,12 +2506,12 @@ Project: less intrusive search button
       h1 {
         font-size: 32px;
         font-weight: 700;
-        color: #2A3B51;
+        color: #2a3b51;
         max-width: 400px;
       }
       p {
         font-size: 26px;
-        color: #2A3B51;
+        color: #2a3b51;
       }
     }
   }
@@ -2700,7 +2710,6 @@ Project: less intrusive search button
           width: 100%;
         }
       }
-
     }
   }
   .contract-collection2 {
@@ -3046,7 +3055,7 @@ Project: less intrusive search button
 }
 // :has is compatible with only 90% of users.
 // However it's not a big deal if this rule is not applied ;p
-div.MuiPaper-root:has(> [aria-labelledby="languageSelect"]) {
+div.MuiPaper-root:has(> [aria-labelledby='languageSelect']) {
   transform: scale(1.2) !important;
 }
 
@@ -3079,7 +3088,7 @@ div.MuiPaper-root:has(> [aria-labelledby="languageSelect"]) {
 
     &:hover {
       border-color: transparent;
-      box-shadow: 0 1px 6px rgba(32,33,36,.28);
+      box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
     }
   }
 
@@ -3136,7 +3145,6 @@ div.MuiPaper-root:has(> [aria-labelledby="languageSelect"]) {
 }
 
 .TokenRanking-Swiper {
-
 }
 
 .TokenRanking-slide {

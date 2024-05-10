@@ -5,10 +5,10 @@ async function backend() {
 
   return {
     fiats: {
-      'EUR': usdToEur,
+      EUR: usdToEur,
     },
     cryptos: {
-      'XTZ': xtzPrice,
+      XTZ: xtzPrice,
     },
   }
 }

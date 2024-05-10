@@ -38,4 +38,3 @@ npm run test
 2. Make sure the project compiles for production: `npm run build`
 3. Make sure tests pass with `npm run unittest`, `npm run test`
 4. Have a look to the website with: `npm run dev`
-

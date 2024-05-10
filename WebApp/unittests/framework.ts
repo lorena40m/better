@@ -38,12 +38,10 @@ export function expect(testName: string, cond: boolean, severity: 'failure' | 'w
   if (cond) {
     testAssertionSuccess++
     console.log(`    ✔️  Success on ${assertionMsg}`)
-  }
-  else if (severity === 'warning') {
+  } else if (severity === 'warning') {
     testAssertionWarning++
     console.log(`    ⚠️  Warning on ${assertionMsg}`)
-  }
-  else {
+  } else {
     testAssertionFailure++
     console.log(`    ❌ Failure on ${assertionMsg}`)
   }
@@ -75,8 +73,12 @@ export async function TestScript(fc: Function) {
   console.log(`\n\n${header}`)
   await fc()
   console.log(`\n\nSummary of ${filename(process.argv[1])}:`)
-  console.log(`    ✔️  ${testCaseSuccess}/${testCaseCount} Cases complete, ⚠️  ${testCaseWarning} warn, ❌ ${testCaseFailure} incomplete`)
-  console.log(`    ✔️  ${testAssertionSuccess}/${testAssertionCount} Assertions succeed, ⚠️  ${testAssertionWarning} warn, ❌ ${testAssertionFailure} fail`)
+  console.log(
+    `    ✔️  ${testCaseSuccess}/${testCaseCount} Cases complete, ⚠️  ${testCaseWarning} warn, ❌ ${testCaseFailure} incomplete`,
+  )
+  console.log(
+    `    ✔️  ${testAssertionSuccess}/${testAssertionCount} Assertions succeed, ⚠️  ${testAssertionWarning} warn, ❌ ${testAssertionFailure} fail`,
+  )
   console.log(`\n`)
 }
 

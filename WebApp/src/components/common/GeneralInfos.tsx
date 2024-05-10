@@ -1,37 +1,26 @@
-import {
-  Box,
-  Grid,
-  IconButton,
-  InputAdornment,
-  OutlinedInput,
-  Typography,
-} from "@mui/material";
-import React, { ReactElement as Element } from "react";
-import Image from "next/image";
-import CreateIcon from "@mui/icons-material/Create";
-import CheckIcon from "@/assets/iconSvg/checkIcon.svg";
-import { appWithTranslation, useTranslation } from "next-i18next";
-import { CopyHashButton } from "./CopyHashButton";
+import { useTranslation } from 'next-i18next'
+import { ReactElement as Element } from 'react'
+import { CopyHashButton } from './CopyHashButton'
 
 type Props = {
-  icon: Element | string,
-  title: Element | string,
-  address: string,
-  var1: Element | string,
-  value1: Element | string,
-  title1: string | undefined,
-  var2: Element | string,
-  value2: Element | string,
-  title2: string | undefined,
-  var3: Element | string,
-  value3: Element | string,
-  title3: string | undefined,
+  icon: Element | string
+  title: Element | string
+  address: string
+  var1: Element | string
+  value1: Element | string
+  title1: string | undefined
+  var2: Element | string
+  value2: Element | string
+  title2: string | undefined
+  var3: Element | string
+  value3: Element | string
+  title3: string | undefined
 }
 
 const GeneralInfos = (props: Props) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common')
 
-  return(
+  return (
     <div className="generalInfos">
       <div className="generalInfos__top">
         <h2>
@@ -58,7 +47,7 @@ const GeneralInfos = (props: Props) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default GeneralInfos;
+export default GeneralInfos

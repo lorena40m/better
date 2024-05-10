@@ -1,10 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { query } from '@/backend/providers/db'
-import { solveAccountType, solveAddressName, solveAddressImage } from '@/backend/solve'
 import type { Account } from '@/backend/apiTypes'
+import { query } from '@/backend/providers/db'
 import * as tzkt from '@/backend/providers/tzkt'
+import { solveAccountType, solveAddressImage, solveAddressName } from '@/backend/solve'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-const validate = (addresses) => {
+const validate = addresses => {
   const REQUEST_LIMIT = 40
   const tezosAddressRegex = /^(tz1|tz2|tz3|KT1)[1-9A-HJ-NP-Za-km-z]{33}$/
 
@@ -12,14 +12,10 @@ const validate = (addresses) => {
     return 'req.body.addresses must be an array'
   }
 
-  if (addresses.length > REQUEST_LIMIT)
-    return `Exceeded the limit of ${REQUEST_LIMIT} addresses.`
+  if (addresses.length > REQUEST_LIMIT) return `Exceeded the limit of ${REQUEST_LIMIT} addresses.`
 
   const isValid = addresses.every(address => {
-    return (
-      address &&
-      typeof address === 'string' && tezosAddressRegex.test(address)
-    )
+    return address && typeof address === 'string' && tezosAddressRegex.test(address)
   })
 
   if (!isValid) {
@@ -30,7 +26,11 @@ const validate = (addresses) => {
 async function backend(addresses: string[]) {
   const tzktAliases$ = Promise.all(addresses.map(tzkt.getAlias))
 
-  const accounts$ = query('ACCOUNT INFOS', addresses.map((a, i) => `(
+  const accounts$ = query(
+    'ACCOUNT INFOS',
+    addresses
+      .map(
+        (a, i) => `(
     SELECT
       a."Id",
       a."Address",
@@ -47,9 +47,9 @@ async function backend(addresses: string[]) {
         'id', d."Id"
       )) as "Domains"
     FROM "Accounts" as a
-    LEFT JOIN "Domains" as d ON d."Address" = $${i+1}
+    LEFT JOIN "Domains" as d ON d."Address" = $${i + 1}
     LEFT JOIN "Tokens" as t1 ON a."Kind" = '2' and t1."ContractId" = a."Id" and t1."TokenId" = '0'
-    WHERE a."Address" = $${i+1}
+    WHERE a."Address" = $${i + 1}
     GROUP BY
       a."Id",
       a."Address",
@@ -59,7 +59,11 @@ async function backend(addresses: string[]) {
       a."Kind",
       a."Metadata",
       t1."Metadata"
-  )`).join(' UNION '), addresses)
+  )`,
+      )
+      .join(' UNION '),
+    addresses,
+  )
 
   const [accounts, tzktAliases] = await Promise.all([accounts$, tzktAliases$])
 

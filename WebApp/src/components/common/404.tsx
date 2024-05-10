@@ -1,14 +1,11 @@
-import React from "react";
-import { Page } from "@/components/common/page";
-import Head from "next/head";
-import Image404 from "@/assets/images/betterscan-404.png";
-import Image from "next/image";
+import Image404 from '@/assets/images/betterscan-404.png'
+import { Page } from '@/components/common/page'
+import Head from 'next/head'
+import Image from 'next/image'
 
-type Props = {
-}
+type Props = {}
 
 const page404 = (props: Props) => {
-
   return (
     <Page title={null}>
       <Head>
@@ -22,7 +19,7 @@ const page404 = (props: Props) => {
         <Image src={Image404} alt="broken robot" />
       </div>
     </Page>
-  );
-};
+  )
+}
 
-export default page404;
+export default page404

@@ -1,24 +1,28 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { query } from '@/backend/providers/db';
-import { solveAccountType, solveAddressName } from '@/backend/solve';
+import { query } from '@/backend/providers/db'
+import { solveAccountType, solveAddressName } from '@/backend/solve'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const limit = req.query.limit
+  const offset = req.query.offset
+  const address = <string>req.query.address
 
-export default async function handler(
-req: NextApiRequest,
-res: NextApiResponse
-) {
-	const limit = req.query.limit;
-	const offset = req.query.offset;
-	const address = <string>req.query.address;
-
-	try {
-		const contractId = (await query('CONTRACT ID', `
+  try {
+    const contractId = (
+      await query(
+        'CONTRACT ID',
+        `
 			SELECT "Id"
 			FROM "Accounts"
 			WHERE "Address" = $1
-		`, [address]))[0].Id
+		`,
+        [address],
+      )
+    )[0].Id
 
-		let tokens = await query('COLLECTION TOKENS', `
+    let tokens = await query(
+      'COLLECTION TOKENS',
+      `
 			SELECT
 				token."Id" as tzkt_id,
 				$4 || '_' || token."TokenId" as id,
@@ -52,13 +56,17 @@ res: NextApiResponse
 				CAST(token."TokenId" AS INTEGER)
 			LIMIT $2
 			OFFSET $3
-		`, [contractId, limit, offset, address]);
+		`,
+      [contractId, limit, offset, address],
+    )
 
-		tokens = tokens.filter(token => token.metadata != null);
+    tokens = tokens.filter(token => token.metadata != null)
 
-		const promises = tokens?.map(async (token) => {
-			if (!token.owner.address) {
-			  const newOwner = await query('TOKEN OWNER', `
+    const promises = tokens?.map(async token => {
+      if (!token.owner.address) {
+        const newOwner = await query(
+          'TOKEN OWNER',
+          `
 				SELECT
 				  owner."Address" as "address",
 				  owner."Kind" as "kind",
@@ -80,31 +88,33 @@ res: NextApiResponse
 				  "TokenTransfers"."TokenId" = $1
 				ORDER BY
 				  "TokenTransfers"."Id" DESC
-			  `, [token.tzkt_id]);
-			  if (newOwner && newOwner.length > 0) {
-				token.owner = {
-				  accountType: solveAccountType(newOwner[0].type, newOwner[0].kind),
-				  address: newOwner[0].address,
-				  name: solveAddressName(newOwner[0].domains, null, null),
-				  image: newOwner[0].metadata?.imageUri,
-				};
-			  }
-			} else {
-			  token.owner = {
-				accountType: solveAccountType(token.owner.type, token.owner.kind),
-				address: token.owner.address,
-				name: solveAddressName(token.owner.domains, null, null),
-				image: token.owner.metadata?.imageUri,
-			  };
-			}
-		  });
-		  await Promise.all(promises);
+			  `,
+          [token.tzkt_id],
+        )
+        if (newOwner && newOwner.length > 0) {
+          token.owner = {
+            accountType: solveAccountType(newOwner[0].type, newOwner[0].kind),
+            address: newOwner[0].address,
+            name: solveAddressName(newOwner[0].domains, null, null),
+            image: newOwner[0].metadata?.imageUri,
+          }
+        }
+      } else {
+        token.owner = {
+          accountType: solveAccountType(token.owner.type, token.owner.kind),
+          address: token.owner.address,
+          name: solveAddressName(token.owner.domains, null, null),
+          image: token.owner.metadata?.imageUri,
+        }
+      }
+    })
+    await Promise.all(promises)
 
-		res.status(200).json({
-			tokens
-		});
-	} catch (err) {
-		res.status(500).json({ error: `Erreur du serveur ${err}` });
-		console.error(err)
-	}
+    res.status(200).json({
+      tokens,
+    })
+  } catch (err) {
+    res.status(500).json({ error: `Erreur du serveur ${err}` })
+    console.error(err)
+  }
 }

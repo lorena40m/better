@@ -1,9 +1,9 @@
-import fetch from 'node-fetch';
+import fetch from 'node-fetch'
 
 export default function fetchCoinInfos(req, res) {
-    const requestBody = {
-        operationName: "GetToken",
-        query: `query GetToken($id: String!, $currency: CurrencyEnum) {
+  const requestBody = {
+    operationName: 'GetToken',
+    query: `query GetToken($id: String!, $currency: CurrencyEnum) {
             token(id: $id) {
               id
               standard
@@ -36,26 +36,26 @@ export default function fetchCoinInfos(req, res) {
               __typename
             }
           }`,
-        variables: {
-            id: req.query.id,
-            currency: "XTZ"
-        }
-    };
+    variables: {
+      id: req.query.id,
+      currency: 'XTZ',
+    },
+  }
 
-    fetch('https://analytics-api.quipuswap.com/graphql', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody)
-    })
+  fetch('https://analytics-api.quipuswap.com/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody),
+  })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
-        res.status(200).json(data?.data.token);
+      console.log(data)
+      res.status(200).json(data?.data.token)
     })
     .catch(error => {
-        console.log(error);
-        res.status(500).json({ error: 'Une erreur est survenue' });
-    });
+      console.log(error)
+      res.status(500).json({ error: 'Une erreur est survenue' })
+    })
 }

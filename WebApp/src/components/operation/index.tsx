@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import Transfert from "../../components/operation/Transfert";
-import Transaction from "../../components/operation/Transaction";
-import { appWithTranslation, useTranslation } from "next-i18next";
-import { fetchOperation } from "@/utils/apiClient";
-import { OperationBatch } from "@/backend/apiTypes";
-import { OperationExecutions } from "./OperationExecutions";
-import { Page } from "../common/page";
+import { OperationBatch } from '@/backend/apiTypes'
+import { fetchOperation } from '@/utils/apiClient'
+import { useTranslation } from 'next-i18next'
+import { useEffect, useState } from 'react'
+import Transaction from '../../components/operation/Transaction'
+import Transfert from '../../components/operation/Transfert'
+import { Page } from '../common/page'
+import { OperationExecutions } from './OperationExecutions'
 
 const Operation = ({ hash }) => {
-  const { t } = useTranslation("common");
-  const [operation, setOperation] = useState({} as OperationBatch);
+  const { t } = useTranslation('common')
+  const [operation, setOperation] = useState({} as OperationBatch)
 
   useEffect(() => {
-    fetchOperation(hash).then((data) => {
-      setOperation(data);
-    });
-  }, [hash]);
+    fetchOperation(hash).then(data => {
+      setOperation(data)
+    })
+  }, [hash])
 
   return (
     <Page title="Operation on Tezos">
@@ -29,7 +29,7 @@ const Operation = ({ hash }) => {
         </div>
       </div>
     </Page>
-  );
-};
+  )
+}
 
-export default Operation;
+export default Operation

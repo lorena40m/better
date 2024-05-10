@@ -10,5 +10,5 @@ check:
   image: node
   script:
     - cd WebApp
-    - npm install
+    - npm install --dev
     - npm run check-all

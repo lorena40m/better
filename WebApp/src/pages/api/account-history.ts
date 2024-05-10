@@ -1,7 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
 import { query } from '@/backend/providers/db'
-import { solveAccountType } from '@/backend/solve'
 import { eliminateDuplicates, groupBy, sum } from '@/utils/arrays'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 /*
   Technical Notes:
@@ -15,133 +14,404 @@ import { eliminateDuplicates, groupBy, sum } from '@/utils/arrays'
 
 // TODO: Don't use the naïve way of loading asset images
 export type Nft = {
-  assetType: 'nft',
-  id: `${string}_${number}`,
-  name: string,
-  image: UrlString,
+  assetType: 'nft'
+  id: `${string}_${number}`
+  name: string
+  image: UrlString
 }
 export type Coin = {
-  assetType: 'coin',
-  id: string | 'tezos',
-  name: string,
-  image: UrlString, // image is null when id = 'tezos'
-  ticker: string,
-  decimals: number,
+  assetType: 'coin'
+  id: string | 'tezos'
+  name: string
+  image: UrlString // image is null when id = 'tezos'
+  ticker: string
+  decimals: number
 }
 export type Asset = Nft | Coin
 
-import type { TokenDecimals, UrlString, DateString } from '@/backend/apiTypes'
-import type { Account } from '@/backend/apiTypes'
+import type { DateString, TokenDecimals, UrlString } from '@/backend/apiTypes'
 // output
 export type History = Array<OperationBatch>
 export type OperationBatch = Array<Operation> // ordered ASC
 export type Operation = {
-  id: string,
-  operationType: 'transfer' | 'call' | 'contractCreation' | 'tezosSpecific',
-  tezosSpecificType: (typeof TABLES)[number]['type'],
-  status: 'waiting' | 'success' | 'failure',
-  date: DateString,
-  functionName: string,
-  counterpartyAddress: string,
+  id: string
+  operationType: 'transfer' | 'call' | 'contractCreation' | 'tezosSpecific'
+  tezosSpecificType: (typeof TABLES)[number]['type']
+  status: 'waiting' | 'success' | 'failure'
+  date: DateString
+  functionName: string
+  counterpartyAddress: string
   balanceChanges: Array<{
-    quantity: TokenDecimals, // -/+ signed balance changes for the user
-    asset: Asset,
-  }>,
+    quantity: TokenDecimals // -/+ signed balance changes for the user
+    asset: Asset
+  }>
 }
 
 const TABLES = [
   { type: 'TokenTransfer', pageSize: 100 }, // Special processing for TokenTransfers
-  { type: 'Activation', sender: null, target: 'AccountId', initiator: false, amount: 'Balance', pageSize: 50, otherProperties: [] },
+  {
+    type: 'Activation',
+    sender: null,
+    target: 'AccountId',
+    initiator: false,
+    amount: 'Balance',
+    pageSize: 50,
+    otherProperties: [],
+  },
   //// { type: 'Autostacking', sender: null, target: null, initiator: false, amount: 'Amount', pageSize: 50, otherProperties: [] }, // note: no OpHash
-  { type: 'Ballot', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'Delegation', sender: 'SenderId', target: 'DelegateId', initiator: true, amount: 'Amount', pageSize: 50, otherProperties: [] },
-  { type: 'DoubleBaking', sender: 'AccuserId', target: 'OffenderId', initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'DoubleEndorsing', sender: 'AccuserId', target: 'OffenderId', initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'DoublePreendorsing', sender: 'AccuserId', target: 'OffenderId', initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'DrainDelegate', sender: 'DelegateId', target: 'TargetId', initiator: false, amount: 'Amount', pageSize: 50, otherProperties: [] },
+  {
+    type: 'Ballot',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'Delegation',
+    sender: 'SenderId',
+    target: 'DelegateId',
+    initiator: true,
+    amount: 'Amount',
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'DoubleBaking',
+    sender: 'AccuserId',
+    target: 'OffenderId',
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'DoubleEndorsing',
+    sender: 'AccuserId',
+    target: 'OffenderId',
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'DoublePreendorsing',
+    sender: 'AccuserId',
+    target: 'OffenderId',
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'DrainDelegate',
+    sender: 'DelegateId',
+    target: 'TargetId',
+    initiator: false,
+    amount: 'Amount',
+    pageSize: 50,
+    otherProperties: [],
+  },
   // { type: 'Endorsement', sender: 'DelegateId', target: null, initiator: false, amount: null, pageSize: 1, otherProperties: [] }, // request takes too much time ; Reward, Deposit?
   //// { type: 'EndorsingReward', sender: null, target: 'BakerId', initiator: false, amount: null, pageSize: 50, otherProperties: [] }, // no OpHash, Expected + 3 Reward
-  { type: 'IncreasePaidStorage', sender: 'SenderId', target: 'ContractId', initiator: false, amount: null, pageSize: 50, otherProperties: [] },
+  {
+    type: 'IncreasePaidStorage',
+    sender: 'SenderId',
+    target: 'ContractId',
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
   //// { type: 'Migration', sender: null, target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] }, // no OpHash
-  { type: 'NonceRevelation', sender: 'SenderId', target: 'BakerId', initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'Origination', sender: 'SenderId', target: 'ContractId', initiator: true, amount: 'Balance', pageSize: 50, otherProperties: [
-    "Status"
-  ] },
-  { type: 'Preendorsement', sender: 'DelegateId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'Proposal', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'RegisterConstant', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'Reveal', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
+  {
+    type: 'NonceRevelation',
+    sender: 'SenderId',
+    target: 'BakerId',
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'Origination',
+    sender: 'SenderId',
+    target: 'ContractId',
+    initiator: true,
+    amount: 'Balance',
+    pageSize: 50,
+    otherProperties: ['Status'],
+  },
+  {
+    type: 'Preendorsement',
+    sender: 'DelegateId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'Proposal',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'RegisterConstant',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'Reveal',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
   //// { type: 'RevelationPenalty', sender: 'BakerId', target: null, initiator: false, amount: 'Loss', pageSize: 50, otherProperties: [] }, // no OpHash
-  { type: 'SetDepositsLimit', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'SmartRollupAddMessages', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'SmartRollupCement', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'SmartRollupExecute', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'SmartRollupOriginate', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'SmartRollupPublish', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'SmartRollupRecoverBond', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'SmartRollupRefute', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'Staking', sender: 'SenderId', target: 'BakerId', initiator: false, amount: 'Amount', pageSize: 50, otherProperties: [] },
-  { type: 'Transaction', sender: 'SenderId', target: 'TargetId', initiator: true, amount: 'Amount', pageSize: 250, otherProperties: [
-    "Entrypoint", "Status"
-  ] },
-  { type: 'TransferTicket', sender: 'SenderId', target: 'TargetId', initiator: false, amount: null, pageSize: 50, otherProperties: [] }, // Amount = not xtz
-  { type: 'TxRollupCommit', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'TxRollupDispatchTickets', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'TxRollupFinalizeCommitment', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'TxRollupOrigination', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'TxRollupRejection', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'TxRollupRemoveCommitment', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'TxRollupReturnBond', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'TxRollupSubmitBatch', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'UpdateConsensusKey', sender: 'SenderId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
-  { type: 'VdfRevelation', sender: 'BakerId', target: null, initiator: false, amount: null, pageSize: 50, otherProperties: [] },
+  {
+    type: 'SetDepositsLimit',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'SmartRollupAddMessages',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'SmartRollupCement',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'SmartRollupExecute',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'SmartRollupOriginate',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'SmartRollupPublish',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'SmartRollupRecoverBond',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'SmartRollupRefute',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'Staking',
+    sender: 'SenderId',
+    target: 'BakerId',
+    initiator: false,
+    amount: 'Amount',
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'Transaction',
+    sender: 'SenderId',
+    target: 'TargetId',
+    initiator: true,
+    amount: 'Amount',
+    pageSize: 250,
+    otherProperties: ['Entrypoint', 'Status'],
+  },
+  {
+    type: 'TransferTicket',
+    sender: 'SenderId',
+    target: 'TargetId',
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  }, // Amount = not xtz
+  {
+    type: 'TxRollupCommit',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'TxRollupDispatchTickets',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'TxRollupFinalizeCommitment',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'TxRollupOrigination',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'TxRollupRejection',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'TxRollupRemoveCommitment',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'TxRollupReturnBond',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'TxRollupSubmitBatch',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'UpdateConsensusKey',
+    sender: 'SenderId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
+  {
+    type: 'VdfRevelation',
+    sender: 'BakerId',
+    target: null,
+    initiator: false,
+    amount: null,
+    pageSize: 50,
+    otherProperties: [],
+  },
 ]
 
 type DbOperation = {
-  Id: string,
-  OpHash: string,
-  OperationType: string,
+  Id: string
+  OpHash: string
+  OperationType: string
   // Only if defined
-  SenderId?: number,
-  TargetId?: number,
-  Amount?: number,
-  IsRoot: boolean,
+  SenderId?: number
+  TargetId?: number
+  Amount?: number
+  IsRoot: boolean
   // specific to operations
-  Timestamp: string,
+  Timestamp: string
   otherProperties: {
-    Entrypoint?: string | null,
-    Status?: number,
-  },
+    Entrypoint?: string | null
+    Status?: number
+  }
 }
 
 type DbTransfer = {
-  Id: string,
-  OpHash: string,
-  OperationType: 'TokenTransfer',
-  SenderId: number,
-  TargetId: number,
-  Amount: number,
-  IsRoot: false,
+  Id: string
+  OpHash: string
+  OperationType: 'TokenTransfer'
+  SenderId: number
+  TargetId: number
+  Amount: number
+  IsRoot: false
   // specific to transfers
-  AssetId: string,
-  Metadata: any,
-  TokenId: string,
-  ContractAddress: string,
+  AssetId: string
+  Metadata: any
+  TokenId: string
+  ContractAddress: string
 }
 
 type PropertiesThatAreOnlyInTransfer = Omit<DbTransfer, keyof DbOperation>
 type PropertiesThatAreOnlyInOperation = Omit<DbOperation, keyof DbTransfer>
 
-async function queryBatches(
-  accountId: number,
-  limit = 10,
-  previousOldestId: string | null,
-) {
+async function queryBatches(accountId: number, limit = 10, previousOldestId: string | null) {
   let operationsAndTransfers: Array<DbOperation | DbTransfer> = []
   let tablesThatDidntReachEnd = TABLES.map(table => table.type)
   let offset = 0
 
-  const makeOperationQuery = (table: typeof TABLES[number], limit: number, offset: number) => `
+  const makeOperationQuery = (table: (typeof TABLES)[number], limit: number, offset: number) => `
     SELECT
       "Id",
       "OpHash",
@@ -160,16 +430,15 @@ async function queryBatches(
       null as "ContractAddress"
     FROM "${table.type}Ops"
     WHERE
-      (${[
-        table.sender && `"${table.sender}" = $1`,
-        table.target && `"${table.target}" = $1`,
-      ].filter(x => x).join(` or `)})
+      (${[table.sender && `"${table.sender}" = $1`, table.target && `"${table.target}" = $1`]
+        .filter(x => x)
+        .join(` or `)})
       ${previousOldestId ? ` and "Id" < $2` : ``}
     ORDER BY "Id" DESC
     LIMIT ${limit}
     OFFSET ${offset}
   `
-  const makeTransferQuery = (table: typeof TABLES[number], limit: number, offset: number) => `
+  const makeTransferQuery = (table: (typeof TABLES)[number], limit: number, offset: number) => `
     SELECT
       t."Id",
       COALESCE("TransactionOps"."OpHash", "OriginationOps"."OpHash") AS "OpHash",
@@ -196,18 +465,17 @@ async function queryBatches(
     LIMIT ${limit}
     OFFSET ${offset}
   `
-  const makeQuery = (table: typeof TABLES[number]) => (offset: number) => {
+  const makeQuery = (table: (typeof TABLES)[number]) => (offset: number) => {
     const evolutiveLimit = (offset + 1) * table.pageSize
     const evolutiveOffset = sum(Array.from({ length: offset + 1 }, (_, index) => index)) * table.pageSize
 
-    return table.type === 'TokenTransfer' ?
-      makeTransferQuery(table, evolutiveLimit, evolutiveOffset) :
-      makeOperationQuery(table, evolutiveLimit, evolutiveOffset)
+    return table.type === 'TokenTransfer'
+      ? makeTransferQuery(table, evolutiveLimit, evolutiveOffset)
+      : makeOperationQuery(table, evolutiveLimit, evolutiveOffset)
   }
 
   while (tablesThatDidntReachEnd.length) {
-    const operationsQuery = TABLES
-      .filter(table => tablesThatDidntReachEnd.includes(table.type))
+    const operationsQuery = TABLES.filter(table => tablesThatDidntReachEnd.includes(table.type))
       .map(table => '(' + makeQuery(table)(offset) + ')')
       .join(' UNION ')
 
@@ -223,19 +491,23 @@ async function queryBatches(
     if (newOperationsAndTransfers.length !== count)
       console.warn(`EXCLUDED ${count - newOperationsAndTransfers.length} operations or transfers with no OpHash`)
 
-    operationsAndTransfers = operationsAndTransfers.concat(newOperationsAndTransfers)
+    operationsAndTransfers = operationsAndTransfers
+      .concat(newOperationsAndTransfers)
       .sort((o1, o2) => Number(BigInt(o2.Id) - BigInt(o1.Id)))
     const hashes = eliminateDuplicates(operationsAndTransfers.map(o => o.OpHash))
     const newOperationsByType = groupBy(newOperationsAndTransfers, o => o.OperationType)
 
     if (process.env.NODE_ENV === 'development')
-      console.info(Array.from(newOperationsByType).map(([type, ops]) => ([type, ops.length])))
+      console.info(Array.from(newOperationsByType).map(([type, ops]) => [type, ops.length]))
 
     tablesThatDidntReachEnd = tablesThatDidntReachEnd.filter(type => {
       const operationsAndTransfers = newOperationsByType.get(type)
       const pageSize = TABLES.find(table => table.type === type).pageSize
-      return operationsAndTransfers && operationsAndTransfers.length === pageSize &&
+      return (
+        operationsAndTransfers &&
+        operationsAndTransfers.length === pageSize &&
         hashes.indexOf(operationsAndTransfers[operationsAndTransfers.length - 1].OpHash) < limit
+      )
     })
     offset += 1
   }
@@ -245,7 +517,7 @@ async function queryBatches(
     .map(([OpHash, operationsAndTransfers]) => ({
       OpHash,
       oldestId: operationsAndTransfers[operationsAndTransfers.length - 1].Id,
-      operationsAndTransfers: <Array<DbOperation | DbTransfer>> operationsAndTransfers
+      operationsAndTransfers: <Array<DbOperation | DbTransfer>>operationsAndTransfers,
     }))
 
   const hashes = batches.map(o => o.OpHash)
@@ -299,15 +571,15 @@ async function queryRoots(addressId: number, hashes: string[]) {
 }
 
 type DbAddress = {
-  Id: number,
-  Address: string,
+  Id: number
+  Address: string
 }
 
 async function queryAddresses(ids: number[]) {
   const addressesQuery = `
     SELECT "Id", "Address"
     FROM "Accounts"
-    WHERE "Id" in (${"" + ids.join(",") + ""})
+    WHERE "Id" in (${'' + ids.join(',') + ''})
   `
 
   const addresses: Array<DbAddress> = await query('ADDRESSES', addressesQuery, [])
@@ -341,11 +613,9 @@ async function backend(address: string, limit: number, previousPagePayload) {
     batch.operationsAndTransfers.forEach(op => {
       // l'op racine est la plus grande op avec le meme hash
       // dont l'id reste plus petit que l'op interne
-      rootsOf[op.Id] = op.IsRoot ? op :
-        allRoots.find(root => root.OpHash === batch.OpHash && root.Id <= op.Id)
+      rootsOf[op.Id] = op.IsRoot ? op : allRoots.find(root => root.OpHash === batch.OpHash && root.Id <= op.Id)
 
-      if (!rootsOf[op.Id])
-        console.warn('THIS OPERATION HAS NO ROOT?!? not displayed', op.OperationType, op.Id)
+      if (!rootsOf[op.Id]) console.warn('THIS OPERATION HAS NO ROOT?!? not displayed', op.OperationType, op.Id)
     })
   })
 
@@ -356,11 +626,13 @@ async function backend(address: string, limit: number, previousPagePayload) {
   // keeps ordering
   const rootsByHash = groupBy(uniqueRoots, r => r.OpHash)
   const operationsByRoot = groupBy(
-    operationsAndTransfers.filter(o => o.OperationType !== 'TokenTransfer') as DbOperation[]
-  , o => rootsOf[o.Id].Id)
+    operationsAndTransfers.filter(o => o.OperationType !== 'TokenTransfer') as DbOperation[],
+    o => rootsOf[o.Id].Id,
+  )
   const transfersByRoot = groupBy(
-    operationsAndTransfers.filter(t => t.OperationType === 'TokenTransfer') as DbTransfer[]
-  , t => rootsOf[t.Id].Id)
+    operationsAndTransfers.filter(t => t.OperationType === 'TokenTransfer') as DbTransfer[],
+    t => rootsOf[t.Id].Id,
+  )
 
   // 3. Identify and query adresses of every counterparty
 
@@ -373,11 +645,13 @@ async function backend(address: string, limit: number, previousPagePayload) {
     const isThereBurnOrMint = transfers.find(t => !t.SenderId || !t.TargetId)
     counterpartyIdOfRoot[root.Id] =
       // if there are transfers with a single counterparty, display this counterparty
-      lengthierSide.length === 1 && !isThereBurnOrMint ? lengthierSide[0] :
-      // otherwise, take the smart contract name
-      !root.SenderId || root.SenderId === addressId && root.TargetId ? root.TargetId :
-      // or the sender
-      root.SenderId
+      lengthierSide.length === 1 && !isThereBurnOrMint
+        ? lengthierSide[0]
+        : // otherwise, take the smart contract name
+          !root.SenderId || (root.SenderId === addressId && root.TargetId)
+          ? root.TargetId
+          : // or the sender
+            root.SenderId
   })
 
   const counterparties = await queryAddresses(eliminateDuplicates(Object.values(counterpartyIdOfRoot)))
@@ -387,66 +661,70 @@ async function backend(address: string, limit: number, previousPagePayload) {
   const history: History = Array.from(rootsByHash).map(([hash, roots]) =>
     roots.map(root => {
       const operationType =
-        root.OperationType === 'Origination' ? 'contractCreation' :
-        root.OperationType === 'Transaction' ? (
-          (!root.otherProperties.Entrypoint // native xtz transfer
-          || /*root.TargetAccountKind === 2 &&*/ root.otherProperties.Entrypoint === 'transfer') // fa transfer
-          ? (
-            'transfer'
-          ) :
-          'call'
-        ) :
-        'tezosSpecific'
+        root.OperationType === 'Origination'
+          ? 'contractCreation'
+          : root.OperationType === 'Transaction'
+            ? !root.otherProperties.Entrypoint || // native xtz transfer
+              /*root.TargetAccountKind === 2 &&*/ root.otherProperties.Entrypoint === 'transfer' // fa transfer
+              ? 'transfer'
+              : 'call'
+            : 'tezosSpecific'
 
       const xtzAmount = sum(
-        (operationsByRoot.get(root.Id) ?? [])
-          .map(o => o.SenderId === addressId ? -o.Amount : +o.Amount)
+        (operationsByRoot.get(root.Id) ?? []).map(o => (o.SenderId === addressId ? -o.Amount : +o.Amount)),
       )
 
       return {
         id: root.OpHash,
         operationType,
         tezosSpecificType: operationType === 'tezosSpecific' ? root.OperationType : null,
-        status: root.otherProperties?.Status === null ? 'success' :
-          root.otherProperties?.Status === 1 ? 'success' : 'failure',
+        status:
+          root.otherProperties?.Status === null
+            ? 'success'
+            : root.otherProperties?.Status === 1
+              ? 'success'
+              : 'failure',
         date: root.Timestamp,
         functionName: root.otherProperties?.Entrypoint,
         counterpartyAddress: counterparties.find(c => c.Id === counterpartyIdOfRoot[root.Id]).Address,
-        balanceChanges:
-          (xtzAmount ? [{
-            quantity: xtzAmount.toString(),
-            asset: {
-              assetType: 'coin',
-              id: 'tezos',
-              name: 'Tezos',
-              ticker: 'XTZ',
-              decimals: 6,
-              image: null, // will be stored by frontend
-            } as Asset,
-          }] : [])
-          .concat(
-            Array.from(groupBy(transfersByRoot.get(root.Id) ?? [], t => t.AssetId))
-            .map(([assetId, transfers]) => ({
-              quantity: sum(
-                transfers.map(t => BigInt(t.SenderId === addressId ? -1 : 1) * BigInt(t.Amount))
-              ).toString(),
-              asset: transfers[0].Metadata?.decimals == 0 ? {
-                assetType: 'nft',
-                id: transfers[0].ContractAddress + '_' + transfers[0].TokenId,
-                name: transfers[0].Metadata?.name,
-                image: transfers[0].Metadata?.thumbnailUri,
-              } as Nft : {
-                assetType: 'coin',
-                id: transfers[0].ContractAddress + '_' + transfers[0].TokenId,
-                name: transfers[0].Metadata?.name,
-                ticker: transfers[0].Metadata?.symbol,
-                decimals: transfers[0].Metadata?.decimals,
-                image: transfers[0].Metadata?.thumbnailUri ?? transfers[0].Metadata?.icon ?? null,
-              } as Coin,
-            }))
-          )
+        balanceChanges: (xtzAmount
+          ? [
+              {
+                quantity: xtzAmount.toString(),
+                asset: {
+                  assetType: 'coin',
+                  id: 'tezos',
+                  name: 'Tezos',
+                  ticker: 'XTZ',
+                  decimals: 6,
+                  image: null, // will be stored by frontend
+                } as Asset,
+              },
+            ]
+          : []
+        ).concat(
+          Array.from(groupBy(transfersByRoot.get(root.Id) ?? [], t => t.AssetId)).map(([assetId, transfers]) => ({
+            quantity: sum(transfers.map(t => BigInt(t.SenderId === addressId ? -1 : 1) * BigInt(t.Amount))).toString(),
+            asset:
+              transfers[0].Metadata?.decimals == 0
+                ? ({
+                    assetType: 'nft',
+                    id: transfers[0].ContractAddress + '_' + transfers[0].TokenId,
+                    name: transfers[0].Metadata?.name,
+                    image: transfers[0].Metadata?.thumbnailUri,
+                  } as Nft)
+                : ({
+                    assetType: 'coin',
+                    id: transfers[0].ContractAddress + '_' + transfers[0].TokenId,
+                    name: transfers[0].Metadata?.name,
+                    ticker: transfers[0].Metadata?.symbol,
+                    decimals: transfers[0].Metadata?.decimals,
+                    image: transfers[0].Metadata?.thumbnailUri ?? transfers[0].Metadata?.icon ?? null,
+                  } as Coin),
+          })),
+        ),
       } as Operation
-    })
+    }),
   )
 
   const nextPageToken = encodeURIComponent(btoa(JSON.stringify({ addressId, oldestId })).replace(/=+$/, ''))
@@ -461,11 +739,11 @@ const validate = (address, limit, nextPageToken): string | undefined => {
     return 'Invalid tezos address in req.body.address'
   }
 
-  if (!(limit && Number.isInteger(limit) && 0 < limit && limit < 100)){
+  if (!(limit && Number.isInteger(limit) && 0 < limit && limit < 100)) {
     return 'Invalid limit in req.body.limit'
   }
 
-  if (nextPageToken && !(typeof nextPageToken === 'string')){
+  if (nextPageToken && !(typeof nextPageToken === 'string')) {
     return 'Invalid nextPageToken in req.body.nextPageToken'
   }
 }
@@ -473,20 +751,20 @@ const validate = (address, limit, nextPageToken): string | undefined => {
 const validatePagePayload = (pagePayload): string | undefined => {
   const digitsOnly = /^\d+$/
 
-  if (!(
-    'addressId' in pagePayload &&
-    typeof pagePayload.addressId === 'number' &&
-    Number.isInteger(pagePayload.addressId) &&
-    0 < pagePayload.addressId
-  )) {
+  if (
+    !(
+      'addressId' in pagePayload &&
+      typeof pagePayload.addressId === 'number' &&
+      Number.isInteger(pagePayload.addressId) &&
+      0 < pagePayload.addressId
+    )
+  ) {
     return 'Invalid addressId in pagePayload'
   }
 
-  if (!(
-    'oldestId' in pagePayload &&
-    typeof pagePayload.oldestId === 'string' &&
-    digitsOnly.test(pagePayload.addressId)
-  )) {
+  if (
+    !('oldestId' in pagePayload && typeof pagePayload.oldestId === 'string' && digitsOnly.test(pagePayload.addressId))
+  ) {
     return 'Invalid oldestId in pagePayload'
   }
 }

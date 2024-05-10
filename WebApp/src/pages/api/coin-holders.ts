@@ -1,16 +1,15 @@
-import { getCollectionSources } from '@/utils/link';
-import type { NextApiRequest, NextApiResponse } from 'next'
 import { query } from '@/backend/providers/db'
-import { solveAccountType, solveAddressName, solveAddressImage } from '@/backend/solve'
+import { solveAccountType, solveAddressName } from '@/backend/solve'
+import { getCollectionSources } from '@/utils/link'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const id = req.query.id;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const id = req.query.id
 
   try {
-    const holders = await query('COIN HOLDERS', `
+    const holders = await query(
+      'COIN HOLDERS',
+      `
 	SELECT
 		tb."Balance",
 		a."Address",
@@ -30,22 +29,22 @@ export default async function handler(
 	WHERE tb."TokenId" = $1
 	ORDER BY CAST(tb."Balance" AS DECIMAL) DESC
 	LIMIT 5
-	`, [id]);
+	`,
+      [id],
+    )
 
-	const holdersFormated = holders.map((holder) => {
-		return ({
-			balance: holder.Balance,
-			account: {
-				accountType: solveAccountType(holder.Type, holder.Kind),
-				address: holder.Address,
-				name: solveAddressName(holder.domains, null, null),
-				image: getCollectionSources(holder.metadata?.imageUri),
-			}
-		});
-	});
-    res.status(200).json(
-		holdersFormated
-	);
+    const holdersFormated = holders.map(holder => {
+      return {
+        balance: holder.Balance,
+        account: {
+          accountType: solveAccountType(holder.Type, holder.Kind),
+          address: holder.Address,
+          name: solveAddressName(holder.domains, null, null),
+          image: getCollectionSources(holder.metadata?.imageUri),
+        },
+      }
+    })
+    res.status(200).json(holdersFormated)
   } catch (err) {
     res.status(500).json({ error: err.toString() })
   }

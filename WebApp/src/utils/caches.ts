@@ -5,5 +5,5 @@ export function getCache(key: string): any | null {
 
 export function setCache(key: string, cache) {
   if (!process.env.ENABLE_CACHE) return
-  localStorage.setItem(key, JSON.stringify(window[key] = cache))
+  localStorage.setItem(key, JSON.stringify((window[key] = cache)))
 }

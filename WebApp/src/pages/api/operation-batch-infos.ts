@@ -1,16 +1,15 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { query } from '@/backend/providers/db';
-import { OperationBatch } from '@/backend/apiTypes';
-import { solveAccountType, solveAddressName } from '@/backend/solve';
+import { OperationBatch } from '@/backend/apiTypes'
+import { query } from '@/backend/providers/db'
+import { solveAccountType, solveAddressName } from '@/backend/solve'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const hash = req.query.hash;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const hash = req.query.hash
 
   try {
-    const response = await query('OPERATION BATCH', `
+    const response = await query(
+      'OPERATION BATCH',
+      `
         SELECT
           op."Id",
           op."Amount",
@@ -128,209 +127,273 @@ export default async function handler(
           Target."Metadata"
         ORDER BY
           op."Id" ASC
-    `, [hash]);
+    `,
+      [hash],
+    )
 
-    const operationGroupList = [];
+    const operationGroupList = []
 
-    response.forEach((operation) => {
+    response.forEach(operation => {
       if (!operation.SenderCodeHash) {
         operationGroupList.push({
           status: operation.Status == 1 ? 'success' : 'failure',
           codeHash: operation.TargetCodeHash,
           fees: +operation.BakerFee + +operation.StorageFee + +operation.AllocationFee,
-          operationList: [{
-            operationType: (!operation.Entrypoint || operation.Entrypoint === 'transfer' ? 'transfer' : 'call'),
-            from: {
-              accountType: solveAccountType(operation.SenderType, operation.SenderKind),
-              address: operation.SenderAddress,
-              name: solveAddressName(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
-              image: operation.SenderMetadata?.imageUri,
-            },
-            to: {
-              accountType: solveAccountType(operation.TargetType, operation.TargetKind),
-              address: operation.TargetAddress,
-              name: solveAddressName(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
-              image: operation.TargetMetadata?.imageUri,
-            },
-            assets: (operation.Amount != "0" ? [{
-              quantity: operation.Amount.toString(),
-              asset: {
-                assetType: 'coin',
-                id: 'tezos',
-                name: 'Tezos',
-                ticker: 'XTZ',
-                decimals: 6,
-                image: null
-              },
+          operationList: [
+            {
+              operationType: !operation.Entrypoint || operation.Entrypoint === 'transfer' ? 'transfer' : 'call',
               from: {
                 accountType: solveAccountType(operation.SenderType, operation.SenderKind),
                 address: operation.SenderAddress,
-                name: solveAddressName(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
+                name: solveAddressName(
+                  operation.SenderDomains,
+                  operation.SenderMetadata,
+                  operation.SenderTokenMetadata,
+                ),
                 image: operation.SenderMetadata?.imageUri,
               },
               to: {
                 accountType: solveAccountType(operation.TargetType, operation.TargetKind),
                 address: operation.TargetAddress,
-                name: solveAddressName(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
-                image: operation.TargetMetadata?.imageUri,
-              }
-            }] : []).concat(operation.Tokens?.map((token) => (
-              (token.Metadata.decimals == '0' ? {
-                quantity: token.Amount,
-                asset: {
-                  assetType: 'nft',
-                  id: token.Id,
-                  name: token.Metadata.name,
-                  ticker: null,
-                  decimals: '0',
-                  image: token.Metadata.thumbnailUrl
-                },
-                from: {
-                  accountType: solveAccountType(token.From.type, token.From.kind) ?? solveAccountType(operation.SenderType, operation.SenderKind),
-                  address: token.From.address ?? operation.SenderAddress,
-                  name: solveAddressName(token.From.domains, null, null),
-                  image: token.From.metadata?.imageUri,
-                },
-                to: {
-                  accountType: solveAccountType(token.To.type, token.To?.kind),
-                  address: token.To.address,
-                  name: solveAddressName(token.To.domains, null, null),
-                  image: token.To.metadata?.imageUri,
-                }
-              } : {
-                quantity: token.Amount,
-                asset: {
-                  assetType: 'coin',
-                  id: token.Id,
-                  name: token.Metadata.name,
-                  ticker: token.Metadata.symbol,
-                  decimals: token.Metadata.decimals,
-                  image: token.Metadata.thumbnailUri ?? token.Metadata.icon ?? null
-                },
-                from: {
-                  accountType: solveAccountType(token.From.type, token.From.kind) ?? solveAccountType(operation.SenderType, operation.SenderKind),
-                  address: token.From.address ?? operation.SenderAddress,
-                  name: solveAddressName(token.From.domains, null, null),
-                  image: token.From.metadata?.imageUri,
-                },
-                to: {
-                  accountType: solveAccountType(token.To.type, token.To.kind),
-                  address: token.To.address,
-                  name: solveAddressName(token.To.domains, null, null),
-                  image: token.To.metadata?.imageUri,
-                }
-              }))
-            ) ?? []),
-            entrypoint: operation.Entrypoint,
-            fees: +operation.BakerFee + +operation.StorageFee + +operation.AllocationFee
-          }]
-        });
-      }
-    });
-    response.forEach((operation) => {
-      if (operation.SenderCodeHash) {
-        operationGroupList.forEach((rootOp) => {
-          if (rootOp.codeHash === operation.SenderCodeHash) {
-            rootOp.fees += +operation.BakerFee + +operation.StorageFee + +operation.AllocationFee;
-            rootOp.operationList.push({
-              operationType: (!operation.Entrypoint || operation.Entrypoint === 'transfer' ? 'transfer' : 'call'),
-              from: {
-                accountType: solveAccountType(operation.SenderType, operation.SenderKind),
-                address: operation.SenderAddress,
-                name: solveAddressName(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
-                image: operation.SenderMetadata?.imageUri,
-              },
-              to: {
-                accountType: solveAccountType(operation.TargetType, operation.TargetKind),
-                address: operation.TargetAddress,
-                name: solveAddressName(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
+                name: solveAddressName(
+                  operation.TargetDomains,
+                  operation.TargetMetadata,
+                  operation.TargetTokenMetadata,
+                ),
                 image: operation.TargetMetadata?.imageUri,
               },
-              assets: (operation.Amount != "0" ? [{
-                quantity: operation.Amount.toString(),
-                asset: {
-                  assetType: 'coin',
-                  id: 'tezos',
-                  name: 'Tezos',
-                  ticker: 'XTZ',
-                  decimals: 6,
-                  image: null,
-                },
-                from: {
-                  accountType: solveAccountType(operation.SenderType, operation.SenderKind),
-                  address: operation.SenderAddress,
-                  name: solveAddressName(operation.SenderDomains, operation.SenderMetadata, operation.SenderTokenMetadata),
-                  image: operation.SenderMetadata?.imageUri,
-                },
-                to: {
-                  accountType: solveAccountType(operation.TargetType, operation.TargetKind),
-                  address: operation.TargetAddress,
-                  name: solveAddressName(operation.TargetDomains, operation.TargetMetadata, operation.TargetTokenMetadata),
-                  image: operation.TargetMetadata?.imageUri,
-                }
-              }] : []).concat(operation.Tokens?.map((token) => (
-                (token.Metadata.decimals == '0' ? {
-                  quantity: token.Amount,
-                  asset: {
-                    assetType: 'nft',
-                    id: token.Id,
-                    name: token.Metadata.name,
-                    ticker: null,
-                    decimals: '0',
-                    image: token.Metadata.thumbnailUri
-                  },
-                  from: {
-                    accountType: solveAccountType(token.From.type, token.From.kind) ?? solveAccountType(operation.SenderType, operation.SenderKind),
-                    address: token.From.address ?? operation.SenderAddress,
-                    name: solveAddressName(token.From.domains, null, null),
-                    image: token.From.metadata?.imageUri,
-                  },
-                  to: {
-                    accountType: solveAccountType(token.To.type, token.To.kind),
-                    address: token.To.address,
-                    name: solveAddressName(token.To.domains, null, null),
-                    image: token.To.metadata?.imageUri,
-                  }
-                } : {
-                  quantity: token.Amount,
-                  asset: {
-                    assetType: 'coin',
-                    id: token.Id,
-                    name: token.Metadata.name,
-                    ticker: token.Metadata.symbol,
-                    decimals: token.Metadata.decimals,
-                    image: token.Metadata.thumbnailUri ?? token.Metadata.icon ?? null
-                  },
-                  from: {
-                    accountType: solveAccountType(token.From.type, token.From.kind) ?? solveAccountType(operation.SenderType, operation.SenderKind),
-                    address: token.From.address ?? operation.SenderAddress,
-                    name: solveAddressName(token.From.domains, null, null),
-                    image: token.From.metadata?.imageUri,
-                  },
-                  to: {
-                    accountType: solveAccountType(token.To.type, token.To.kind),
-                    address: token.To.address,
-                    name: solveAddressName(token.To.domains, null, null),
-                    image: token.To.metadata?.imageUri,
-                  }
-                })
-              )) ?? []),
+              assets: (operation.Amount != '0'
+                ? [
+                    {
+                      quantity: operation.Amount.toString(),
+                      asset: {
+                        assetType: 'coin',
+                        id: 'tezos',
+                        name: 'Tezos',
+                        ticker: 'XTZ',
+                        decimals: 6,
+                        image: null,
+                      },
+                      from: {
+                        accountType: solveAccountType(operation.SenderType, operation.SenderKind),
+                        address: operation.SenderAddress,
+                        name: solveAddressName(
+                          operation.SenderDomains,
+                          operation.SenderMetadata,
+                          operation.SenderTokenMetadata,
+                        ),
+                        image: operation.SenderMetadata?.imageUri,
+                      },
+                      to: {
+                        accountType: solveAccountType(operation.TargetType, operation.TargetKind),
+                        address: operation.TargetAddress,
+                        name: solveAddressName(
+                          operation.TargetDomains,
+                          operation.TargetMetadata,
+                          operation.TargetTokenMetadata,
+                        ),
+                        image: operation.TargetMetadata?.imageUri,
+                      },
+                    },
+                  ]
+                : []
+              ).concat(
+                operation.Tokens?.map(token =>
+                  token.Metadata.decimals == '0'
+                    ? {
+                        quantity: token.Amount,
+                        asset: {
+                          assetType: 'nft',
+                          id: token.Id,
+                          name: token.Metadata.name,
+                          ticker: null,
+                          decimals: '0',
+                          image: token.Metadata.thumbnailUrl,
+                        },
+                        from: {
+                          accountType:
+                            solveAccountType(token.From.type, token.From.kind) ??
+                            solveAccountType(operation.SenderType, operation.SenderKind),
+                          address: token.From.address ?? operation.SenderAddress,
+                          name: solveAddressName(token.From.domains, null, null),
+                          image: token.From.metadata?.imageUri,
+                        },
+                        to: {
+                          accountType: solveAccountType(token.To.type, token.To?.kind),
+                          address: token.To.address,
+                          name: solveAddressName(token.To.domains, null, null),
+                          image: token.To.metadata?.imageUri,
+                        },
+                      }
+                    : {
+                        quantity: token.Amount,
+                        asset: {
+                          assetType: 'coin',
+                          id: token.Id,
+                          name: token.Metadata.name,
+                          ticker: token.Metadata.symbol,
+                          decimals: token.Metadata.decimals,
+                          image: token.Metadata.thumbnailUri ?? token.Metadata.icon ?? null,
+                        },
+                        from: {
+                          accountType:
+                            solveAccountType(token.From.type, token.From.kind) ??
+                            solveAccountType(operation.SenderType, operation.SenderKind),
+                          address: token.From.address ?? operation.SenderAddress,
+                          name: solveAddressName(token.From.domains, null, null),
+                          image: token.From.metadata?.imageUri,
+                        },
+                        to: {
+                          accountType: solveAccountType(token.To.type, token.To.kind),
+                          address: token.To.address,
+                          name: solveAddressName(token.To.domains, null, null),
+                          image: token.To.metadata?.imageUri,
+                        },
+                      },
+                ) ?? [],
+              ),
               entrypoint: operation.Entrypoint,
-              fees: +operation.BakerFee + +operation.StorageFee + +operation.AllocationFee
-            });
+              fees: +operation.BakerFee + +operation.StorageFee + +operation.AllocationFee,
+            },
+          ],
+        })
+      }
+    })
+    response.forEach(operation => {
+      if (operation.SenderCodeHash) {
+        operationGroupList.forEach(rootOp => {
+          if (rootOp.codeHash === operation.SenderCodeHash) {
+            rootOp.fees += +operation.BakerFee + +operation.StorageFee + +operation.AllocationFee
+            rootOp.operationList.push({
+              operationType: !operation.Entrypoint || operation.Entrypoint === 'transfer' ? 'transfer' : 'call',
+              from: {
+                accountType: solveAccountType(operation.SenderType, operation.SenderKind),
+                address: operation.SenderAddress,
+                name: solveAddressName(
+                  operation.SenderDomains,
+                  operation.SenderMetadata,
+                  operation.SenderTokenMetadata,
+                ),
+                image: operation.SenderMetadata?.imageUri,
+              },
+              to: {
+                accountType: solveAccountType(operation.TargetType, operation.TargetKind),
+                address: operation.TargetAddress,
+                name: solveAddressName(
+                  operation.TargetDomains,
+                  operation.TargetMetadata,
+                  operation.TargetTokenMetadata,
+                ),
+                image: operation.TargetMetadata?.imageUri,
+              },
+              assets: (operation.Amount != '0'
+                ? [
+                    {
+                      quantity: operation.Amount.toString(),
+                      asset: {
+                        assetType: 'coin',
+                        id: 'tezos',
+                        name: 'Tezos',
+                        ticker: 'XTZ',
+                        decimals: 6,
+                        image: null,
+                      },
+                      from: {
+                        accountType: solveAccountType(operation.SenderType, operation.SenderKind),
+                        address: operation.SenderAddress,
+                        name: solveAddressName(
+                          operation.SenderDomains,
+                          operation.SenderMetadata,
+                          operation.SenderTokenMetadata,
+                        ),
+                        image: operation.SenderMetadata?.imageUri,
+                      },
+                      to: {
+                        accountType: solveAccountType(operation.TargetType, operation.TargetKind),
+                        address: operation.TargetAddress,
+                        name: solveAddressName(
+                          operation.TargetDomains,
+                          operation.TargetMetadata,
+                          operation.TargetTokenMetadata,
+                        ),
+                        image: operation.TargetMetadata?.imageUri,
+                      },
+                    },
+                  ]
+                : []
+              ).concat(
+                operation.Tokens?.map(token =>
+                  token.Metadata.decimals == '0'
+                    ? {
+                        quantity: token.Amount,
+                        asset: {
+                          assetType: 'nft',
+                          id: token.Id,
+                          name: token.Metadata.name,
+                          ticker: null,
+                          decimals: '0',
+                          image: token.Metadata.thumbnailUri,
+                        },
+                        from: {
+                          accountType:
+                            solveAccountType(token.From.type, token.From.kind) ??
+                            solveAccountType(operation.SenderType, operation.SenderKind),
+                          address: token.From.address ?? operation.SenderAddress,
+                          name: solveAddressName(token.From.domains, null, null),
+                          image: token.From.metadata?.imageUri,
+                        },
+                        to: {
+                          accountType: solveAccountType(token.To.type, token.To.kind),
+                          address: token.To.address,
+                          name: solveAddressName(token.To.domains, null, null),
+                          image: token.To.metadata?.imageUri,
+                        },
+                      }
+                    : {
+                        quantity: token.Amount,
+                        asset: {
+                          assetType: 'coin',
+                          id: token.Id,
+                          name: token.Metadata.name,
+                          ticker: token.Metadata.symbol,
+                          decimals: token.Metadata.decimals,
+                          image: token.Metadata.thumbnailUri ?? token.Metadata.icon ?? null,
+                        },
+                        from: {
+                          accountType:
+                            solveAccountType(token.From.type, token.From.kind) ??
+                            solveAccountType(operation.SenderType, operation.SenderKind),
+                          address: token.From.address ?? operation.SenderAddress,
+                          name: solveAddressName(token.From.domains, null, null),
+                          image: token.From.metadata?.imageUri,
+                        },
+                        to: {
+                          accountType: solveAccountType(token.To.type, token.To.kind),
+                          address: token.To.address,
+                          name: solveAddressName(token.To.domains, null, null),
+                          image: token.To.metadata?.imageUri,
+                        },
+                      },
+                ) ?? [],
+              ),
+              entrypoint: operation.Entrypoint,
+              fees: +operation.BakerFee + +operation.StorageFee + +operation.AllocationFee,
+            })
           }
         })
       }
-    });
+    })
 
     res.status(200).json({
-        operationGroupList: operationGroupList,
-        date: response[0].Timestamp,
-        block: response[0].Level,
-        fees: operationGroupList.reduce((total, operationGroup) => { return (total + operationGroup.fees) }, 0)
-    } as OperationBatch);
+      operationGroupList: operationGroupList,
+      date: response[0].Timestamp,
+      block: response[0].Level,
+      fees: operationGroupList.reduce((total, operationGroup) => {
+        return total + operationGroup.fees
+      }, 0),
+    } as OperationBatch)
   } catch (err) {
-    res.status(500).json({ error: `Erreur du serveur ${err}` });
+    res.status(500).json({ error: `Erreur du serveur ${err}` })
     console.error(err)
   }
 }
