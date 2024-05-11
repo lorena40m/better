@@ -13,7 +13,8 @@
     "check-lint": "next lint",
     "check": "npm run check-types; npm run check-format; npm run check-lint",
     "check-all": "npm run check-types && npm run check-format && npm run check-lint",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "prepare": "cp ../pre-commit ../.git/hooks/pre-commit"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.15.0",
