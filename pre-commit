@@ -1,10 +1,11 @@
 #!/bin/sh
 
-
-cd WebApp
-
 # Get a list of staged files before formatting
 staged_files_before=$(git diff --name-only --cached)
+echo "Staged:\n$staged_files_before"
+
+
+cd WebApp
 
 
 # Run the commands
@@ -27,9 +28,13 @@ if [ $? -ne 0 ]; then
 fi
 
 
+cd ..
+
+
 # Add the newly formatted files to the staging area
 for file in $staged_files_before; do
     git add "$file"
+    echo "Added: $file"
 done
 
 # Continue with the commit
