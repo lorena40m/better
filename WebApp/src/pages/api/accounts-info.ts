@@ -47,9 +47,9 @@ async function backend(addresses: string[]) {
         'id', d."Id"
       )) as "Domains"
     FROM "Accounts" as a
-    LEFT JOIN "Domains" as d ON d."Address" = $${i + 1}
+    LEFT JOIN "Domains" as d ON d."Address" ILIKE $${i + 1}
     LEFT JOIN "Tokens" as t1 ON a."Kind" = '2' and t1."ContractId" = a."Id" and t1."TokenId" = '0'
-    WHERE a."Address" = $${i + 1}
+    WHERE a."Address" ILIKE $${i + 1}
     GROUP BY
       a."Id",
       a."Address",
@@ -67,9 +67,11 @@ async function backend(addresses: string[]) {
 
   const [accounts, tzktAliases] = await Promise.all([accounts$, tzktAliases$])
 
+  
   return addresses.map((address, i) => {
-    const account = accounts.find(a => a.Address === address)
-
+    const account = accounts.find(a => a.Address.toLowerCase() === address.toLowerCase())
+    console.log("hellohello");
+    console.log(account);
     return {
       account: {
         address: account.Address,

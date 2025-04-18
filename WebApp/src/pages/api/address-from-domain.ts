@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       SELECT
         "Domains"."Address"
       FROM "Domains"
-      WHERE "Domains"."Name" = $1
+      WHERE "Domains"."Name" ILIKE $1
     `,
       [domain],
     )

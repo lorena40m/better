@@ -26,7 +26,7 @@ async function fetch(query) {
 
 export async function getTopNftCollection(pageSize = 10) {
   const makeRequest = criteria => `
-    fa(order_by: {${criteria}: desc_nulls_last}, limit: ${pageSize}) {
+    fa(order_by: {${criteria}: desc_nulls_last}, limit: ${2}) {
       volume_total
       volume_24h
       contract
@@ -59,7 +59,7 @@ export async function getTopNftCollection(pageSize = 10) {
           marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? collection?.contract),
         }) as ExtendedCollection,
     ) as ExtendedCollection[]
-
+    
   return {
     top: formatCollections(data.top),
     trending: formatCollections(data.trending),
