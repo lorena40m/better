@@ -2,15 +2,15 @@ import axios from 'axios'
 
 async function fetch(urn: string) {
   try {
-    const response = await axios.get('https://api.tzkt.io/' + urn);
+    const response = await axios.get('https://api.tzkt.io/' + urn)
 
     if (response.status === 200) {
-      return response.data;
+      return response.data
     } else {
-      console.error('Failed to fetch external data. Status code:', response.status);
+      console.error('Failed to fetch external data. Status code:', response.status)
     }
   } catch (error) {
-    console.error(`Error on request '${'https://api.tzkt.io/' + urn}':`, error.toString());
+    console.error(`Error on request '${'https://api.tzkt.io/' + urn}':`, error.toString())
   }
 
   return null

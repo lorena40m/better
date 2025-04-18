@@ -1,25 +1,27 @@
-import Image from "next/image"
-import Link from 'next/link'
-import { useTranslation } from "next-i18next"
-import { useRouter } from "next/router"
-import { formatToken } from '@/utils/format'
-import Media from './Media'
 import { ExtendedCollection } from '@/backend/providers/objkt'
+import { formatToken } from '@/utils/format'
 import { getCollectionSources } from '@/utils/link'
+import { useTranslation } from 'next-i18next'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 type Props = {
-  item: ExtendedCollection,
+  item: ExtendedCollection
 }
 
 export default function CollectionSlide({ item }: Props) {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common')
   const { locale } = useRouter()
 
   return (
     <Link href={'/' + item.id}>
-      <div className="CarouselSlide"
-        style={{ backgroundImage: getCollectionSources(item?.image)
-          ?.map(source => `url(${source})`)?.join(',') }}
+      <div
+        className="CarouselSlide"
+        style={{
+          backgroundImage: getCollectionSources(item?.image)
+            ?.map(source => `url(${source})`)
+            ?.join(','),
+        }}
       >
         <div className="CarouselSlide-title-floating">
           {/*<Media src={item?.image?.map(source => `url(${source})`)?.join(',')} />*/}

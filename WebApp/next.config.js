@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 //const { nextI18NextRewrites } = require("next-i18next/rewrites");
-const { i18n } = require("./library/i18n/config");
+const { i18n } = require('./library/i18n/config')
 
 const nextConfig = {
   reactStrictMode: true,
@@ -9,8 +9,8 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "**",
+        protocol: 'https',
+        hostname: '**',
       },
     ],
     dangerouslyAllowSVG: true,

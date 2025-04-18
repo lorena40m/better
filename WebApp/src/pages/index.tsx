@@ -1,63 +1,49 @@
-import { useState, useEffect } from 'react'
-import Image from "next/image";
-import Header from "@/components/Header";
-import {
-  Grid,
-  Button,
-  Typography,
-  Divider,
-  Box,
-  Container,
-  Stack,
-  FormControl,
-  TextField,
-  Card,
-  CardContent,
-} from "@mui/material";
-import Select from "@/components/common/Select";
-import TokenRanking from "@/components/Home/TokenRanking";
-import Carousel from "@/components/Carousel/Carousel";
-import CollectionSlide from "@/components/Carousel/CollectionSlide";
-import HeadCrumb from "@/components/Header/HeadCrumb";
-import searchIcon from "@/assets/iconSvg/searchIcon.svg";
-import TypingEffect from "@/components/others/typingEffect";
-import Background from "@/components/others/background";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
-import { formatPrice, formatToken } from '@/utils/format';
-import ChainStats from '@/components/Home/ChainStats';
-import Head from 'next/head';
-import { SearchInput } from '@/components/common/SearchInput';
-import { fetchHomeCollections, fetchHomeCoins } from '@/utils/apiClient'
+import searchIcon from '@/assets/iconSvg/searchIcon.svg'
+import Carousel from '@/components/Carousel/Carousel'
+import CollectionSlide from '@/components/Carousel/CollectionSlide'
+import Header from '@/components/Header'
+import ChainStats from '@/components/Home/ChainStats'
+import TokenRanking from '@/components/Home/TokenRanking'
+import Select from '@/components/common/Select'
+import TypingEffect from '@/components/others/typingEffect'
+import { fetchHomeCoins, fetchHomeCollections } from '@/utils/apiClient'
+import { Box, Button, Container, TextField, Typography } from '@mui/material'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import Head from 'next/head'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import useSearch from '@/hooks/useSearch'
 
 export async function getServerSideProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await serverSideTranslations(locale, ['common'])),
     },
-  };
+  }
 }
 
 export default function Home({ _nextI18Next }) {
-  const { t } = useTranslation("common");
-  const { locale } = useRouter();
-  const router = useRouter();
-  const [collectionCriteria, setCollectionCriteria] = useState('trending');
-  const [tokenCriteria, setTokenCriteria] = useState('byCap');
+  const { t } = useTranslation('common')
+  const { locale } = useRouter()
+  const router = useRouter()
+  const [collectionCriteria, setCollectionCriteria] = useState('trending')
+  const [tokenCriteria, setTokenCriteria] = useState('byCap')
   const [collections, setCollections] = useState(null)
   const [coins, setCoins] = useState(null)
+  const { search, setSearch, animError, searchEvent } = useSearch()
 
   useEffect(() => {
     fetchHomeCollections().then(setCollections)
     fetchHomeCoins().then(setCoins)
   }, [])
 
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-    const searchValue = event.target.querySelector('input').value;
-    router.push(`/${encodeURIComponent(searchValue)}`);
-  };
+  // const handleSearchSubmit = event => {
+  //   event.preventDefault()
+  //   const searchValue = event.target.querySelector('input').value
+  //   router.push(`/${encodeURIComponent(searchValue)}`)
+  // }
 
   return (
     <>
@@ -69,34 +55,35 @@ export default function Home({ _nextI18Next }) {
         <Header hideSearch={false} />
         <Box className="searchBlock">
           <Container maxWidth="xl">
-            <Typography
-              variant="h5"
-              align="center"
-              color="text.secondary"
-              paragraph
-            >
-              {t("animTitle")} <span className="displayIfSmall"><br /></span>
+            <Typography variant="h5" align="center" color="text.secondary" paragraph>
+              {t('animTitle')}{' '}
+              <span className="displayIfSmall">
+                <br />
+              </span>
               <TypingEffect strings={_nextI18Next.initialI18nStore[locale].common.anim} /> <br />
-              {t("animTitle2")}
+              {t('animTitle2')}
             </Typography>
-            <form onSubmit={handleSearchSubmit} className="searchBlock-form">
+            {/* <form className="searchBlock-form"> */}
+            <div className="searchBlock-form">
               <TextField
                 hiddenLabel
                 id="filled-hidden-label-small mainSearchField"
                 defaultValue=""
-                placeholder={t("inputPlaceholder")}
+                placeholder={t('inputPlaceholder')}
                 fullWidth
+                onChange={e => setSearch(e.target.value)}
+                value={search}
+                onKeyDown={e => {
+                  e.key === 'Enter' ? searchEvent() : null;
+                }}
                 sx={{ ml: 0 }}
               ></TextField>
               <span className="scanIcon">{/* <ScanIcon /> */}</span>
-              <Button
-                type="submit"
-                variant="contained"
-                className="mainSearchButton"
-              >
-                <Image src={searchIcon} width={40} alt="Research icon" style={{zIndex: "1"}} />
+              <Button onClick={searchEvent}  variant="contained" className="mainSearchButton">
+                <Image src={searchIcon} width={40} alt="Research icon" style={{ zIndex: '1' }} />
               </Button>
-            </form>
+            </div>
+            {/* </form> */}
             <ChainStats />
           </Container>
         </Box>
@@ -112,7 +99,9 @@ export default function Home({ _nextI18Next }) {
                 defaultValue="trending"
               />
             </Box>
-            <Carousel Slide={CollectionSlide} items={collections?.[collectionCriteria]}
+            <Carousel
+              Slide={CollectionSlide}
+              items={collections?.[collectionCriteria]}
               breakpoints={{
                 100: { slidesPerView: 1 },
                 640: { slidesPerView: 2 },
@@ -132,5 +121,5 @@ export default function Home({ _nextI18Next }) {
         </Box>
       </main>
     </>
-  );
+  )
 }

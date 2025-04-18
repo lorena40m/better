@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import Typed from 'typed.js';
+import { useEffect } from 'react'
+import Typed from 'typed.js'
 
 const TypingEffect = ({ strings }) => {
   useEffect(() => {
@@ -7,18 +7,16 @@ const TypingEffect = ({ strings }) => {
       strings: strings,
       typeSpeed: 80,
       backSpeed: 40,
-	    showCursor: true,
-      loop: true
-    };
-    const typed = new Typed("#typed-output", options);
+      showCursor: true,
+      loop: true,
+    }
+    const typed = new Typed('#typed-output', options)
     return () => {
-      typed.destroy();
-    };
-  }, [strings]);
+      typed.destroy()
+    }
+  }, [strings])
 
-  return (
-	<span id="typed-output"></span>
-  );
-};
+  return <span id="typed-output"></span>
+}
 
-export default TypingEffect;
+export default TypingEffect

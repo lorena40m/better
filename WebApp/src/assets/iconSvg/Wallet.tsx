@@ -1,14 +1,6 @@
-import React from "react";
-
 const Wallet = () => {
   return (
-    <svg
-      width="27"
-      height="24"
-      viewBox="0 0 27 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="27" height="24" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M21.1321 20H6.10263C5.53319 20 4.98708 19.7893 4.58443 19.4142C4.18177 19.0391 3.95557 18.5304 3.95557 18V9C3.95557 8.46957 4.18177 7.96086 4.58443 7.58579C4.98708 7.21071 5.53319 7 6.10263 7H21.1321C21.7015 7 22.2476 7.21071 22.6503 7.58579C23.0529 7.96086 23.2791 8.46957 23.2791 9V18C23.2791 18.5304 23.0529 19.0391 22.6503 19.4142C22.2476 19.7893 21.7015 20 21.1321 20Z"
         stroke="#8C8C8C"
@@ -28,7 +20,7 @@ const Wallet = () => {
         stroke-width="1.5"
       />
     </svg>
-  );
-};
+  )
+}
 
-export default Wallet;
+export default Wallet

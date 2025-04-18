@@ -1,25 +1,25 @@
 // node modules
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 // local modules
-import { i18n } from "./index";
+import { i18n } from './index'
 
 const useLanguageByRootPath = () => {
   const {
     query: { lang },
-  } = useRouter();
+  } = useRouter()
 
   useEffect(() => {
-    const localePath = Object.keys(i18n.options.localeSubpaths).find((key) => {
-      return i18n.options.localeSubpaths[key] === lang;
-    });
+    const localePath = Object.keys(i18n.options.localeSubpaths).find(key => {
+      return i18n.options.localeSubpaths[key] === lang
+    })
 
     if (i18n.language !== localePath) {
       // console.log("Change Language.", i18n.language, localePath);
-      i18n.changeLanguage(localePath);
+      i18n.changeLanguage(localePath)
     }
-  }, [lang]);
-};
+  }, [lang])
+}
 
-export default useLanguageByRootPath;
+export default useLanguageByRootPath

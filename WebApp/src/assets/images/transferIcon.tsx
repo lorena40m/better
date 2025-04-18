@@ -1,14 +1,6 @@
-import React from "react";
-
 const RightArrow = () => {
   return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M23.5625 12C23.5625 18.3858 18.3858 23.5625 12 23.5625C5.61421 23.5625 0.4375 18.3858 0.4375 12C0.4375 5.61421 5.61421 0.4375 12 0.4375C18.3858 0.4375 23.5625 5.61421 23.5625 12Z"
         fill="#21BC27"
@@ -28,7 +20,7 @@ const RightArrow = () => {
         stroke-width="0.875"
       />
     </svg>
-  );
-};
+  )
+}
 
-export default RightArrow;
+export default RightArrow

@@ -1,9 +1,9 @@
-import { expect, TestCase, TestScript, logResult } from './framework'
+import ArtifactEndpoint from '../src/endpoints/ArtifactEndpoint'
 import HomeEndpoint from '../src/endpoints/HomeEndpoint'
 import MiscellaneousEndpoint from '../src/endpoints/MiscellaneousEndpoint'
-import ArtifactEndpoint from '../src/endpoints/ArtifactEndpoint'
-import * as schemas from './validationSchemas'
+import { TestCase, TestScript, expect, logResult } from './framework'
 import { ids } from './sampleIds'
+import * as schemas from './validationSchemas'
 
 // Multi-assets: KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ
 // Tezos Domain: tz1QiNtZx3b6EeATAJ5PgHp2X6y7jwZNXp3G
@@ -15,70 +15,70 @@ const TEST_CASES = [
     testCaseName: 'HomeEndpoint endpoint',
     endpoint: HomeEndpoint,
     artifactType: null,
-    params: {pageSize: 100},
+    params: { pageSize: 100 },
     schema: schemas.homeResponseSchema,
   },
   {
     testCaseName: 'MiscellaneousEndpoint endpoint',
     endpoint: MiscellaneousEndpoint,
     artifactType: null,
-    params: {pageSize: 100},
+    params: { pageSize: 100 },
     schema: schemas.miscellaneousResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: coin artifact',
     endpoint: ArtifactEndpoint,
     artifactType: 'coin',
-    params: {id: ids.coin, pageSize: 100},
+    params: { id: ids.coin, pageSize: 100 },
     schema: schemas.coinResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: collection artifact',
     endpoint: ArtifactEndpoint,
     artifactType: 'collection',
-    params: {id: ids.collection, pageSize: 100},
+    params: { id: ids.collection, pageSize: 100 },
     schema: schemas.collectionResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: wallet artifact #1',
     endpoint: ArtifactEndpoint,
     artifactType: 'wallet',
-    params: {id: ids.wallet1, pageSize: 5},
+    params: { id: ids.wallet1, pageSize: 5 },
     schema: schemas.walletResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: wallet artifact #2',
     endpoint: ArtifactEndpoint,
     artifactType: 'wallet',
-    params: {id: ids.wallet2, pageSize: 5},
+    params: { id: ids.wallet2, pageSize: 5 },
     schema: schemas.walletResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: contract artifact',
     endpoint: ArtifactEndpoint,
     artifactType: 'contract',
-    params: {id: ids.contract, pageSize: 10},
+    params: { id: ids.contract, pageSize: 10 },
     schema: schemas.contractResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: transfer artifact #1',
     endpoint: ArtifactEndpoint,
     artifactType: 'transfer',
-    params: {id: ids.transfer, pageSize: 10},
+    params: { id: ids.transfer, pageSize: 10 },
     schema: schemas.transferResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: transfer artifact #2 Tezos Transfer',
     endpoint: ArtifactEndpoint,
     artifactType: 'transfer',
-    params: {id: ids.tezosTransfer, pageSize: 100},
+    params: { id: ids.tezosTransfer, pageSize: 100 },
     schema: schemas.transferResponseSchema,
   },
   {
     testCaseName: 'ArtifactEndpoint endpoint: call artifact',
     endpoint: ArtifactEndpoint,
     artifactType: 'call',
-    params: {id: ids.call, pageSize: 100},
+    params: { id: ids.call, pageSize: 100 },
     schema: schemas.callResponseSchema,
   },
 ]
@@ -102,7 +102,10 @@ TestScript(async function () {
       await new Promise(resolve => setTimeout(resolve, 2000))
 
       if (artifactType) {
-        expect(`return the correct ${artifactType} artifactType, got: ${response.artifactType}`, response.artifactType === artifactType)
+        expect(
+          `return the correct ${artifactType} artifactType, got: ${response.artifactType}`,
+          response.artifactType === artifactType,
+        )
       }
       expect(`return within a reasonable time: ${time}ms; expect <1000ms`, time < 1000, 'warning')
 
@@ -122,7 +125,6 @@ TestScript(async function () {
     })
   }
 })
-
 
 // TODO
 

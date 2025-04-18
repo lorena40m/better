@@ -16,7 +16,7 @@ export function getCollectionSources(url: string | null): string[] | null {
     const ipfsId = url.split('://')[1]
     return [
       `https://assets.objkt.media/file/assets-003/${ipfsId}/thumb288`,
-      ...gateways.map((gateway) => (gateway + ipfsId)), // Defaults with gateways
+      ...gateways.map(gateway => gateway + ipfsId), // Defaults with gateways
     ]
   }
 }
@@ -27,7 +27,7 @@ export function getAssetSources(url: string | null, id: `${string}_${number}`): 
   if (!url) return null
 
   if (!id.includes('_')) throw new Error(`NFT id should be {contractAddress}_{tokenId}, given: ${id}`)
-  const [ contractHash, tokenId ] = id.split('_')
+  const [contractHash, tokenId] = id.split('_')
 
   if (url.startsWith('http')) {
     return [url]
@@ -37,12 +37,10 @@ export function getAssetSources(url: string | null, id: `${string}_${number}`): 
     if (contractHash && tokenId) {
       return [
         `https://assets.objkt.media/file/assets-003/${contractHash}/${tokenId}/thumb400`,
-        ...gateways.map((gateway) => (gateway + ipfsId)), // Defaults with gateways
+        ...gateways.map(gateway => gateway + ipfsId), // Defaults with gateways
       ]
     } else {
-      return [
-        ...gateways.map((gateway) => (gateway + ipfsId)),
-      ]
+      return [...gateways.map(gateway => gateway + ipfsId)]
     }
   }
 }

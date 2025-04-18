@@ -1,6 +1,6 @@
-import { createContext, useState, useEffect, useContext } from 'react'
 import { Rates } from '@/pages/api/rates'
 import { fetchRates } from '@/utils/apiClient'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 const RatesContext = createContext(undefined as Rates)
 
@@ -19,9 +19,5 @@ export const RatesProvider = ({ children }) => {
     fetchRates().then(setRates)
   }, [])
 
-  return (
-    <RatesContext.Provider value={rates}>
-      {children}
-    </RatesContext.Provider>
-  )
+  return <RatesContext.Provider value={rates}>{children}</RatesContext.Provider>
 }

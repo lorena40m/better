@@ -1,33 +1,31 @@
 import axios from 'axios'
-import * as tzkt from './tzkt'
 
 async function fetch(urn: string) {
   try {
     const apiKey = process.env.TZPRO_API_KEY
     const response = await axios.get(`https://api.tzpro.io/${urn}`, {
-      headers : { 
+      headers: {
         'X-API-Key': apiKey,
       },
-    }
-    );
+    })
 
     if (response.status === 200) {
-      return response.data;
+      return response.data
     } else {
-      console.error('Failed to fetch external data. Status code:', response.status);
+      console.error('Failed to fetch external data. Status code:', response.status)
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error:', error)
   }
 
-  return null;
+  return null
 }
 
 export async function getLastBlock() {
   const data = await fetch('explorer/tip')
   return {
     hash: data?.block_hash,
-    date: data?.timestamp
+    date: data?.timestamp,
   }
 }
 

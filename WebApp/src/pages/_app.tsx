@@ -1,15 +1,13 @@
-import '@/styles/globals.css';
-import "@/styles/style.scss";
-import type { AppProps } from 'next/app';
-import { useRouter } from 'next/router';
-import {appWithTranslation} from "next-i18next";
-import Head from "next/head";
-import { useTranslation } from "next-i18next";
 import { RatesProvider } from '@/hooks/RatesContext'
+import '@/styles/globals.css'
+import '@/styles/style.scss'
+import { appWithTranslation, useTranslation } from 'next-i18next'
+import type { AppProps } from 'next/app'
+import Head from 'next/head'
 
 function App({ Component, pageProps }: AppProps) {
-  const { t } = useTranslation("common");
-  
+  const { t } = useTranslation('common')
+
   return (
     <>
       <Head>
@@ -23,4 +21,4 @@ function App({ Component, pageProps }: AppProps) {
   )
 }
 
-export default appWithTranslation(App);
+export default appWithTranslation(App)

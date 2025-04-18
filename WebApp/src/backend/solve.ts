@@ -15,7 +15,7 @@ const contractTypes = {
 }
 
 export type Metadata = Record<string, string>
-export type Domain = { id: number, lastLevel: number, name: string, data: Metadata }
+export type Domain = { id: number; lastLevel: number; name: string; data: Metadata }
 function findDomainsMetadata(domains: Array<Domain>, key: string) {
   return domains?.map(d => d.data?.[key])?.find(d => d)
 }
@@ -27,21 +27,19 @@ export function solveAccountType(accountType, accountKind) {
 }
 
 export function solveAddressName(domains: Array<Domain>, accountMetadata: Metadata, tokenMetadata: Metadata) {
-  domains?.sort((a, b) => (a.name?.length - b.name?.length) || (b.id - a.id) || (b.lastLevel - a.lastLevel) || (b < a ? 1 : -1))
+  domains?.sort(
+    (a, b) => a.name?.length - b.name?.length || b.id - a.id || b.lastLevel - a.lastLevel || (b < a ? 1 : -1),
+  )
   return (
-    accountMetadata?.name ||
-    findDomainsMetadata(domains, 'openid:name') ||
-    domains?.[0].name ||
-    tokenMetadata?.name
+    accountMetadata?.name || findDomainsMetadata(domains, 'openid:name') || domains?.[0].name || tokenMetadata?.name
   )
 }
 
-export function solveAddressImage(
-  domains: Array<Domain>,
-  accountMetadata: Metadata,
-  tokenMetadata: Metadata
-) {
+export function solveAddressImage(domains: Array<Domain>, accountMetadata: Metadata, tokenMetadata: Metadata) {
   const gravatarHash = findDomainsMetadata(domains, 'gravatar:hash')
-  return gravatarHash && `https://www.gravatar.com/avatar/${gravatarHash}` ||
-    accountMetadata?.imageUri || tokenMetadata?.imageUri
+  return (
+    (gravatarHash && `https://www.gravatar.com/avatar/${gravatarHash}`) ||
+    accountMetadata?.imageUri ||
+    tokenMetadata?.imageUri
+  )
 }

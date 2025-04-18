@@ -1,14 +1,14 @@
+import { Dollars, Integer, UrlString } from '@/backend/apiTypes'
 import axios from 'axios'
-import { UrlString, Dollars, Integer } from '@/backend/apiTypes'
 
 export type ExtendedCollection = {
-  id: string,
-  name: string,
-  image: UrlString,
-  floorPrice: Dollars,
-  topSale: Dollars,
-  marketplaceLink: UrlString,
-  supply: Integer,
+  id: string
+  name: string
+  image: UrlString
+  floorPrice: Dollars
+  topSale: Dollars
+  marketplaceLink: UrlString
+  supply: Integer
 }
 
 async function fetch(query) {
@@ -17,8 +17,7 @@ async function fetch(query) {
   try {
     const queryResult = await axios.post(url, { query })
     return queryResult.data.data
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Error calling API: ', error)
   }
 
@@ -27,7 +26,7 @@ async function fetch(query) {
 
 export async function getTopNftCollection(pageSize = 10) {
   const makeRequest = criteria => `
-    fa(order_by: {${criteria}: desc_nulls_last}, limit: ${pageSize}) {
+    fa(order_by: {${criteria}: desc_nulls_last}, limit: ${2}) {
       volume_total
       volume_24h
       contract
@@ -47,16 +46,20 @@ export async function getTopNftCollection(pageSize = 10) {
   }
   `)
 
-  const formatCollections = collections => collections.map((collection) => ({
-    id: collection?.contract,
-    image: collection?.logo,
-    name: collection?.short_name || collection?.name,
-    supply: collection?.items?.toString(),
-    floorPrice: collection?.floor_price ?? null,
-    topSale: null,
-    marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? collection?.contract),
-  } as ExtendedCollection)) as ExtendedCollection[]
-
+  const formatCollections = collections =>
+    collections.map(
+      collection =>
+        ({
+          id: collection?.contract,
+          image: collection?.logo,
+          name: collection?.short_name || collection?.name,
+          supply: collection?.items?.toString(),
+          floorPrice: collection?.floor_price ?? null,
+          topSale: null,
+          marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? collection?.contract),
+        }) as ExtendedCollection,
+    ) as ExtendedCollection[]
+    
   return {
     top: formatCollections(data.top),
     trending: formatCollections(data.trending),
@@ -80,7 +83,7 @@ export async function getCollection(address: string) {
     id: address,
     name: collection?.short_name || collection?.name,
     image: collection?.logo,
-    supply: collection?.items.toString(),
+    supply: collection?.items?.toString(),
     floorPrice: collection?.floor_price,
     marketplaceLink: 'https://objkt.com/collection/' + (collection?.path ?? address),
     timestamp: collection?.timestamp,
