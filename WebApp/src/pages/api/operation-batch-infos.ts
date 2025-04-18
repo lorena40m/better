@@ -60,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   'lastLevel', "Domains"."LastLevel",
                   'data', "Domains"."Data",
                   'id', "Domains"."Id"
-                )) FROM "Domains" WHERE "Domains"."Address" = TokenTransferSender."Address"
+                )) FROM "Domains" WHERE "Domains"."Address" ILIKE TokenTransferSender."Address"
               )
             ),
             'To', jsonb_build_object(
@@ -74,7 +74,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   'lastLevel', "Domains"."LastLevel",
                   'data', "Domains"."Data",
                   'id', "Domains"."Id"
-                )) FROM "Domains" WHERE "Domains"."Address" = TokenTransferTarget."Address"
+                )) FROM "Domains" WHERE "Domains"."Address" ILIKE TokenTransferTarget."Address"
               )
             )
           )) FILTER (WHERE "TokenTransfers"."Amount" IS NOT NULL) AS "Tokens"

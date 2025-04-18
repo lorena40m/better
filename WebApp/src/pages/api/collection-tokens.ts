@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         `
 			SELECT "Id"
 			FROM "Accounts"
-			WHERE "Address" = $1
+			WHERE "Address" ILIKE $1
 		`,
         [address],
       )
@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 							'lastLevel', "Domains"."LastLevel",
 							'data', "Domains"."Data",
 							'id', "Domains"."Id"
-						)) FROM "Domains" WHERE "Domains"."Address" = tokenOwner."Address"
+						)) FROM "Domains" WHERE "Domains"."Address" ILIKE tokenOwner."Address"
 					)
 				) as owner,
 				token."Metadata" as metadata,
@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			LEFT JOIN
 				"Accounts" as tokenOwner ON tokenOwner."Id" = token."OwnerId"
 			WHERE
-				token."ContractId" = $1
+				token."ContractId" ILIKE $1
 				AND
 				(token."Metadata"->>'decimals')::INT = 0
 			ORDER BY
@@ -78,14 +78,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					  'lastLevel', "Domains"."LastLevel",
 					  'data', "Domains"."Data",
 					  'id', "Domains"."Id"
-					)) FROM "Domains" WHERE "Domains"."Address" = owner."Address"
+					)) FROM "Domains" WHERE "Domains"."Address" ILIKE owner."Address"
 				  ) as "domains"
 				FROM
 				  "TokenTransfers"
 				LEFT JOIN
 				  "Accounts" as owner ON owner."Id" = "TokenTransfers"."ToId"
 				WHERE
-				  "TokenTransfers"."TokenId" = $1
+				  "TokenTransfers"."TokenId" ILIKE $1
 				ORDER BY
 				  "TokenTransfers"."Id" DESC
 			  `,

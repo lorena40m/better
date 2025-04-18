@@ -14,6 +14,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import useSearch from '@/hooks/useSearch'
 
 export async function getServerSideProps({ locale }: any) {
   return {
@@ -31,17 +32,18 @@ export default function Home({ _nextI18Next }) {
   const [tokenCriteria, setTokenCriteria] = useState('byCap')
   const [collections, setCollections] = useState(null)
   const [coins, setCoins] = useState(null)
+  const { search, setSearch, animError, searchEvent } = useSearch()
 
   useEffect(() => {
     fetchHomeCollections().then(setCollections)
     fetchHomeCoins().then(setCoins)
   }, [])
 
-  const handleSearchSubmit = event => {
-    event.preventDefault()
-    const searchValue = event.target.querySelector('input').value
-    router.push(`/${encodeURIComponent(searchValue)}`)
-  }
+  // const handleSearchSubmit = event => {
+  //   event.preventDefault()
+  //   const searchValue = event.target.querySelector('input').value
+  //   router.push(`/${encodeURIComponent(searchValue)}`)
+  // }
 
   return (
     <>
@@ -61,20 +63,27 @@ export default function Home({ _nextI18Next }) {
               <TypingEffect strings={_nextI18Next.initialI18nStore[locale].common.anim} /> <br />
               {t('animTitle2')}
             </Typography>
-            <form onSubmit={handleSearchSubmit} className="searchBlock-form">
+            {/* <form className="searchBlock-form"> */}
+            <div className="searchBlock-form">
               <TextField
                 hiddenLabel
                 id="filled-hidden-label-small mainSearchField"
                 defaultValue=""
                 placeholder={t('inputPlaceholder')}
                 fullWidth
+                onChange={e => setSearch(e.target.value)}
+                value={search}
+                onKeyDown={e => {
+                  e.key === 'Enter' ? searchEvent() : null;
+                }}
                 sx={{ ml: 0 }}
               ></TextField>
               <span className="scanIcon">{/* <ScanIcon /> */}</span>
-              <Button type="submit" variant="contained" className="mainSearchButton">
+              <Button onClick={searchEvent}  variant="contained" className="mainSearchButton">
                 <Image src={searchIcon} width={40} alt="Research icon" style={{ zIndex: '1' }} />
               </Button>
-            </form>
+            </div>
+            {/* </form> */}
             <ChainStats />
           </Container>
         </Box>

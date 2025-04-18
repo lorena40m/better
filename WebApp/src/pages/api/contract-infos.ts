@@ -122,7 +122,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     LEFT JOIN
       "Domains" as creatorDomain ON creatorDomain."Address" = creator."Address"
     WHERE
-      contract."Address" = $1
+      contract."Address" ILIKE $1
     GROUP BY
       contract."Id",
       creator."Address",
@@ -143,7 +143,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     INNER JOIN
       "TransactionOps" as tsxOps ON tsxOps."TargetId" = contract."Id"
     WHERE
-      contract."Address" = $1
+      contract."Address" ILIKE $1
     LIMIT
       100
     `,
@@ -176,7 +176,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 'lastLevel', "Domains"."LastLevel",
                 'data', "Domains"."Data",
                 'id', "Domains"."Id"
-              )) FROM "Domains" WHERE "Domains"."Address" = tokenOwner."Address"
+              )) FROM "Domains" WHERE "Domains"."Address" ILIKE tokenOwner."Address"
             )
           ) as owner,
           token."Metadata" as metadata,
@@ -190,7 +190,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         LEFT JOIN
           "Accounts" as tokenOwner ON tokenOwner."Id" = token."OwnerId"
         WHERE
-          token."ContractId" = $1
+          token."ContractId" ILIKE $1
         ORDER BY
           CAST(token."TokenId" AS BIGINT)
         LIMIT $2
@@ -228,14 +228,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 'lastLevel', "Domains"."LastLevel",
                 'data', "Domains"."Data",
                 'id', "Domains"."Id"
-              )) FROM "Domains" WHERE "Domains"."Address" = owner."Address"
+              )) FROM "Domains" WHERE "Domains"."Address" ILIKE owner."Address"
             ) as "domains"
           FROM
             "TokenBalances"
           LEFT JOIN
             "Accounts" as owner ON owner."Id" = "TokenBalances"."AccountId"
           WHERE
-            "TokenBalances"."TokenId" = $1 and "TokenBalances"."Balance" != '0'
+            "TokenBalances"."TokenId" ILIKE $1 and "TokenBalances"."Balance" != '0'
           LIMIT 1
         `,
           [token.tzkt_id],

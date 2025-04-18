@@ -84,7 +84,7 @@ export function fetchAccountHistory(
     `account-history?address=${address}&limit=${historyLimit}&nextPageToken=${nextPageToken}`,
   )
   const history$ = data$.then(data => data.history)
-  const nextPageToken$ = data$.then(data => data.nextPageToken)
+  const nextPageToken$ = data$.then(data => data?.nextPageToken)
 
   const counterpartiesInfo$ = history$.then(history => {
     const addresses = eliminateDuplicates(
@@ -105,6 +105,7 @@ export function fetchAccountHistory(
 }
 
 import type { OperationBatch } from '@/backend/apiTypes'
+import next from 'next'
 export async function fetchOperation(hash: string) {
   const infos = await fetchApi(`operation-batch-infos?hash=${hash}`).then(response => response as OperationBatch)
   return infos

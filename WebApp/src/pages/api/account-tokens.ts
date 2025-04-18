@@ -75,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       LEFT JOIN
         "Accounts" as contract ON "Tokens"."ContractId" = contract."Id"
       WHERE
-        "Accounts"."Address" = $1 AND "TokenBalances"."Balance" <> '0'
+        "Accounts"."Address" ILIKE $1 AND "TokenBalances"."Balance" <> '0'
       GROUP BY
         "TokenBalances"."TokenId",
         "Tokens"."TokenId",

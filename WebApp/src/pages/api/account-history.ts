@@ -592,7 +592,7 @@ async function backend(address: string, limit: number, previousPagePayload) {
   const previousOldestId: string | null = previousPagePayload?.oldestId
 
   if (!addressId) {
-    const addressQuery = `SELECT "Id" FROM "Accounts" WHERE "Address" = $1`
+    const addressQuery = `SELECT "Id" FROM "Accounts" WHERE "Address" ILIKE $1`
     addressId = (await query('ADDRESS', addressQuery, [address]))[0].Id
   }
 
