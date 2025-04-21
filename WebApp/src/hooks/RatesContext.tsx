@@ -1,23 +1,35 @@
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { Rates } from '@/pages/api/rates'
 import { fetchRates } from '@/utils/apiClient'
-import { createContext, useContext, useEffect, useState } from 'react'
 
-const RatesContext = createContext(undefined as Rates)
+// Define context type
+const RatesContext = createContext<Rates | undefined>(undefined)
 
+// Custom hook to consume RatesContext
 export const useRates = () => {
-  const value = useContext(RatesContext)
-  if (value === undefined) {
-    throw new Error('useRates should be called inside RatesContext')
+  const context = useContext(RatesContext)
+  if (context === undefined) {
+    throw new Error('useRates must be used within a RatesProvider')
   }
-  return value
+  return context
 }
 
-export const RatesProvider = ({ children }) => {
-  const [rates, setRates] = useState(null as Rates)
+// Props typing for provider
+interface RatesProviderProps {
+  children: ReactNode
+}
+
+// Provider component
+export const RatesProvider = ({ children }: RatesProviderProps) => {
+  const [rates, setRates] = useState<Rates | null>(null)
 
   useEffect(() => {
     fetchRates().then(setRates)
   }, [])
 
-  return <RatesContext.Provider value={rates}>{children}</RatesContext.Provider>
+  return (
+    <RatesContext.Provider value={rates}>
+      {children}
+    </RatesContext.Provider>
+  )
 }
